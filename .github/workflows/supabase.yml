@@ -1,0 +1,32 @@
+# Spielt Datenbank-Änderungen und die Anmelde-Funktion in Supabase ein.
+# Benötigt die Repository-Secrets SUPABASE_ACCESS_TOKEN und SUPABASE_DB_PASSWORD.
+name: Supabase aktualisieren
+
+on:
+  push:
+    branches: [main]
+    paths: ['supabase/**']
+  workflow_dispatch:
+
+concurrency:
+  group: supabase
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROJECT_REF: znxplygfxvghmtyqbwvb
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Projekt verbinden
+        run: supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+      - name: Datenbank aktualisieren
+        run: supabase db push --password "$SUPABASE_DB_PASSWORD"
+      - name: Anmelde-Funktion veröffentlichen
+        run: supabase functions deploy auth --project-ref "$PROJECT_REF" --no-verify-jwt

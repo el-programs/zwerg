@@ -1,0 +1,118 @@
+<script setup>
+import { computed, onMounted, ref } from 'vue';
+import { addIdea, neuigkeiten, partner, state, toast } from '../lib/store.js';
+import { relativ } from '../lib/format.js';
+import ZLogo from '../components/ZLogo.vue';
+import Icon from '../components/Icon.vue';
+import SyncStatus from '../components/SyncStatus.vue';
+
+const text = ref('');
+const fieldId = ref('');
+const area = ref(null);
+const fields = computed(() => state.fields.filter((f) => !f.archived));
+const neu = computed(() => neuigkeiten());
+const aktive = computed(() => state.ideas.filter((i) => i.status !== 'geparkt').length);
+const anderer = computed(() => partner());
+const isWindows = /Windows/.test(navigator.userAgent);
+
+onMounted(() => {
+  // Am Computer direkt lostippen können; auf dem Handy öffnet erst ein Antippen die Tastatur.
+  if (window.matchMedia('(pointer: fine)').matches) area.value?.focus();
+});
+
+function save() {
+  if (!text.value.trim()) return;
+  addIdea({ text: text.value, searchFieldId: fieldId.value });
+  text.value = '';
+  toast(state.online ? 'Idee gespeichert' : 'Offline gespeichert – wird später abgeglichen');
+}
+</script>
+
+<template>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <ZLogo :size="30" :echoes="1" />
+      <span class="brand grow">Zwerg</span>
+      <router-link v-if="state.me" to="/mehr" class="avatar me" :aria-label="`Einstellungen von ${state.me.name}`">{{ state.me.kuerzel }}</router-link>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="card stack">
+      <label for="start-text" class="title">Was ist dir eingefallen?</label>
+      <textarea
+        id="start-text"
+        ref="area"
+        v-model="text"
+        class="textarea"
+        rows="4"
+        placeholder="Idee kurz notieren … Die erste Zeile wird zum Titel."
+        @keydown.enter.meta.prevent="save"
+        @keydown.enter.ctrl.prevent="save"
+      ></textarea>
+      <p class="hint small muted">
+        <Icon name="mic" :size="16" />
+        <span v-if="isWindows">Diktieren: Windows-Taste + H</span>
+        <span v-else>Diktieren: Mikrofon auf der Tastatur</span>
+      </p>
+      <div class="row">
+        <label class="field grow">
+          <span>Suchfeld</span>
+          <select v-model="fieldId" class="select">
+            <option value="">– ohne –</option>
+            <option v-for="f in fields" :key="f.id" :value="f.id">{{ f.name }}</option>
+          </select>
+        </label>
+        <button class="btn primary save" type="button" :disabled="!text.trim()" @click="save">Speichern</button>
+      </div>
+    </section>
+
+    <section class="stack">
+      <div class="row between">
+        <h2>Neu von {{ anderer?.name ?? 'deinem Partner' }}</h2>
+        <span v-if="neu.length" class="small muted">{{ neu.length }} neu</span>
+      </div>
+      <p v-if="!neu.length" class="small muted">Nichts Neues – du bist auf dem aktuellen Stand.</p>
+      <router-link v-for="n in neu.slice(0, 6)" :key="n.kind + n.idea.id" :to="`/idee/${n.idea.id}`" class="card news">
+        <span class="dot"></span>
+        <span class="grow">
+          <span class="news-title">
+            <template v-if="n.kind === 'idee'">Neue Idee: „{{ n.idea.title || 'Ohne Titel' }}“</template>
+            <template v-else>{{ n.count === 1 ? 'Neuer Kommentar' : `${n.count} neue Kommentare` }} zu „{{ n.idea.title || 'Ohne Titel' }}“</template>
+          </span>
+          <span class="small muted">{{ relativ(n.at) }}</span>
+        </span>
+      </router-link>
+    </section>
+
+    <section class="tiles">
+      <router-link to="/ideen" class="card tile">
+        <span class="small muted">Ideen</span>
+        <span class="big">{{ aktive }}</span>
+      </router-link>
+      <router-link to="/phasen" class="card tile">
+        <span class="small muted">Aktuelle Phase</span>
+        <span class="mid">1 · Ideenfindung</span>
+      </router-link>
+    </section>
+
+    <SyncStatus />
+  </main>
+</template>
+
+<style scoped>
+.brand { font-size: 19px; font-weight: 600; letter-spacing: 0.02em; margin-left: 4px; }
+.me { width: 36px; height: 36px; text-decoration: none; color: var(--text); font-size: 13px; }
+.title { font-weight: 600; font-size: 16px; }
+.hint { display: flex; align-items: center; gap: 6px; margin: 0; }
+.grow { flex: 1; min-width: 0; }
+.save { align-self: flex-end; }
+.between { justify-content: space-between; }
+.news { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; padding: 12px 14px; }
+.news .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+.news-title { display: block; font-weight: 500; }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.tile { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: inherit; }
+.big { font-size: 24px; font-weight: 600; }
+.mid { font-size: 16px; font-weight: 600; }
+</style>

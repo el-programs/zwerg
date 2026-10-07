@@ -1,0 +1,6 @@
+# Nur die Einstellungen, die Zwerg beim Deployment braucht.
+project_id = "zwerg"
+
+[functions.auth]
+# Die Funktion prüft Anmeldungen selbst (Passkey bzw. Zugangs-Token).
+verify_jwt = false

@@ -1,0 +1,21 @@
+# Kostenlose Supabase-Projekte pausieren nach etwa einer Woche ohne Zugriff.
+# Dieser Ablauf meldet sich alle drei Tage kurz bei der Datenbank.
+name: Supabase wachhalten
+
+on:
+  schedule:
+    - cron: '23 6 */3 * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Datenbank anfragen
+        run: |
+          curl --fail --silent --show-error -X POST \
+            "https://znxplygfxvghmtyqbwvb.supabase.co/rest/v1/rpc/ping" \
+            -H "apikey: sb_publishable_1TsSUvN6jXmEa7zhwAsCBw_s4XzVUWc" \
+            -H "Content-Type: application/json" -d '{}'

@@ -1,0 +1,29 @@
+{
+  "name": "zwerg",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Zwerg – Web-App für zwei Gründer",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "icons": "node scripts/icons.mjs"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@simplewebauthn/browser": "^13.3.0",
+    "@supabase/supabase-js": "^2.117.3",
+    "idb-keyval": "^6.3.0",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4",
+    "vue": "^3.5.43",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@vitejs/plugin-vue": "^6.0.9",
+    "vite": "^6.4.4",
+    "vite-plugin-pwa": "^2.0.0"
+  }
+}
