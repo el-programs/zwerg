@@ -8,7 +8,10 @@ import QuickCapture from './components/QuickCapture.vue';
 const route = useRoute();
 const router = useRouter();
 const capture = ref(null);
-const showNav = computed(() => state.status === 'ready' && route.meta.nav !== false);
+// Am Computer ist die Navigation immer als Seitenleiste da; am Handy blendet sie
+// sich auf Detailseiten aus (dort sitzt z. B. das Kommentarfeld unten).
+const withNav = computed(() => state.status === 'ready' && !route.meta.public);
+const hideNavMobile = computed(() => route.meta.nav === false);
 
 // Abgemeldet (z. B. Gerät gesperrt): zurück zur Anmeldung.
 watch(
@@ -20,12 +23,14 @@ watch(
 </script>
 
 <template>
-  <router-view />
+  <div :class="{ 'with-side': withNav }">
+    <router-view />
+  </div>
   <template v-if="state.status === 'ready'">
-    <BottomNav v-if="showNav" @plus="capture?.open()" />
+    <BottomNav v-if="withNav" :class="{ 'hide-mobile': hideNavMobile }" @plus="capture?.open()" />
     <QuickCapture ref="capture" />
   </template>
-  <div class="toast" role="status" aria-live="polite">
+  <div class="toast" :class="{ 'with-side': withNav }" role="status" aria-live="polite">
     <span v-if="state.toast">{{ state.toast }}</span>
   </div>
 </template>
@@ -49,5 +54,9 @@ watch(
   font-size: 14px;
   font-weight: 500;
   max-width: calc(100% - 32px);
+}
+@media (min-width: 900px) {
+  .with-side { --side: var(--side-w); padding-left: var(--side-w); }
+  .toast.with-side { bottom: 28px; }
 }
 </style>

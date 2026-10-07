@@ -14,6 +14,8 @@ const neu = computed(() => neuigkeiten());
 const aktive = computed(() => state.ideas.filter((i) => i.status !== 'geparkt').length);
 const anderer = computed(() => partner());
 const isWindows = /Windows/.test(navigator.userAgent);
+const stunde = new Date().getHours();
+const gruss = stunde < 11 ? 'Guten Morgen' : stunde < 18 ? 'Guten Tag' : 'Guten Abend';
 
 onMounted(() => {
   // Am Computer direkt lostippen können; auf dem Handy öffnet erst ein Antippen die Tastatur.
@@ -31,14 +33,15 @@ function save() {
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <ZLogo :size="30" :echoes="1" />
-      <span class="brand grow">Zwerg</span>
+      <ZLogo class="mobile-only" :size="30" :echoes="1" />
+      <span class="brand grow mobile-only">Zwerg</span>
+      <h1 class="grow desktop-only">{{ gruss }}, {{ state.me?.name }}</h1>
       <router-link v-if="state.me" to="/mehr" class="avatar me" :aria-label="`Einstellungen von ${state.me.name}`">{{ state.me.kuerzel }}</router-link>
     </div>
   </header>
 
-  <main class="page">
-    <section class="card stack">
+  <main class="page start">
+    <section class="card stack capture">
       <label for="start-text" class="title">Was ist dir eingefallen?</label>
       <textarea
         id="start-text"
@@ -67,6 +70,7 @@ function save() {
       </div>
     </section>
 
+    <div class="side">
     <section class="stack">
       <div class="row between">
         <h2>Neu von {{ anderer?.name ?? 'deinem Partner' }}</h2>
@@ -97,10 +101,16 @@ function save() {
     </section>
 
     <SyncStatus />
+    </div>
   </main>
 </template>
 
 <style scoped>
+.side { display: flex; flex-direction: column; gap: 22px; }
+@media (min-width: 900px) {
+  .start { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; gap: 28px; }
+  .capture .textarea { min-height: 190px; }
+}
 .brand { font-size: 19px; font-weight: 600; letter-spacing: 0.02em; margin-left: 4px; }
 .me { width: 36px; height: 36px; text-decoration: none; color: var(--text); font-size: 13px; }
 .title { font-weight: 600; font-size: 16px; }

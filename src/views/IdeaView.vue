@@ -252,7 +252,7 @@ p { margin: 0; }
 .danger-zone { border-top: 1px solid var(--line); padding-top: 18px; }
 .composer {
   position: fixed;
-  left: 0;
+  left: var(--side, 0px);
   right: 0;
   bottom: 0;
   z-index: 20;
@@ -264,6 +264,13 @@ p { margin: 0; }
   align-items: flex-end;
 }
 .composer .input { border-radius: 22px; resize: none; max-height: 140px; field-sizing: content; }
+@media (min-width: 900px) {
+  .composer {
+    --pad: max(24px, calc((100vw - var(--side, 0px) - var(--content-w)) / 2 + 32px));
+    padding-left: var(--pad);
+    padding-right: var(--pad);
+  }
+}
 .send {
   width: 44px;
   height: 44px;
