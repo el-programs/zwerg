@@ -52,7 +52,7 @@ function uebernehmen(run, v, i) {
   </header>
   <main class="page">
     <p class="muted">Die KI macht sechs Vorschläge – mit Haken und einem ersten günstigen Test. Übernehmt nur, was euch wirklich anspricht.</p>
-    <p v-if="!kiSichtbar" class="card small note">Du hast die KI ausgeschaltet (Mehr → KI-Unterstützung).</p>
+    <p v-if="!kiSichtbar" class="card small note">Du hast die KI ausgeschaltet (Einstellungen → KI-Unterstützung).</p>
     <p v-else-if="state.kiStatus?.configured === false" class="card small note">Die KI ist noch nicht eingerichtet (Anleitung Teil E).</p>
     <p v-else-if="limitErreicht" class="card small note">Das Monatslimit ist erreicht.</p>
 

@@ -76,7 +76,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 1. Am Laptop <https://el-programs.github.io/zwerg/> in Edge oder Chrome öffnen.
 2. **Mit dem iPhone verbinden** – ein QR-Code erscheint.
-3. Auf dem iPhone in Zwerg: **Mehr → Gerät hinzufügen (QR-Code scannen)** → Code scannen → **Mit Face ID bestätigen**.
+3. Auf dem iPhone in Zwerg: **Einstellungen → Gerät hinzufügen (QR-Code scannen)** → Code scannen → **Mit Face ID bestätigen**.
 4. Der Laptop meldet sich innerhalb weniger Sekunden an und bleibt angemeldet.
 5. Tipp: In Edge/Chrome über das Menü **Apps → Zwerg installieren** bekommt ihr ein eigenes Fenster.
 
@@ -95,10 +95,10 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Kommentare | Notiz öffnen → unten kommentieren. Eigene Kommentare lassen sich löschen. |
 | Notizen bearbeiten | Titel, Beschreibung, Suchfeld, Schlagworte und Links direkt in der Notiz ändern – wird beim Verlassen des Feldes gespeichert. |
 | Offline | iPhone in den Flugmodus, Notiz erfassen („Offline gespeichert“), Flugmodus aus → die Notiz wird automatisch abgeglichen. |
-| Suchfelder | **Mehr → Suchfelder**: umbenennen, sortieren, archivieren, neu anlegen. |
-| Darstellung | **Mehr → Darstellung**: System/Hell/Dunkel und eure persönliche Akzentfarbe. |
-| Geräte | **Mehr → Geräte**: alle angemeldeten Geräte, einzeln sperrbar. |
-| Neues iPhone | **Mehr → Geräte → Link für …** erzeugt einen 24-Stunden-Einladungslink. |
+| Suchfelder | **Einstellungen → Suchfelder**: umbenennen, sortieren, archivieren, neu anlegen. |
+| Darstellung | **Einstellungen → Darstellung**: System/Hell/Dunkel und eure persönliche Akzentfarbe. |
+| Geräte | **Einstellungen → Geräte**: alle angemeldeten Geräte, einzeln sperrbar. |
+| Neues iPhone | **Einstellungen → Geräte → Link für …** erzeugt einen 24-Stunden-Einladungslink. |
 
 ### Etappe 2 testen
 
@@ -110,19 +110,19 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Ranking | **Gedanken & Notizen → Ranking**: sortiert nach Punkten (0–100). „vorläufig“ = Mittel der Einzelbewertungen. KO-Notizen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
 | Vergleich | **Gedanken & Notizen → Vergleich**: bis zu drei Notizen als Netzdiagramm und Tabelle. |
 | Parkplatz | Notiz öffnen → **Auf den Parkplatz** mit Begründung. Unter **Gedanken & Notizen → Liste → Parkplatz** jederzeit reaktivieren. |
-| Faktoren & KO-Kriterien | **Mehr → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |
+| Faktoren & KO-Kriterien | **Einstellungen → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |
 
 ### Etappe 3 testen (nach Teil E)
 
 | Was | So testet ihr es |
 |---|---|
-| Stufe je Person | **Mehr → KI-Unterstützung**: Aus / Nur auf Anfrage / Aktiv mit Hinweisen. Bei „Aus“ verschwinden alle KI-Knöpfe für diese Person. |
+| Stufe je Person | **Einstellungen → KI-Unterstützung**: Aus / Nur auf Anfrage / Aktiv mit Hinweisen. Bei „Aus“ verschwinden alle KI-Knöpfe für diese Person. |
 | Vorschläge der KI | **Gedanken & Notizen → KI-Vorschläge**: Suchfeld wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Notiz übernehmen“. |
 | Kritische Einschätzung | Notiz öffnen → **KI-Sparring → Einschätzung**. Getrennt nach Fakten, Schätzungen, Annahmen, mit Bewertungsvorschlag je Faktor (klar als KI-Vorschlag markiert, fließt nicht in eure Wertung ein). |
 | Marktrecherche | **KI-Sparring → Recherche**, optional mit eigener Frage. Ergebnis mit Quellenliste. |
 | Chat | **KI-Sparring → Chat**: Sparring zur Notiz, für beide sichtbar. |
 | Bewertung | Nach beiden Abgaben zeigt der Vergleich auch den KI-Vorschlag je Faktor – erst dann, damit eure Bewertung unbeeinflusst bleibt. |
-| Kostenbremse | **Mehr → KI-Unterstützung**: Verbrauch des Monats und Limit. Ist es erreicht, sperrt Zwerg die KI bis Monatsende. |
+| Kostenbremse | **Einstellungen → KI-Unterstützung**: Verbrauch des Monats und Limit. Ist es erreicht, sperrt Zwerg die KI bis Monatsende. |
 
 ### Etappe 4 testen
 
@@ -184,7 +184,7 @@ Server (Supabase), nie in der App oder im Browser.
    **Nicht in den Chat schreiben.**
 5. **Im Supabase-Projekt hinterlegen:** <https://supabase.com/dashboard/project/znxplygfxvghmtyqbwvb/functions/secrets>
    öffnen → **Add new secret** → Name `ANTHROPIC_API_KEY`, Wert: der Schlüssel → **Save**.
-6. In Zwerg unter **Mehr → KI-Unterstützung** Modell und Monatslimit prüfen. Fertig.
+6. In Zwerg unter **Einstellungen → KI-Unterstützung** Modell und Monatslimit prüfen. Fertig.
 
 Datenschutz: Nur beim Benutzen einer KI-Funktion wird die betroffene Notiz (Titel, Beschreibung, Kommentare) an Anthropic
 (USA) übermittelt; Anthropic verwendet API-Daten nicht zum Training. Ein Auftragsverarbeitungsvertrag (DPA) ist in den
@@ -198,6 +198,6 @@ Anthropic-Bedingungen enthalten.
   „Supabase wachhalten“ verhindert das. GitHub schaltet solche Zeitpläne nach 60 Tagen ohne Änderungen im
   Repository ab und schickt vorher eine Mail – dann unter **Actions** einfach wieder aktivieren.
   Ist das Projekt doch pausiert: im Supabase-Dashboard auf **Restore project** klicken.
-- **Gerät verloren:** Am anderen Gerät **Mehr → Geräte → Sperren**. Für ein neues iPhone den Partner um einen
-  Einladungslink bitten (oder selbst unter **Mehr → Geräte → Link für …** erzeugen).
+- **Gerät verloren:** Am anderen Gerät **Einstellungen → Geräte → Sperren**. Für ein neues iPhone den Partner um einen
+  Einladungslink bitten (oder selbst unter **Einstellungen → Geräte → Link für …** erzeugen).
 - **Kosten:** 0 €. Die KI-Funktionen (Etappe 3) bleiben aus, bis ihr einen Schlüssel hinterlegt.

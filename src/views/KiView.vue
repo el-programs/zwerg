@@ -28,9 +28,9 @@ onMounted(ladeStatus);
 const eingerichtet = computed(() => state.kiStatus?.configured !== false);
 const gesperrt = computed(() => !state.online || !eingerichtet.value || limitErreicht.value || !kiSichtbar.value);
 const sperrGrund = computed(() => {
-  if (!kiSichtbar.value) return 'Du hast die KI ausgeschaltet (Mehr → KI-Unterstützung).';
+  if (!kiSichtbar.value) return 'Du hast die KI ausgeschaltet (Einstellungen → KI-Unterstützung).';
   if (!eingerichtet.value) return 'Die KI ist noch nicht eingerichtet (Anleitung Teil E).';
-  if (limitErreicht.value) return 'Das Monatslimit ist erreicht (Mehr → KI-Unterstützung).';
+  if (limitErreicht.value) return 'Das Monatslimit ist erreicht (Einstellungen → KI-Unterstützung).';
   if (!state.online) return 'Für die KI wird eine Internetverbindung benötigt.';
   return '';
 });

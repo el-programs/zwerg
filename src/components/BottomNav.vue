@@ -18,7 +18,7 @@ defineEmits(['plus']);
       <button class="plus" type="button" aria-label="Neue Notiz" @click="$emit('plus')"><Icon name="plus" :size="26" /></button>
     </div>
     <router-link to="/phasen" class="item" active-class="active"><Icon name="phases" /><span>Plan</span></router-link>
-    <router-link to="/mehr" class="item" active-class="active"><Icon name="more" /><span>Mehr</span></router-link>
+    <router-link to="/mehr" class="item" active-class="active"><Icon name="settings" /><span>Einstellungen</span></router-link>
   </nav>
 </template>
 
@@ -67,6 +67,11 @@ defineEmits(['plus']);
 
 @media (max-width: 899px) {
   .nav.hide-mobile { display: none; }
+}
+
+/* Schmale iPhones: Beschriftung etwas kleiner, damit „Einstellungen“ passt. */
+@media (max-width: 380px) {
+  .item { font-size: 10px; letter-spacing: -0.01em; }
 }
 
 @media (min-width: 900px) {

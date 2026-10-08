@@ -92,7 +92,7 @@ onBeforeUnmount(stop);
       <img :src="qr" alt="QR-Code zum Verbinden" width="280" height="280">
       <ol class="small">
         <li>Öffne Zwerg auf deinem iPhone.</li>
-        <li>Tippe auf <strong>Mehr → Gerät hinzufügen</strong>.</li>
+        <li>Tippe auf <strong>Einstellungen → Gerät hinzufügen</strong>.</li>
         <li>Scanne diesen Code und bestätige mit Face ID.</li>
       </ol>
       <p class="small muted" role="status">{{ qrStatus }}</p>
