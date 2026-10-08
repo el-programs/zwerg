@@ -9,6 +9,7 @@ import { datum } from '../lib/format.js';
 import IdeaCard from '../components/IdeaCard.vue';
 import RadarChart from '../components/RadarChart.vue';
 import Icon from '../components/Icon.vue';
+import { kiSichtbar } from '../lib/ki.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -115,6 +116,7 @@ function stern(idea) {
   <header class="topbar">
     <div class="topbar-inner">
       <h1 class="grow">Ideen</h1>
+      <router-link v-if="kiSichtbar && ansicht === 'liste'" to="/ki/vorschlaege" class="btn ki-btn">KI-Vorschläge</router-link>
       <button v-if="ansicht === 'liste'" class="icon-btn" type="button" :aria-pressed="sucheOffen" aria-label="Suchen" @click="sucheOffen = !sucheOffen"><Icon name="search" /></button>
     </div>
   </header>
@@ -244,6 +246,7 @@ function stern(idea) {
 
 <style scoped>
 .grow { flex: 1; min-width: 0; }
+.ki-btn { min-height: 36px; padding: 0 12px; font-size: 14px; border-color: var(--accent); color: var(--accent); }
 .block { display: block; }
 p { margin: 0; }
 .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: var(--chip); max-width: 480px; }

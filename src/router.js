@@ -8,6 +8,8 @@ import RatingView from './views/RatingView.vue';
 import WeightsView from './views/WeightsView.vue';
 import PhasesView from './views/PhasesView.vue';
 import SettingsView from './views/SettingsView.vue';
+import KiView from './views/KiView.vue';
+import KiSuggestView from './views/KiSuggestView.vue';
 
 // Hash-Adressen (#/ideen …), damit die App auf GitHub Pages ohne Server-Regeln läuft.
 export const router = createRouter({
@@ -16,6 +18,8 @@ export const router = createRouter({
     { path: '/', name: 'start', component: StartView },
     { path: '/ideen', name: 'ideen', component: IdeasView },
     { path: '/idee/:id/bewertung', name: 'bewertung', component: RatingView },
+    { path: '/idee/:id/ki', name: 'ki', component: KiView },
+    { path: '/ki/vorschlaege', name: 'ki-vorschlaege', component: KiSuggestView },
     { path: '/gewichtung', name: 'gewichtung', component: WeightsView },
     { path: '/idee/:id', name: 'idee', component: IdeaView, meta: { nav: false } },
     { path: '/phasen', name: 'phasen', component: PhasesView },

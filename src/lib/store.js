@@ -29,6 +29,11 @@ export const state = reactive({
   personalKo: [],
   jointRatings: [],
   evaluations: [],
+  aiSettings: [],
+  aiUsage: [],
+  aiResults: [],
+  aiChat: [],
+  kiStatus: null,
   outbox: [],
   online: navigator.onLine,
   syncing: false,
@@ -221,6 +226,10 @@ export const TABLES = {
   personal_ko: { key: 'personalKo', id: (r) => `${r.idea_id}|${r.profile_id}|${r.ko_id}` },
   joint_ratings: { key: 'jointRatings', id: (r) => `${r.idea_id}|${r.criterion_id}` },
   idea_evaluations: { key: 'evaluations', id: (r) => r.idea_id },
+  ai_settings: { key: 'aiSettings', id: byId },
+  ai_usage: { key: 'aiUsage', id: byId },
+  ai_results: { key: 'aiResults', id: byId, front: true },
+  ai_chat: { key: 'aiChat', id: byId },
 };
 
 function replayOutbox() {
@@ -270,7 +279,8 @@ export async function refresh() {
       const rows = results[i].data;
       if (t.sort) rows.sort(t.sort);
       if (n === 'ideas') rows.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-      if (n === 'comments') rows.sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
+      if (n === 'comments' || n === 'ai_chat') rows.sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
+      if (n === 'ai_results') rows.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
       state[t.key] = rows;
     });
     state.me = me;

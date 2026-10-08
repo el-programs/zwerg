@@ -4,3 +4,7 @@ project_id = "zwerg"
 [functions.auth]
 # Die Funktion prüft Anmeldungen selbst (Passkey bzw. Zugangs-Token).
 verify_jwt = false
+
+[functions.ki]
+# Prüft die Anmeldung selbst; der Claude-API-Schlüssel liegt nur als Secret auf dem Server.
+verify_jwt = false

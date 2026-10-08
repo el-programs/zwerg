@@ -28,5 +28,7 @@ jobs:
         run: supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
       - name: Datenbank aktualisieren
         run: supabase db push --password "$SUPABASE_DB_PASSWORD"
-      - name: Anmelde-Funktion veröffentlichen
-        run: supabase functions deploy auth --project-ref "$PROJECT_REF" --no-verify-jwt
+      - name: Funktionen veröffentlichen
+        run: |
+          supabase functions deploy auth --project-ref "$PROJECT_REF" --no-verify-jwt
+          supabase functions deploy ki --project-ref "$PROJECT_REF" --no-verify-jwt

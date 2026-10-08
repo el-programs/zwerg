@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { createInvite, profile, revokeDevice, setAppearance, signOut, state, toast } from '../lib/store.js';
 import ListEditor from '../components/ListEditor.vue';
+import KiSettings from '../components/KiSettings.vue';
 import { AKZENTE, relativ } from '../lib/format.js';
 import Icon from '../components/Icon.vue';
 
@@ -171,6 +172,8 @@ function abmelden() {
       <p class="small muted">Trifft eines davon zu, ist eine Idee unabhängig von der Punktzahl ausgeschlossen.</p>
       <ListEditor table="ko_criteria" placeholder="Neues KO-Kriterium" @error="error = $event" />
     </section>
+
+    <KiSettings @error="error = $event" />
 
     <section class="stack">
       <h2 class="section-title">Konto</h2>

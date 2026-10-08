@@ -10,6 +10,7 @@ import {
   personalScores, total,
 } from '../lib/score.js';
 import ScoreButtons from '../components/ScoreButtons.vue';
+import { ergebnisse, kiSichtbar } from '../lib/ki.js';
 import Icon from '../components/Icon.vue';
 
 const route = useRoute();
@@ -32,6 +33,11 @@ const seineKo = computed(() => (anderer.value ? personalKoIds(id.value, anderer.
 const ev = computed(() => evaluation(id.value));
 const offen = computed(() => criteria.value.filter((c) => !meine.value[c.id]?.score).length);
 const notizOffen = reactive({});
+// KI-Vorschlag erst im Vergleich zeigen, damit die eigene Bewertung unbeeinflusst bleibt.
+const kiVorschlag = computed(() => {
+  const e = ergebnisse(id.value, 'einschaetzung').find((r) => r.status === 'fertig');
+  return kiSichtbar.value && e ? Object.fromEntries((e.content?.bewertung ?? []).map((b) => [b.faktor_id, b])) : null;
+});
 // Partnerwerte werden erst nach der eigenen Abgabe vom Server geliefert.
 const partnerGeladen = computed(() => Object.keys(seine.value).length > 0);
 watch(
@@ -196,6 +202,7 @@ function wiederOeffnen() {
           <div class="pair small">
             <div><span class="avatar">{{ me.kuerzel }}</span> <strong>{{ meine[c.id]?.score ?? '–' }}</strong> <span v-if="meine[c.id]?.note" class="muted">– {{ meine[c.id].note }}</span></div>
             <div><span class="avatar">{{ anderer.kuerzel }}</span> <strong>{{ seine[c.id]?.score ?? '–' }}</strong> <span v-if="seine[c.id]?.note" class="muted">– {{ seine[c.id].note }}</span></div>
+            <div v-if="kiVorschlag?.[c.id]" class="ki-hint" :title="kiVorschlag[c.id].begruendung"><span class="ki-tag">KI-Vorschlag</span> <strong>{{ kiVorschlag[c.id].punkte }}</strong> <span class="muted">– {{ kiVorschlag[c.id].begruendung }}</span></div>
           </div>
           <ScoreButtons
             :model-value="gemeinsam[c.id]?.score ?? null"
@@ -271,6 +278,8 @@ p { margin: 0; }
 .totals .card { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; }
 .totals .final { border-color: var(--accent); }
 .big { font-size: 22px; }
+.ki-hint { flex-basis: 100%; }
+.ki-tag { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--accent); color: var(--accent); }
 .pair { display: flex; flex-wrap: wrap; gap: 6px 18px; }
 .pair .avatar { width: 24px; height: 24px; font-size: 10px; display: inline-flex; vertical-align: middle; }
 .warn { color: var(--warn); font-weight: 500; }
