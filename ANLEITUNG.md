@@ -150,6 +150,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Was | So testet ihr es |
 |---|---|
 | Anlegen | **Notizen → Meetings → Neue Besprechung**: Titel, Datum, Uhrzeit, Ort, wer dabei war, Gäste. |
+| Notizen im Meeting | Das große Feld **Notizen** unter den Kopfdaten nimmt alles Freie auf, was ihr während des Meetings festhalten wollt. |
 | Tagesordnung | Punkte hinzufügen, je Punkt **Notiz** und **Ergebnis** eintragen, mit den Pfeilen umsortieren. Punkte ohne Ergebnis haben links einen gelben Rand, erledigte einen farbigen. |
 | Aufgaben und Entscheidungen | Am Punkt **+ Aufgabe** (erscheint auch unter Plan → Aufgaben) oder **+ Entscheidung** (übernimmt Ergebnis und Notiz ins Entscheidungsprotokoll; geht erst, wenn ein Ergebnis drinsteht). |
 | Offene Punkte übernehmen | Neue Besprechung anlegen → oben erscheint **Offene Punkte übernehmen**, wenn die vorige Besprechung Punkte ohne Ergebnis hat. Übernommene Punkte zeigen, woher sie stammen. |

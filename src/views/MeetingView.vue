@@ -118,6 +118,18 @@ function besprechungLoeschen() {
       <label class="field"><span>Gäste (optional)</span><input class="input" :value="meeting.guests" placeholder="z. B. Steuerberater Herr Maier" @change="feld('guests', $event.target.value.trim())"></label>
     </section>
 
+    <section class="stack">
+      <h2><label for="m-notes">Notizen</label></h2>
+      <textarea
+        id="m-notes"
+        class="textarea meeting-notes"
+        rows="8"
+        :value="meeting.notes ?? ''"
+        placeholder="Alles, was ihr während des Meetings festhalten wollt …"
+        @change="feld('notes', $event.target.value)"
+      ></textarea>
+    </section>
+
     <div v-if="offeneVorher.length" class="card carry">
       <span class="grow small">{{ offeneVorher.length }} Punkt{{ offeneVorher.length === 1 ? '' : 'e' }} ohne Ergebnis aus der Besprechung vom {{ datum(vorige.held_on) }}</span>
       <button class="btn" type="button" @click="uebernehmen">Offene Punkte übernehmen</button>
@@ -215,6 +227,7 @@ h2 { margin: 8px 0 0; font-size: 17px; }
 .title-input:focus { outline: none; border-bottom: 2px solid var(--accent); }
 .three { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
 .two { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.meeting-notes { min-height: 180px; }
 .carry { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border-color: var(--warn); }
 .agenda { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .item { border-left: 3px solid var(--warn); }

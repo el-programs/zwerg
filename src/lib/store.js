@@ -873,6 +873,7 @@ export function addMeeting(fields = {}) {
     attendees: state.profiles.map((p) => p.id),
     guests: '',
     place: '',
+    notes: '',
     idea_ids: [],
     ...fields,
     created_by: state.me.id,
