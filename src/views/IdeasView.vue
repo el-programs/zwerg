@@ -115,7 +115,7 @@ function stern(idea) {
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <h1 class="grow">Ideen</h1>
+      <h1 class="grow">Gedanken &amp; Notizen</h1>
       <router-link v-if="kiSichtbar && ansicht === 'liste'" to="/ki/vorschlaege" class="btn ki-btn">KI-Vorschläge</router-link>
       <button v-if="ansicht === 'liste'" class="icon-btn" type="button" :aria-pressed="sucheOffen" aria-label="Suchen" @click="sucheOffen = !sucheOffen"><Icon name="search" /></button>
     </div>

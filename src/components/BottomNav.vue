@@ -13,7 +13,7 @@ defineEmits(['plus']);
     </div>
     <button class="new side-only" type="button" @click="$emit('plus')"><Icon name="plus" :size="20" />Neue Idee</button>
     <router-link to="/" class="item" exact-active-class="active"><Icon name="home" /><span>Start</span></router-link>
-    <router-link to="/ideen" class="item" active-class="active"><Icon name="list" /><span>Ideen</span></router-link>
+    <router-link to="/ideen" class="item" active-class="active"><Icon name="list" /><span class="side-label">Gedanken &amp; Notizen</span><span class="mobile-label">Gedanken</span></router-link>
     <div class="center mobile-only">
       <button class="plus" type="button" aria-label="Neue Idee" @click="$emit('plus')"><Icon name="plus" :size="26" /></button>
     </div>
@@ -38,6 +38,7 @@ defineEmits(['plus']);
   align-items: center;
 }
 .side-only { display: none; }
+.side-label { display: none; }
 .item {
   display: flex;
   flex-direction: column;
@@ -84,6 +85,8 @@ defineEmits(['plus']);
   }
   .mobile-only { display: none; }
   .side-only { display: flex; }
+  .side-label { display: inline; }
+  .mobile-label { display: none; }
   .brand {
     align-items: center;
     gap: 10px;

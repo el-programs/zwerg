@@ -176,7 +176,7 @@ watch(
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <router-link to="/ideen" class="icon-btn back"><Icon name="back" /><span>Ideen</span></router-link>
+      <router-link to="/ideen" class="icon-btn back"><Icon name="back" /><span>Gedanken</span></router-link>
       <span class="grow"></span>
       <button
         v-if="idea && idea.status !== 'geparkt'"

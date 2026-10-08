@@ -104,12 +104,12 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 | Was | So testet ihr es |
 |---|---|
-| Gewichtung | **Ideen → Ranking → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
+| Gewichtung | **Gedanken & Notizen → Ranking → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
 | Bewertung | Idee öffnen → **Bewertung**. Jeder bewertet alle Faktoren 1–5 (5 = gut für uns) und markiert ggf. KO-Kriterien. Die Werte des anderen bleiben verborgen, bis man selbst abgegeben hat – das prüft die Datenbank. |
 | Vergleich & Endbewertung | Nach beiden Abgaben: Abweichungen ab 2 Punkten sind hervorgehoben. Gemeinsame Punkte wählen (oder Mittelwerte übernehmen), KO gemeinsam festlegen, **Endbewertung festlegen**. |
-| Ranking | **Ideen → Ranking**: sortiert nach Punkten (0–100). „vorläufig“ = Mittel der Einzelbewertungen. KO-Ideen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
-| Vergleich | **Ideen → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
-| Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Ideen → Liste → Parkplatz** jederzeit reaktivieren. |
+| Ranking | **Gedanken & Notizen → Ranking**: sortiert nach Punkten (0–100). „vorläufig“ = Mittel der Einzelbewertungen. KO-Ideen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
+| Vergleich | **Gedanken & Notizen → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
+| Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Gedanken & Notizen → Liste → Parkplatz** jederzeit reaktivieren. |
 | Faktoren & KO-Kriterien | **Mehr → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |
 
 ### Etappe 3 testen (nach Teil E)
@@ -117,7 +117,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Was | So testet ihr es |
 |---|---|
 | Stufe je Person | **Mehr → KI-Unterstützung**: Aus / Nur auf Anfrage / Aktiv mit Hinweisen. Bei „Aus“ verschwinden alle KI-Knöpfe für diese Person. |
-| Ideen vorschlagen | **Ideen → KI-Vorschläge**: Suchfeld wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Idee übernehmen“. |
+| Ideen vorschlagen | **Gedanken & Notizen → KI-Vorschläge**: Suchfeld wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Idee übernehmen“. |
 | Kritische Einschätzung | Idee öffnen → **KI-Sparring → Einschätzung**. Getrennt nach Fakten, Schätzungen, Annahmen, mit Bewertungsvorschlag je Faktor (klar als KI-Vorschlag markiert, fließt nicht in eure Wertung ein). |
 | Marktrecherche | **KI-Sparring → Recherche**, optional mit eigener Frage. Ergebnis mit Quellenliste. |
 | Chat | **KI-Sparring → Chat**: Sparring zur Idee, für beide sichtbar. |
