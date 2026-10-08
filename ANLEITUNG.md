@@ -82,7 +82,9 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 ---
 
-## Teil B – Etappe 1 testen
+## Teil B – Testen
+
+### Etappe 1 testen
 
 | Was | So testet ihr es |
 |---|---|
@@ -97,6 +99,18 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Darstellung | **Mehr → Darstellung**: System/Hell/Dunkel und eure persönliche Akzentfarbe. |
 | Geräte | **Mehr → Geräte**: alle angemeldeten Geräte, einzeln sperrbar. |
 | Neues iPhone | **Mehr → Geräte → Link für …** erzeugt einen 24-Stunden-Einladungslink. |
+
+### Etappe 2 testen
+
+| Was | So testet ihr es |
+|---|---|
+| Gewichtung | **Ideen → Ranking → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
+| Bewertung | Idee öffnen → **Bewertung**. Jeder bewertet alle Faktoren 1–5 (5 = gut für uns) und markiert ggf. KO-Kriterien. Die Werte des anderen bleiben verborgen, bis man selbst abgegeben hat – das prüft die Datenbank. |
+| Vergleich & Endbewertung | Nach beiden Abgaben: Abweichungen ab 2 Punkten sind hervorgehoben. Gemeinsame Punkte wählen (oder Mittelwerte übernehmen), KO gemeinsam festlegen, **Endbewertung festlegen**. |
+| Ranking | **Ideen → Ranking**: sortiert nach Punkten (0–100). „vorläufig“ = Mittel der Einzelbewertungen. KO-Ideen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
+| Vergleich | **Ideen → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
+| Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Ideen → Liste → Parkplatz** jederzeit reaktivieren. |
+| Faktoren & KO-Kriterien | **Mehr → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |
 
 ---
 

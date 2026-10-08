@@ -12,6 +12,7 @@ const area = ref(null);
 const fields = computed(() => state.fields.filter((f) => !f.archived));
 const neu = computed(() => neuigkeiten());
 const aktive = computed(() => state.ideas.filter((i) => i.status !== 'geparkt').length);
+const favoriten = computed(() => state.ideas.filter((i) => i.is_favorite && i.status !== 'geparkt').length);
 const anderer = computed(() => partner());
 const isWindows = /Windows/.test(navigator.userAgent);
 const stunde = new Date().getHours();
@@ -77,11 +78,12 @@ function save() {
         <span v-if="neu.length" class="small muted">{{ neu.length }} neu</span>
       </div>
       <p v-if="!neu.length" class="small muted">Nichts Neues – du bist auf dem aktuellen Stand.</p>
-      <router-link v-for="n in neu.slice(0, 6)" :key="n.kind + n.idea.id" :to="`/idee/${n.idea.id}`" class="card news">
+      <router-link v-for="n in neu.slice(0, 6)" :key="n.kind + n.idea.id" :to="n.kind === 'bewertung' ? `/idee/${n.idea.id}/bewertung` : `/idee/${n.idea.id}`" class="card news">
         <span class="dot"></span>
         <span class="grow">
           <span class="news-title">
             <template v-if="n.kind === 'idee'">Neue Idee: „{{ n.idea.title || 'Ohne Titel' }}“</template>
+            <template v-else-if="n.kind === 'bewertung'">„{{ n.idea.title || 'Ohne Titel' }}“ wurde bewertet – du bist dran</template>
             <template v-else>{{ n.count === 1 ? 'Neuer Kommentar' : `${n.count} neue Kommentare` }} zu „{{ n.idea.title || 'Ohne Titel' }}“</template>
           </span>
           <span class="small muted">{{ relativ(n.at) }}</span>
@@ -93,6 +95,7 @@ function save() {
       <router-link to="/ideen" class="card tile">
         <span class="small muted">Ideen</span>
         <span class="big">{{ aktive }}</span>
+        <span v-if="favoriten" class="small muted">davon {{ favoriten }} Favorit{{ favoriten > 1 ? 'en' : '' }}</span>
       </router-link>
       <router-link to="/phasen" class="card tile">
         <span class="small muted">Aktuelle Phase</span>

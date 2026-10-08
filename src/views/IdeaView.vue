@@ -2,8 +2,10 @@
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  addComment, commentsOf, deleteComment, deleteIdea, markSeen, newComments, profile, state, toast, updateIdea,
+  addComment, commentsOf, deleteComment, deleteIdea, markSeen, newComments, parkIdea, partner, profile, setFavorite,
+  state, toast, unparkIdea, updateIdea,
 } from '../lib/store.js';
+import { hasSubmittedRating, ideaResult, RESULT_LABEL } from '../lib/score.js';
 import { datum, phaseName, relativ } from '../lib/format.js';
 import Icon from '../components/Icon.vue';
 
@@ -77,6 +79,26 @@ function removeIdea() {
   router.replace('/ideen');
 }
 
+const ergebnis = computed(() => (idea.value ? ideaResult(idea.value.id) : null));
+const bewertungText = computed(() => {
+  if (!idea.value || !state.me) return '';
+  const ich = hasSubmittedRating(idea.value.id, state.me.id);
+  const anderer = partner();
+  const er = anderer && hasSubmittedRating(idea.value.id, anderer.id);
+  if (ergebnis.value?.kind === 'final') return 'Endbewertung festgelegt';
+  if (ich && er) return 'Beide haben bewertet – jetzt gemeinsam festlegen';
+  if (ich) return `Du hast bewertet – warte auf ${anderer?.name}`;
+  if (er) return `${anderer?.name} hat bewertet – du bist dran`;
+  return 'Noch nicht bewertet';
+});
+
+function parken() {
+  const grund = prompt('Warum wird die Idee geparkt? (Begründung bleibt erhalten)');
+  if (grund === null) return;
+  parkIdea(idea.value.id, grund || 'ohne Begründung');
+  toast('Idee auf den Parkplatz gestellt');
+}
+
 function host(url) {
   try {
     return new URL(url).host;
@@ -107,6 +129,14 @@ watch(
     <div class="topbar-inner">
       <router-link to="/ideen" class="icon-btn back"><Icon name="back" /><span>Ideen</span></router-link>
       <span class="grow"></span>
+      <button
+        v-if="idea && idea.status !== 'geparkt'"
+        class="icon-btn star"
+        type="button"
+        :aria-pressed="idea.is_favorite"
+        :aria-label="idea.is_favorite ? 'Favorit entfernen' : 'Als Favorit markieren'"
+        @click="setFavorite(idea.id, !idea.is_favorite)"
+      >{{ idea.is_favorite ? '★' : '☆' }}</button>
     </div>
   </header>
 
@@ -136,6 +166,24 @@ watch(
         <span class="chip">Phase {{ idea.phase }} · {{ phaseName(idea.phase) }}</span>
       </div>
     </section>
+
+    <div v-if="idea.status === 'geparkt'" class="card parked-banner">
+      <strong>Auf dem Parkplatz</strong>
+      <p class="small">Begründung: {{ idea.park_reason || '–' }} <span class="muted">({{ profile(idea.parked_by)?.name }})</span></p>
+      <button class="btn" type="button" @click="unparkIdea(idea.id); toast('Idee reaktiviert')">Reaktivieren</button>
+    </div>
+
+    <router-link v-else :to="`/idee/${idea.id}/bewertung`" class="card rating-card">
+      <span class="grow">
+        <strong>Bewertung</strong>
+        <span class="small muted block">{{ bewertungText }}</span>
+      </span>
+      <span v-if="ergebnis?.score !== null && ergebnis?.score !== undefined" class="score">
+        {{ ergebnis.score }}<span class="small muted"> / 100</span>
+        <span class="small muted block">{{ RESULT_LABEL[ergebnis.kind] }}{{ ergebnis.ko ? ' · KO' : '' }}</span>
+      </span>
+      <span v-else class="btn primary">Bewerten</span>
+    </router-link>
 
     <label class="field">
       <span>Kurzbeschreibung</span>
@@ -203,7 +251,8 @@ watch(
       </div>
     </section>
 
-    <section class="danger-zone">
+    <section class="danger-zone row wrap">
+      <button v-if="idea.status !== 'geparkt'" class="btn" type="button" @click="parken">Auf den Parkplatz</button>
       <button class="btn danger" type="button" @click="removeIdea"><Icon name="trash" :size="18" />Idee löschen</button>
     </section>
   </main>
@@ -249,6 +298,11 @@ p { margin: 0; }
 .comment .avatar { width: 30px; height: 30px; }
 .body { white-space: pre-wrap; overflow-wrap: anywhere; }
 .link-btn { border: 0; background: none; padding: 0; margin-left: auto; cursor: pointer; text-decoration: underline; }
+.star { font-size: 22px; color: var(--warn); }
+.block { display: block; }
+.rating-card { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+.rating-card .score { font-size: 22px; font-weight: 600; text-align: right; }
+.parked-banner { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; border-color: var(--warn); }
 .danger-zone { border-top: 1px solid var(--line); padding-top: 18px; }
 .composer {
   position: fixed;

@@ -7,6 +7,8 @@ export const router = createRouter({
   routes: [
     { path: '/', name: 'start', component: () => import('./views/StartView.vue') },
     { path: '/ideen', name: 'ideen', component: () => import('./views/IdeasView.vue') },
+    { path: '/idee/:id/bewertung', name: 'bewertung', component: () => import('./views/RatingView.vue') },
+    { path: '/gewichtung', name: 'gewichtung', component: () => import('./views/WeightsView.vue') },
     { path: '/idee/:id', name: 'idee', component: () => import('./views/IdeaView.vue'), meta: { nav: false } },
     { path: '/phasen', name: 'phasen', component: () => import('./views/PhasesView.vue') },
     { path: '/mehr', name: 'mehr', component: () => import('./views/SettingsView.vue') },
@@ -21,7 +23,7 @@ export const router = createRouter({
 router.beforeEach((to) => {
   const signedIn = state.status === 'ready';
   if (to.meta.public) {
-    if (signedIn && to.name === 'anmelden') return '/';
+    if (signedIn && to.name === 'anmelden') return typeof to.query.weiter === 'string' ? to.query.weiter : '/';
     return true;
   }
   if (!signedIn) {

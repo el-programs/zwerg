@@ -1,8 +1,7 @@
 <script setup>
-import { computed, reactive, ref } from 'vue';
-import {
-  addField, createInvite, moveField, profile, revokeDevice, setAppearance, signOut, state, toast, updateField,
-} from '../lib/store.js';
+import { computed, ref } from 'vue';
+import { createInvite, profile, revokeDevice, setAppearance, signOut, state, toast } from '../lib/store.js';
+import ListEditor from '../components/ListEditor.vue';
 import { AKZENTE, relativ } from '../lib/format.js';
 import Icon from '../components/Icon.vue';
 
@@ -69,27 +68,6 @@ function teilen() {
   navigator.share?.({ title: 'Zwerg-Einladung', url: einladung.value.url }).catch(() => {});
 }
 const kannTeilen = typeof navigator.share === 'function';
-
-// Suchfelder
-const sortedFields = computed(() => [...state.fields].sort((a, b) => a.sort - b.sort));
-const neuesFeld = ref('');
-const namen = reactive({});
-function feldName(f) {
-  return namen[f.id] ?? f.name;
-}
-function umbenennen(f) {
-  const name = (namen[f.id] ?? '').trim();
-  delete namen[f.id];
-  if (!name || name === f.name) return;
-  run(() => updateField(f.id, { name }));
-}
-function feldHinzufuegen() {
-  if (!neuesFeld.value.trim()) return;
-  run(async () => {
-    await addField(neuesFeld.value);
-    neuesFeld.value = '';
-  });
-}
 
 function abmelden() {
   const warten = state.outbox.length;
@@ -176,28 +154,20 @@ function abmelden() {
 
     <section class="stack">
       <h2 class="section-title">Suchfelder</h2>
-      <p class="small muted">Gelten für euch beide. Archivierte Suchfelder bleiben an bestehenden Ideen erhalten.</p>
-      <div v-for="(f, i) in sortedFields" :key="f.id" class="field-row" :class="{ archived: f.archived }">
-        <label class="visually-hidden" :for="`feld-${f.id}`">Name</label>
-        <input
-          :id="`feld-${f.id}`"
-          class="input"
-          :value="feldName(f)"
-          @input="namen[f.id] = $event.target.value"
-          @blur="umbenennen(f)"
-          @keydown.enter.prevent="$event.target.blur()"
-        >
-        <button class="icon-btn" type="button" aria-label="Nach oben" :disabled="i === 0" @click="run(() => moveField(f.id, -1))"><Icon name="up" :size="18" /></button>
-        <button class="icon-btn" type="button" aria-label="Nach unten" :disabled="i === sortedFields.length - 1" @click="run(() => moveField(f.id, 1))"><Icon name="down" :size="18" /></button>
-        <button class="btn small-btn" type="button" @click="run(() => updateField(f.id, { archived: !f.archived }))">
-          {{ f.archived ? 'Aktivieren' : 'Archivieren' }}
-        </button>
-      </div>
-      <form class="row" @submit.prevent="feldHinzufuegen">
-        <label class="visually-hidden" for="neues-feld">Neues Suchfeld</label>
-        <input id="neues-feld" v-model="neuesFeld" class="input" placeholder="Neues Suchfeld">
-        <button class="btn" type="submit" :disabled="!neuesFeld.trim()">Hinzufügen</button>
-      </form>
+      <p class="small muted">Gelten für euch beide. Archivierte Einträge bleiben an bestehenden Ideen erhalten.</p>
+      <ListEditor table="search_fields" placeholder="Neues Suchfeld" @error="error = $event" />
+    </section>
+
+    <section class="stack">
+      <h2 class="section-title">Bewertungsfaktoren</h2>
+      <p class="small muted">Grundlage der Bewertungsmatrix. Neue Faktoren erscheinen in offenen Bewertungen; die Gewichtung legt ihr unter Ideen → Ranking fest.</p>
+      <ListEditor table="criteria" placeholder="Neuer Faktor" with-description @error="error = $event" />
+    </section>
+
+    <section class="stack">
+      <h2 class="section-title">KO-Kriterien</h2>
+      <p class="small muted">Trifft eines davon zu, ist eine Idee unabhängig von der Punktzahl ausgeschlossen.</p>
+      <ListEditor table="ko_criteria" placeholder="Neues KO-Kriterium" @error="error = $event" />
     </section>
 
     <section class="stack">
@@ -223,8 +193,4 @@ function abmelden() {
 .device .btn { flex: none; padding: 0 12px; font-size: 14px; }
 .grow { flex: 1; min-width: 0; }
 .wrap { flex-wrap: wrap; }
-.field-row { display: flex; align-items: center; gap: 4px; }
-.field-row .input { flex: 1; min-width: 0; }
-.field-row.archived .input { color: var(--muted); text-decoration: line-through; }
-.small-btn { padding: 0 10px; font-size: 13px; }
 </style>

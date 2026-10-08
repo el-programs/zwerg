@@ -20,6 +20,15 @@ export const state = reactive({
   comments: [],
   reads: {},
   devices: [],
+  criteria: [],
+  koCriteria: [],
+  weightSubs: [],
+  weights: [],
+  ratingSubs: [],
+  ratings: [],
+  personalKo: [],
+  jointRatings: [],
+  evaluations: [],
   outbox: [],
   online: navigator.onLine,
   syncing: false,
@@ -182,7 +191,7 @@ export async function signOut(notice = '') {
     ideas: [],
     comments: [],
     reads: {},
-    devices: [],
+    ...Object.fromEntries(Object.values(TABLES).map((t) => [t.key, []])),
     outbox: [],
     loadedFromServer: false,
     notice,
@@ -193,64 +202,79 @@ export async function signOut(notice = '') {
 // Laden, Zwischenspeicher, Live-Abgleich
 // ---------------------------------------------------------------------------
 
+// Alle Tabellen, die die App lädt und live mitverfolgt. "id" bildet den Schlüssel einer Zeile.
+const byId = (r) => r.id;
+const bySort = (a, b) => a.sort - b.sort;
+export const TABLES = {
+  profiles: { key: 'profiles', id: byId },
+  search_fields: { key: 'fields', id: byId, sort: bySort },
+  ideas: { key: 'ideas', id: byId, front: true },
+  comments: { key: 'comments', id: byId },
+  devices: { key: 'devices', id: byId },
+  criteria: { key: 'criteria', id: byId, sort: bySort },
+  ko_criteria: { key: 'koCriteria', id: byId, sort: bySort },
+  weight_submissions: { key: 'weightSubs', id: (r) => r.profile_id },
+  personal_weights: { key: 'weights', id: (r) => `${r.profile_id}|${r.criterion_id}` },
+  rating_submissions: { key: 'ratingSubs', id: (r) => `${r.idea_id}|${r.profile_id}` },
+  ratings: { key: 'ratings', id: (r) => `${r.idea_id}|${r.profile_id}|${r.criterion_id}` },
+  personal_ko: { key: 'personalKo', id: (r) => `${r.idea_id}|${r.profile_id}|${r.ko_id}` },
+  joint_ratings: { key: 'jointRatings', id: (r) => `${r.idea_id}|${r.criterion_id}` },
+  idea_evaluations: { key: 'evaluations', id: (r) => r.idea_id },
+};
+
+function replayOutbox() {
+  for (const op of state.outbox) {
+    if (op.op === 'insert' || op.op === 'upsert') upsertLocal(op.table, op.row);
+    if (op.op === 'delete' && op.match) removeLocal(op.table, op.match);
+  }
+}
+
 function applyCache(c) {
-  state.profiles = c.profiles ?? [];
-  state.fields = c.fields ?? [];
-  state.ideas = c.ideas ?? [];
-  state.comments = c.comments ?? [];
+  for (const t of Object.values(TABLES)) state[t.key] = c[t.key] ?? [];
   state.reads = c.reads ?? {};
-  state.devices = c.devices ?? [];
   state.me = c.me ?? null;
   // Noch nicht abgeglichene Einträge wieder einblenden.
-  for (const op of state.outbox) if (op.op === 'insert') upsertLocal(op.table, op.row);
+  replayOutbox();
   if (state.me) applyAppearance(state.me.theme, state.me.accent);
 }
 
 function saveCache() {
   clearTimeout(cacheTimer);
   cacheTimer = setTimeout(() => {
-    const plain = JSON.parse(
-      JSON.stringify({
-        me: state.me,
-        profiles: state.profiles,
-        fields: state.fields,
-        ideas: state.ideas,
-        comments: state.comments,
-        reads: state.reads,
-        devices: state.devices,
-      }),
-    );
-    set(CACHE_KEY, plain).catch(() => {});
+    const data = { me: state.me, reads: state.reads };
+    for (const t of Object.values(TABLES)) data[t.key] = state[t.key];
+    set(CACHE_KEY, JSON.parse(JSON.stringify(data))).catch(() => {});
   }, 300);
 }
 
 export async function refresh() {
   if (!state.online || !state.session) return;
   try {
-    const [profiles, fields, ideas, comments, reads, devices] = await Promise.all([
-      supabase.from('profiles').select('*').order('name'),
-      supabase.from('search_fields').select('*').order('sort'),
-      supabase.from('ideas').select('*').order('created_at', { ascending: false }),
-      supabase.from('comments').select('*').order('created_at'),
+    const names = Object.keys(TABLES);
+    const results = await Promise.all([
+      ...names.map((n) => supabase.from(n).select('*')),
       supabase.from('idea_reads').select('idea_id, seen_at'),
-      supabase.from('devices').select('*').order('created_at'),
     ]);
-    const failed = [profiles, fields, ideas, comments, reads, devices].find((r) => r.error);
+    const failed = results.find((r) => r.error);
     if (failed) throw failed.error;
 
-    const me = profiles.data.find((p) => p.user_id === state.session.user.id);
+    const profiles = results[names.indexOf('profiles')].data;
+    const me = profiles.find((p) => p.user_id === state.session.user.id);
     if (!me) {
       await signOut('Dieses Gerät ist nicht mehr angemeldet. Bitte erneut anmelden.');
       return;
     }
+    names.forEach((n, i) => {
+      const t = TABLES[n];
+      const rows = results[i].data;
+      if (t.sort) rows.sort(t.sort);
+      if (n === 'ideas') rows.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+      if (n === 'comments') rows.sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
+      state[t.key] = rows;
+    });
     state.me = me;
-    state.profiles = profiles.data;
-    state.fields = fields.data;
-    state.ideas = ideas.data;
-    state.comments = comments.data;
-    state.reads = Object.fromEntries(reads.data.map((r) => [r.idea_id, r.seen_at]));
-    state.devices = devices.data;
-    for (const op of state.outbox) if (op.op === 'insert') upsertLocal(op.table, op.row);
+    state.reads = Object.fromEntries(results[names.length].data.map((r) => [r.idea_id, r.seen_at]));
+    replayOutbox();
     state.loadedFromServer = true;
     state.error = '';
     applyAppearance(me.theme, me.accent);
@@ -261,43 +285,50 @@ export async function refresh() {
   }
 }
 
-const TABLE_KEYS = { ideas: 'ideas', comments: 'comments', search_fields: 'fields', profiles: 'profiles', devices: 'devices' };
-
 function subscribe() {
   if (channel) return;
   channel = supabase.channel('zwerg-db');
-  for (const table of Object.keys(TABLE_KEYS)) {
+  for (const table of Object.keys(TABLES)) {
     channel.on('postgres_changes', { event: '*', schema: 'public', table }, (p) => onChange(table, p));
   }
   channel.subscribe();
 }
 
 function onChange(table, payload) {
-  const key = TABLE_KEYS[table];
-  if (payload.eventType === 'DELETE') {
-    state[key] = state[key].filter((r) => r.id !== payload.old.id);
-  } else {
-    upsertLocal(key === 'fields' ? 'search_fields' : table, payload.new);
-  }
+  if (payload.eventType === 'DELETE') removeLocal(table, payload.old);
+  else upsertLocal(table, payload.new);
   if (table === 'profiles' && state.me && payload.new?.id === state.me.id) {
     state.me = payload.new;
     applyAppearance(state.me.theme, state.me.accent);
   }
-  if (table === 'search_fields') state.fields.sort((a, b) => a.sort - b.sort);
   if (table === 'devices' && payload.new?.session_id === state.sessionId && payload.new?.revoked_at) {
     signOut('Dieses Gerät wurde in den Einstellungen gesperrt.');
     return;
+  }
+  // Hat der Partner gerade abgegeben, nachdem ich schon abgegeben hatte? Dann seine Werte nachladen.
+  if ((table === 'rating_submissions' || table === 'weight_submissions') && payload.new?.profile_id !== state.me?.id) {
+    refresh();
   }
   saveCache();
 }
 
 function upsertLocal(table, row) {
-  const key = TABLE_KEYS[table];
-  const list = state[key];
-  const i = list.findIndex((r) => r.id === row.id);
+  const t = TABLES[table];
+  if (!t) return;
+  const list = state[t.key];
+  const k = t.id(row);
+  const i = list.findIndex((r) => t.id(r) === k);
   if (i >= 0) list[i] = { ...list[i], ...row };
-  else if (table === 'ideas') list.unshift(row);
+  else if (t.front) list.unshift(row);
   else list.push(row);
+  if (t.sort) list.sort(t.sort);
+}
+
+function removeLocal(table, row) {
+  const t = TABLES[table];
+  if (!t) return;
+  const k = t.id(row);
+  state[t.key] = state[t.key].filter((r) => t.id(r) !== k);
 }
 
 // ---------------------------------------------------------------------------
@@ -317,9 +348,10 @@ async function enqueue(op) {
 
 async function runOp(op) {
   const q = supabase.from(op.table);
-  if (op.op === 'insert') return q.upsert(op.row, { onConflict: 'id', ignoreDuplicates: true });
-  if (op.op === 'update') return q.update(op.patch).eq('id', op.id);
-  if (op.op === 'delete') return q.delete().eq('id', op.id);
+  if (op.op === 'insert') return q.upsert(op.row, { onConflict: op.onConflict ?? 'id', ignoreDuplicates: true });
+  if (op.op === 'upsert') return q.upsert(op.row, { onConflict: op.onConflict });
+  if (op.op === 'update') return op.match ? q.update(op.patch).match(op.match) : q.update(op.patch).eq('id', op.id);
+  if (op.op === 'delete') return op.match ? q.delete().match(op.match) : q.delete().eq('id', op.id);
   return { error: null };
 }
 
@@ -465,6 +497,12 @@ export function neuigkeiten() {
   const items = [];
   for (const idea of state.ideas) {
     if (isNewIdea(idea)) items.push({ idea, kind: 'idee', at: idea.created_at });
+    const andererAbgegeben = state.ratingSubs.some((r) => r.idea_id === idea.id && r.profile_id !== state.me?.id);
+    const ichAbgegeben = state.ratingSubs.some((r) => r.idea_id === idea.id && r.profile_id === state.me?.id);
+    if (andererAbgegeben && !ichAbgegeben && idea.status !== 'geparkt') {
+      const sub = state.ratingSubs.find((r) => r.idea_id === idea.id && r.profile_id !== state.me?.id);
+      items.push({ idea, kind: 'bewertung', at: sub.submitted_at });
+    }
     const nc = newComments(idea);
     if (nc.length) items.push({ idea, kind: 'kommentar', count: nc.length, at: nc[nc.length - 1].created_at });
   }
@@ -491,27 +529,33 @@ export async function setAppearance(theme, accent) {
   if (state.online) await must(supabase.from('profiles').update({ theme, accent }).eq('id', state.me.id));
 }
 
-export async function addField(name) {
+// Bearbeitbare Listen (Suchfelder, Bewertungsfaktoren, KO-Kriterien)
+export const addField = (name) => addListItem('search_fields', name);
+export const updateField = (id, patch) => updateListItem('search_fields', id, patch);
+export const moveField = (id, dir) => moveListItem('search_fields', id, dir);
+
+export async function addListItem(table, name) {
   requireOnline();
-  const sort = Math.max(0, ...state.fields.map((f) => f.sort)) + 10;
-  await must(supabase.from('search_fields').insert({ name: name.trim(), sort }));
+  const list = state[TABLES[table].key];
+  const sort = Math.max(0, ...list.map((f) => f.sort)) + 10;
+  await must(supabase.from(table).insert({ name: name.trim(), sort }));
   await refresh();
 }
 
-export async function updateField(id, patch) {
+export async function updateListItem(table, id, patch) {
   requireOnline();
-  await must(supabase.from('search_fields').update(patch).eq('id', id));
+  await must(supabase.from(table).update(patch).eq('id', id));
   await refresh();
 }
 
-export async function moveField(id, dir) {
+export async function moveListItem(table, id, dir) {
   requireOnline();
-  const list = [...state.fields].sort((a, b) => a.sort - b.sort);
+  const list = [...state[TABLES[table].key]].sort((a, b) => a.sort - b.sort);
   const i = list.findIndex((f) => f.id === id);
   const j = i + dir;
   if (j < 0 || j >= list.length) return;
-  await must(supabase.from('search_fields').update({ sort: list[j].sort }).eq('id', list[i].id));
-  await must(supabase.from('search_fields').update({ sort: list[i].sort }).eq('id', list[j].id));
+  await must(supabase.from(table).update({ sort: list[j].sort }).eq('id', list[i].id));
+  await must(supabase.from(table).update({ sort: list[i].sort }).eq('id', list[j].id));
   await refresh();
 }
 
@@ -524,4 +568,97 @@ export async function revokeDevice(deviceId) {
   requireOnline();
   await callAuth('device-revoke', { deviceId });
   await refresh();
+}
+
+// ---------------------------------------------------------------------------
+// Etappe 2: Gewichtung, Bewertung, KO, Parkplatz, Favoriten
+// ---------------------------------------------------------------------------
+
+function now() {
+  return new Date().toISOString();
+}
+
+function queueUpsert(table, row, onConflict) {
+  upsertLocal(table, row);
+  saveCache();
+  enqueue({ op: 'upsert', table, row, onConflict });
+}
+
+export function setWeight(criterionId, weight) {
+  queueUpsert('personal_weights', { profile_id: state.me.id, criterion_id: criterionId, weight, updated_at: now() }, 'profile_id,criterion_id');
+}
+
+export function submitWeights() {
+  const row = { profile_id: state.me.id, submitted_at: now() };
+  upsertLocal('weight_submissions', row);
+  saveCache();
+  enqueue({ op: 'insert', table: 'weight_submissions', row, onConflict: 'profile_id' });
+  afterSync(refresh);
+}
+
+export function setJointWeight(criterionId, weight) {
+  upsertLocal('criteria', { id: criterionId, joint_weight: weight });
+  saveCache();
+  enqueue({ op: 'update', table: 'criteria', id: criterionId, patch: { joint_weight: weight } });
+}
+
+export function setRating(ideaId, criterionId, patch) {
+  const existing = state.ratings.find((r) => r.idea_id === ideaId && r.profile_id === state.me.id && r.criterion_id === criterionId);
+  const row = { note: '', ...existing, idea_id: ideaId, profile_id: state.me.id, criterion_id: criterionId, ...patch, updated_at: now() };
+  if (!row.score) {
+    // Nur eine Notiz ohne Punktzahl: lokal merken, gespeichert wird mit der Punktzahl.
+    upsertLocal('ratings', row);
+    return;
+  }
+  queueUpsert('ratings', row, 'idea_id,profile_id,criterion_id');
+}
+
+export function toggleKo(ideaId, koId, on) {
+  const row = { idea_id: ideaId, profile_id: state.me.id, ko_id: koId };
+  if (on) {
+    upsertLocal('personal_ko', row);
+    saveCache();
+    enqueue({ op: 'insert', table: 'personal_ko', row, onConflict: 'idea_id,profile_id,ko_id' });
+  } else {
+    removeLocal('personal_ko', row);
+    saveCache();
+    enqueue({ op: 'delete', table: 'personal_ko', match: row });
+  }
+}
+
+export function submitRating(ideaId) {
+  const row = { idea_id: ideaId, profile_id: state.me.id, submitted_at: now() };
+  upsertLocal('rating_submissions', row);
+  saveCache();
+  enqueue({ op: 'insert', table: 'rating_submissions', row, onConflict: 'idea_id,profile_id' });
+  afterSync(refresh);
+}
+
+export function setJointRating(ideaId, criterionId, score) {
+  queueUpsert('joint_ratings', { idea_id: ideaId, criterion_id: criterionId, score, updated_by: state.me.id, updated_at: now() }, 'idea_id,criterion_id');
+}
+
+export function setEvaluation(ideaId, patch) {
+  const existing = state.evaluations.find((e) => e.idea_id === ideaId) ?? { ko_ids: [], ko_note: '', finalized_at: null, finalized_by: null };
+  queueUpsert('idea_evaluations', { ...existing, idea_id: ideaId, ...patch, updated_at: now() }, 'idea_id');
+}
+
+export function parkIdea(id, reason) {
+  updateIdea(id, { status: 'geparkt', park_reason: reason.trim(), parked_at: now(), parked_by: state.me.id, is_favorite: false });
+}
+
+export function unparkIdea(id) {
+  updateIdea(id, { status: 'aktiv', park_reason: null, parked_at: null, parked_by: null });
+}
+
+export function setFavorite(id, value) {
+  updateIdea(id, { is_favorite: value });
+}
+
+// Führt fn aus, sobald die Warteschlange abgearbeitet ist (z. B. Partnerwerte nachladen).
+async function afterSync(fn) {
+  for (let i = 0; i < 40 && (state.outbox.length || flushing); i++) {
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  if (!state.outbox.length) fn();
 }
