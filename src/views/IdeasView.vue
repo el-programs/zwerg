@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fieldName, partner, setFavorite, state, unparkIdea, profile, toast } from '../lib/store.js';
 import {
@@ -7,14 +7,14 @@ import {
 } from '../lib/score.js';
 import { datum } from '../lib/format.js';
 import IdeaCard from '../components/IdeaCard.vue';
-import MeetingList from '../components/MeetingList.vue';
 import RadarChart from '../components/RadarChart.vue';
 import Icon from '../components/Icon.vue';
 import { kiSichtbar } from '../lib/ki.js';
 
+const openCapture = inject('openCapture');
 const route = useRoute();
 const router = useRouter();
-const ansicht = ref(['liste', 'ranking', 'vergleich', 'meetings'].includes(route.query.ansicht) ? route.query.ansicht : 'liste');
+const ansicht = ref(['liste', 'ranking', 'vergleich'].includes(route.query.ansicht) ? route.query.ansicht : 'liste');
 watch(ansicht, (a) => router.replace({ query: a === 'liste' ? {} : { ansicht: a } }));
 
 const filter = ref('alle');
@@ -82,7 +82,7 @@ watch(
 function toggleAuswahl(id) {
   if (auswahl.value.includes(id)) auswahl.value = auswahl.value.filter((x) => x !== id);
   else if (auswahl.value.length < 3) auswahl.value = [...auswahl.value, id];
-  else toast('Höchstens drei Notizen gleichzeitig');
+  else toast('Höchstens drei Ideen gleichzeitig');
 }
 function kurz(name) {
   const teil = name.split('/')[0].trim();
@@ -116,7 +116,8 @@ function stern(idea) {
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <h1 class="grow">Gedanken &amp; Notizen</h1>
+      <h1 class="grow">Gedanken &amp; Ideen</h1>
+      <button class="icon-btn" type="button" aria-label="Neue Idee" title="Neue Idee" @click="openCapture('idee')"><Icon name="plus" /></button>
       <router-link v-if="kiSichtbar && ansicht === 'liste'" to="/ki/vorschlaege" class="btn ki-btn">KI-Vorschläge</router-link>
       <button v-if="ansicht === 'liste'" class="icon-btn" type="button" :aria-pressed="sucheOffen" aria-label="Suchen" @click="sucheOffen = !sucheOffen"><Icon name="search" /></button>
     </div>
@@ -126,7 +127,6 @@ function stern(idea) {
       <button role="tab" type="button" :aria-selected="ansicht === 'liste'" @click="ansicht = 'liste'">Liste</button>
       <button role="tab" type="button" :aria-selected="ansicht === 'ranking'" @click="ansicht = 'ranking'">Ranking</button>
       <button role="tab" type="button" :aria-selected="ansicht === 'vergleich'" @click="ansicht = 'vergleich'">Vergleich</button>
-      <button role="tab" type="button" :aria-selected="ansicht === 'meetings'" @click="ansicht = 'meetings'">Meetings</button>
     </div>
 
     <!-- Liste -->
@@ -138,21 +138,21 @@ function stern(idea) {
       <div class="segmented" role="group" aria-label="Filter">
         <button v-for="f in filters" :key="f.id" type="button" :aria-pressed="filter === f.id" @click="filter = f.id">{{ f.label }}</button>
       </div>
-      <p v-if="filter === 'parkplatz'" class="small muted">Verworfene Notizen mit Begründung. Sie lassen sich jederzeit reaktivieren.</p>
+      <p v-if="filter === 'parkplatz'" class="small muted">Verworfene Ideen mit Begründung. Sie lassen sich jederzeit reaktivieren.</p>
       <div class="stack">
         <template v-if="filter === 'parkplatz'">
           <div v-for="i in liste" :key="i.id" class="card parked">
             <router-link :to="`/idee/${i.id}`" class="parked-title">{{ i.title || 'Ohne Titel' }}</router-link>
             <p class="small"><span class="muted">Begründung:</span> {{ i.park_reason || '–' }}</p>
             <p class="small muted">geparkt von {{ profile(i.parked_by)?.name ?? '–' }}{{ i.parked_at ? `, ${datum(i.parked_at)}` : '' }}</p>
-            <button class="btn" type="button" @click="unparkIdea(i.id); toast('Notiz reaktiviert')">Reaktivieren</button>
+            <button class="btn" type="button" @click="unparkIdea(i.id); toast('Idee reaktiviert')">Reaktivieren</button>
           </div>
         </template>
         <template v-else>
           <IdeaCard v-for="i in liste" :key="i.id" :idea="i" />
         </template>
         <p v-if="!liste.length" class="empty">
-          {{ filter === 'parkplatz' ? 'Der Parkplatz ist leer.' : state.ideas.length ? 'Keine Notiz passt zu diesem Filter.' : 'Noch keine Notizen. Tippe auf das Plus, um die erste zu notieren.' }}
+          {{ filter === 'parkplatz' ? 'Der Parkplatz ist leer.' : state.ideas.length ? 'Keine Idee passt zu diesem Filter.' : 'Noch keine Ideen. Tippe auf das Plus, um die erste zu notieren.' }}
         </p>
       </div>
     </template>
@@ -185,7 +185,7 @@ function stern(idea) {
           </button>
         </li>
       </ol>
-      <p v-if="!ranking.bewertet.length" class="empty">Noch keine bewerteten Notizen. Öffne eine Notiz und tippe auf „Bewerten“.</p>
+      <p v-if="!ranking.bewertet.length" class="empty">Noch keine bewerteten Ideen. Öffne eine Idee und tippe auf „Bewerten“.</p>
 
       <section v-if="ranking.ko.length" class="stack">
         <h2>Ausgeschlossen (KO)</h2>
@@ -206,11 +206,11 @@ function stern(idea) {
 
     <!-- Vergleich -->
     <template v-else-if="ansicht === 'vergleich'">
-      <p class="small muted">Bis zu drei bewertete Notizen auswählen. Gezeigt wird die Endbewertung, sonst der Mittelwert eurer Einzelbewertungen.</p>
-      <div class="segmented wrap" role="group" aria-label="Notizen auswählen">
+      <p class="small muted">Bis zu drei bewertete Ideen auswählen. Gezeigt wird die Endbewertung, sonst der Mittelwert eurer Einzelbewertungen.</p>
+      <div class="segmented wrap" role="group" aria-label="Ideen auswählen">
         <button v-for="i in vergleichbar" :key="i.id" type="button" :aria-pressed="auswahl.includes(i.id)" @click="toggleAuswahl(i.id)">{{ i.title || 'Ohne Titel' }}</button>
       </div>
-      <p v-if="!vergleichbar.length" class="empty">Noch keine bewerteten Notizen zum Vergleichen.</p>
+      <p v-if="!vergleichbar.length" class="empty">Noch keine bewerteten Ideen zum Vergleichen.</p>
       <template v-else-if="serien.length">
         <ul class="legend">
           <li v-for="s in serien" :key="s.id">
@@ -243,7 +243,6 @@ function stern(idea) {
         </div>
       </template>
     </template>
-    <MeetingList v-else-if="ansicht === 'meetings'" />
   </main>
 </template>
 
@@ -252,7 +251,7 @@ function stern(idea) {
 .ki-btn { min-height: 36px; padding: 0 12px; font-size: 14px; border-color: var(--accent); color: var(--accent); }
 .block { display: block; }
 p { margin: 0; }
-.tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: var(--chip); max-width: 560px; }
+.tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: var(--chip); max-width: 480px; }
 .tabs button { height: 38px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-weight: 500; cursor: pointer; }
 .tabs button[aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
 .segmented.wrap { flex-wrap: wrap; }

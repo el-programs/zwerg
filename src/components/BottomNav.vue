@@ -13,12 +13,13 @@ defineEmits(['plus']);
     </div>
     <button class="new side-only" type="button" @click="$emit('plus')"><Icon name="plus" :size="20" />Neue Notiz</button>
     <router-link to="/" class="item" exact-active-class="active"><Icon name="home" /><span>Start</span></router-link>
-    <router-link to="/ideen" class="item" active-class="active"><Icon name="list" /><span class="side-label">Gedanken &amp; Notizen</span><span class="mobile-label">Gedanken</span></router-link>
+    <router-link to="/ideen" class="item" active-class="active"><Icon name="list" /><span class="side-label">Gedanken &amp; Ideen</span><span class="mobile-label">Ideen</span></router-link>
     <div class="center mobile-only">
       <button class="plus" type="button" aria-label="Neue Notiz" @click="$emit('plus')"><Icon name="plus" :size="26" /></button>
     </div>
+    <router-link to="/notizen" class="item" active-class="active"><Icon name="note" /><span>Notizen</span></router-link>
     <router-link to="/phasen" class="item" active-class="active"><Icon name="phases" /><span>Plan</span></router-link>
-    <router-link to="/mehr" class="item" active-class="active"><Icon name="settings" /><span>Einstellungen</span></router-link>
+    <router-link to="/mehr" class="item side-only" active-class="active"><Icon name="settings" /><span>Einstellungen</span></router-link>
   </nav>
 </template>
 
@@ -37,7 +38,7 @@ defineEmits(['plus']);
   grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: center;
 }
-.side-only { display: none; }
+.side-only, .item.side-only { display: none; }
 .side-label { display: none; }
 .item {
   display: flex;
@@ -69,11 +70,6 @@ defineEmits(['plus']);
   .nav.hide-mobile { display: none; }
 }
 
-/* Schmale iPhones: Beschriftung etwas kleiner, damit „Einstellungen“ passt. */
-@media (max-width: 380px) {
-  .item { font-size: 10px; letter-spacing: -0.01em; }
-}
-
 @media (min-width: 900px) {
   .nav {
     top: 0;
@@ -89,7 +85,7 @@ defineEmits(['plus']);
     gap: 4px;
   }
   .mobile-only { display: none; }
-  .side-only { display: flex; }
+  .side-only, .item.side-only { display: flex; }
   .side-label { display: inline; }
   .mobile-label { display: none; }
   .brand {

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, provide, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { state } from './lib/store.js';
 import { ladeStatus } from './lib/ki.js';
@@ -9,6 +9,8 @@ import QuickCapture from './components/QuickCapture.vue';
 const route = useRoute();
 const router = useRouter();
 const capture = ref(null);
+// Schnellerfassung von überall öffnen: als Notiz (Standard) oder direkt als Idee.
+provide('openCapture', (mode = 'notiz') => capture.value?.open(mode));
 // Am Computer ist die Navigation immer als Seitenleiste da; am Handy blendet sie
 // sich auf Detailseiten aus (dort sitzt z. B. das Kommentarfeld unten).
 const withNav = computed(() => state.status === 'ready' && !route.meta.public);

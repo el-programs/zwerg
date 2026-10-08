@@ -1,16 +1,23 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { addIdea, currentPhase, heute, neuigkeiten, partner, state, toast } from '../lib/store.js';
+import { addIdea, addNote, currentPhase, heute, neuigkeiten, newNotes, partner, state, toast } from '../lib/store.js';
 import { relativ } from '../lib/format.js';
 import ZLogo from '../components/ZLogo.vue';
 import Icon from '../components/Icon.vue';
 import SyncStatus from '../components/SyncStatus.vue';
 
 const text = ref('');
+const mode = ref('notiz');
 const fieldId = ref('');
 const area = ref(null);
 const fields = computed(() => state.fields.filter((f) => !f.archived));
-const neu = computed(() => neuigkeiten());
+const neueNotizen = computed(() => newNotes());
+const neu = computed(() => {
+  const items = neuigkeiten();
+  const n = neueNotizen.value;
+  if (n.length) items.unshift({ kind: 'notizen', count: n.length, at: n[0].created_at });
+  return items;
+});
 const aktive = computed(() => state.ideas.filter((i) => i.status !== 'geparkt').length);
 const phase = computed(() => state.phases.find((p) => p.nr === currentPhase()));
 const meineAufgaben = computed(() => state.tasks.filter((t) => t.status !== 'erledigt' && t.assignee === state.me?.id));
@@ -28,9 +35,11 @@ onMounted(() => {
 
 function save() {
   if (!text.value.trim()) return;
-  addIdea({ text: text.value, searchFieldId: fieldId.value });
+  if (mode.value === 'idee') addIdea({ text: text.value, searchFieldId: fieldId.value });
+  else addNote(text.value);
   text.value = '';
-  toast(state.online ? 'Notiz gespeichert' : 'Offline gespeichert – wird später abgeglichen');
+  const was = mode.value === 'idee' ? 'Idee' : 'Notiz';
+  toast(state.online ? `${was} gespeichert` : 'Offline gespeichert – wird später abgeglichen');
 }
 </script>
 
@@ -46,14 +55,20 @@ function save() {
 
   <main class="page start">
     <section class="card stack capture">
-      <label for="start-text" class="title">Was ist dir eingefallen?</label>
+      <div class="row between">
+        <label for="start-text" class="title">Was ist dir eingefallen?</label>
+        <div class="segmented" role="group" aria-label="Art">
+          <button type="button" :aria-pressed="mode === 'notiz'" @click="mode = 'notiz'">Notiz</button>
+          <button type="button" :aria-pressed="mode === 'idee'" @click="mode = 'idee'">Idee</button>
+        </div>
+      </div>
       <textarea
         id="start-text"
         ref="area"
         v-model="text"
         class="textarea"
         rows="4"
-        placeholder="Kurz notieren … Die erste Zeile wird zum Titel."
+        :placeholder="mode === 'idee' ? 'Idee kurz beschreiben … Die erste Zeile wird zum Titel.' : 'Gedanken festhalten …'"
         @keydown.enter.meta.prevent="save"
         @keydown.enter.ctrl.prevent="save"
       ></textarea>
@@ -63,13 +78,14 @@ function save() {
         <span v-else>Diktieren: Mikrofon auf der Tastatur</span>
       </p>
       <div class="row">
-        <label class="field grow">
+        <label v-if="mode === 'idee'" class="field grow">
           <span>Suchfeld</span>
           <select v-model="fieldId" class="select">
             <option value="">– ohne –</option>
             <option v-for="f in fields" :key="f.id" :value="f.id">{{ f.name }}</option>
           </select>
         </label>
+        <span v-else class="grow"></span>
         <button class="btn primary save" type="button" :disabled="!text.trim()" @click="save">Speichern</button>
       </div>
     </section>
@@ -81,11 +97,12 @@ function save() {
         <span v-if="neu.length" class="small muted">{{ neu.length }} neu</span>
       </div>
       <p v-if="!neu.length" class="small muted">Nichts Neues – du bist auf dem aktuellen Stand.</p>
-      <router-link v-for="n in neu.slice(0, 6)" :key="n.kind + n.idea.id" :to="n.kind === 'bewertung' ? `/idee/${n.idea.id}/bewertung` : `/idee/${n.idea.id}`" class="card news">
+      <router-link v-for="n in neu.slice(0, 6)" :key="n.kind + (n.idea?.id ?? '')" :to="n.kind === 'notizen' ? '/notizen' : n.kind === 'bewertung' ? `/idee/${n.idea.id}/bewertung` : `/idee/${n.idea.id}`" class="card news">
         <span class="dot"></span>
         <span class="grow">
           <span class="news-title">
-            <template v-if="n.kind === 'idee'">Neue Notiz: „{{ n.idea.title || 'Ohne Titel' }}“</template>
+            <template v-if="n.kind === 'notizen'">{{ n.count === 1 ? 'Neue Notiz' : `${n.count} neue Notizen` }}</template>
+            <template v-else-if="n.kind === 'idee'">Neue Idee: „{{ n.idea.title || 'Ohne Titel' }}“</template>
             <template v-else-if="n.kind === 'bewertung'">„{{ n.idea.title || 'Ohne Titel' }}“ wurde bewertet – du bist dran</template>
             <template v-else>{{ n.count === 1 ? 'Neuer Kommentar' : `${n.count} neue Kommentare` }} zu „{{ n.idea.title || 'Ohne Titel' }}“</template>
           </span>
@@ -96,9 +113,14 @@ function save() {
 
     <section class="tiles">
       <router-link to="/ideen" class="card tile">
-        <span class="small muted">Gedanken &amp; Notizen</span>
+        <span class="small muted">Gedanken &amp; Ideen</span>
         <span class="big">{{ aktive }}</span>
         <span v-if="favoriten" class="small muted">davon {{ favoriten }} Favorit{{ favoriten > 1 ? 'en' : '' }}</span>
+      </router-link>
+      <router-link to="/notizen" class="card tile">
+        <span class="small muted">Notizen</span>
+        <span class="big">{{ state.notes.length }}</span>
+        <span v-if="state.meetings.length" class="small muted">{{ state.meetings.length }} Meeting{{ state.meetings.length > 1 ? 's' : '' }}</span>
       </router-link>
       <router-link to="/phasen" class="card tile">
         <span class="small muted">Aktuelle Phase</span>

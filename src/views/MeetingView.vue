@@ -86,14 +86,14 @@ function besprechungLoeschen() {
   if (!confirm('Diese Besprechung mit allen Punkten löschen? Aufgaben und Entscheidungen daraus bleiben erhalten.')) return;
   deleteMeeting(id.value);
   toast('Besprechung gelöscht');
-  router.replace('/ideen?ansicht=meetings');
+  router.replace('/notizen?ansicht=meetings');
 }
 </script>
 
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <router-link to="/ideen?ansicht=meetings" class="icon-btn back"><Icon name="back" /><span>Meetings</span></router-link>
+      <router-link to="/notizen?ansicht=meetings" class="icon-btn back"><Icon name="back" /><span>Meetings</span></router-link>
       <span class="grow"></span>
       <button v-if="meeting" class="icon-btn" type="button" aria-label="Besprechung löschen" @click="besprechungLoeschen"><Icon name="trash" /></button>
     </div>
@@ -171,7 +171,7 @@ function besprechungLoeschen() {
     </section>
 
     <section class="stack">
-      <h2>Besprochene Notizen</h2>
+      <h2>Besprochene Ideen</h2>
       <div v-if="verknuepft.length" class="chips">
         <span v-for="i in verknuepft" :key="i.id" class="chip linked">
           <router-link :to="`/idee/${i.id}`">{{ i.title || 'Ohne Titel' }}</router-link>
@@ -179,9 +179,9 @@ function besprechungLoeschen() {
         </span>
       </div>
       <label class="field">
-        <span class="visually-hidden">Notiz verknüpfen</span>
+        <span class="visually-hidden">Idee verknüpfen</span>
         <select class="select" @change="verknuepfen">
-          <option value="">+ Notiz verknüpfen …</option>
+          <option value="">+ Idee verknüpfen …</option>
           <option v-for="i in waehlbar" :key="i.id" :value="i.id">{{ i.title || 'Ohne Titel' }}</option>
         </select>
       </label>

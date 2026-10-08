@@ -7,6 +7,7 @@ const paths = {
   plus: 'M12 5v14M5 12h14',
   phases: 'M4 19h4V11H4zM10 19h4V7h-4zM16 19h4V4h-4z',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
+  note: 'M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h5',
   settings: 'M4 7h9M17 7h3M15 5v4M4 17h3M11 17h9M9 15v4M4 12h3M11 12h9',
   back: 'M15 5l-7 7 7 7',
   search: 'M11 4.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM16 16l4.5 4.5',

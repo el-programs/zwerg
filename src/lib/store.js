@@ -42,6 +42,8 @@ export const state = reactive({
   decisions: [],
   meetings: [],
   meetingItems: [],
+  notes: [],
+  notesSeen: readNotesSeen(),
   outbox: [],
   online: navigator.onLine,
   syncing: false,
@@ -246,6 +248,7 @@ export const TABLES = {
   decisions: { key: 'decisions', id: byId },
   meetings: { key: 'meetings', id: byId },
   meeting_items: { key: 'meetingItems', id: byId, sort: bySort },
+  notes: { key: 'notes', id: byId, front: true },
 };
 
 function replayOutbox() {
@@ -673,13 +676,13 @@ export function setEvaluation(ideaId, patch) {
 export function parkIdea(id, reason) {
   updateIdea(id, { status: 'geparkt', park_reason: reason.trim(), parked_at: now(), parked_by: state.me.id, is_favorite: false });
   const idea = state.ideas.find((i) => i.id === id);
-  addDecision({ title: `Notiz „${idea?.title || 'Ohne Titel'}“ geparkt`, reason: reason.trim(), idea_id: id, automatic: true });
+  addDecision({ title: `Idee „${idea?.title || 'Ohne Titel'}“ geparkt`, reason: reason.trim(), idea_id: id, automatic: true });
 }
 
 export function unparkIdea(id) {
   updateIdea(id, { status: 'aktiv', park_reason: null, parked_at: null, parked_by: null });
   const idea = state.ideas.find((i) => i.id === id);
-  addDecision({ title: `Notiz „${idea?.title || 'Ohne Titel'}“ reaktiviert`, idea_id: id, automatic: true });
+  addDecision({ title: `Idee „${idea?.title || 'Ohne Titel'}“ reaktiviert`, idea_id: id, automatic: true });
 }
 
 export function setFavorite(id, value) {
@@ -760,7 +763,7 @@ export function setIdeaPhase(id, nr) {
   const idea = state.ideas.find((i) => i.id === id);
   if (!idea || idea.phase === nr) return;
   updateIdea(id, { phase: nr });
-  addDecision({ title: `Notiz „${idea.title || 'Ohne Titel'}“ in Phase ${nr} verschoben`, idea_id: id, phase: nr, automatic: true });
+  addDecision({ title: `Idee „${idea.title || 'Ohne Titel'}“ in Phase ${nr} verschoben`, idea_id: id, phase: nr, automatic: true });
 }
 
 export function addTask(fields) {
@@ -952,4 +955,64 @@ export function carryOverOpenItems(meetingId) {
   const offen = openItemsFromPrevious(meetingId);
   for (const i of offen) addMeetingItem(meetingId, { title: i.title, carried_from: i.id });
   return offen.length;
+}
+
+// ---------------------------------------------------------------------------
+// Schnellnotizen
+// ---------------------------------------------------------------------------
+
+const NOTES_SEEN_KEY = 'zwerg-notizen-gesehen';
+
+function readNotesSeen() {
+  try {
+    return localStorage.getItem('zwerg-notizen-gesehen') ?? ''; // läuft vor NOTES_SEEN_KEY
+  } catch {
+    return '';
+  }
+}
+
+export function addNote(body) {
+  const row = {
+    id: crypto.randomUUID(),
+    body: body.trim(),
+    pinned: false,
+    idea_id: null,
+    created_by: state.me.id,
+    created_at: now(),
+    updated_by: state.me.id,
+    updated_at: now(),
+  };
+  queueInsert('notes', row);
+  return row.id;
+}
+
+export function updateNote(id, patch) {
+  queueUpdate('notes', id, { ...patch, updated_by: state.me.id, updated_at: now() });
+}
+
+export function deleteNote(id) {
+  queueDelete('notes', id);
+}
+
+// Aus einer Notiz wird eine Idee; die Notiz bleibt erhalten und verweist darauf.
+export function noteToIdea(id) {
+  const note = state.notes.find((n) => n.id === id);
+  if (!note) return null;
+  const ideaId = addIdea({ text: note.body });
+  updateNote(id, { idea_id: ideaId });
+  return ideaId;
+}
+
+// Notizen des anderen, die seit dem letzten Blick in die Notizen dazugekommen sind.
+export function newNotes() {
+  return state.notes.filter((n) => n.created_by !== state.me?.id && n.created_at > state.notesSeen);
+}
+
+export function markNotesSeen() {
+  state.notesSeen = now();
+  try {
+    localStorage.setItem(NOTES_SEEN_KEY, state.notesSeen);
+  } catch {
+    // Ohne Speicher bleibt die Markierung bis zum Neuladen.
+  }
 }

@@ -19,7 +19,7 @@ function info(m) {
 }
 function neu() {
   const id = addMeeting();
-  router.push(`/ideen/besprechung/${id}`);
+  router.push(`/notizen/besprechung/${id}`);
 }
 </script>
 
@@ -27,7 +27,7 @@ function neu() {
   <div class="stack">
     <button class="btn primary new" type="button" @click="neu"><Icon name="plus" :size="20" />Neue Besprechung</button>
     <p v-if="!liste.length" class="empty">Noch keine Besprechungen. Legt die erste an und sammelt die Tagesordnungspunkte.</p>
-    <router-link v-for="m in liste" :key="m.id" :to="`/ideen/besprechung/${m.id}`" class="card meeting">
+    <router-link v-for="m in liste" :key="m.id" :to="`/notizen/besprechung/${m.id}`" class="card meeting">
       <span class="small muted">{{ datum(m.held_on) }}<template v-if="m.start_time"> · {{ m.start_time.slice(0, 5) }} Uhr</template></span>
       <strong>{{ m.title || 'Besprechung' }}</strong>
       <span class="row foot">

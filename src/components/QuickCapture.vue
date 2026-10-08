@@ -1,11 +1,12 @@
 <script setup>
-// Schnellnotiz hinter dem Plus-Knopf. Das Textfeld ist immer vorhanden und wird direkt
+// Schnellerfassung hinter dem Plus-Knopf: standardmäßig eine Notiz, umschaltbar auf eine Idee. Das Textfeld ist immer vorhanden und wird direkt
 // beim Antippen fokussiert – nur so öffnet das iPhone sofort die Tastatur (mit Diktat-Mikrofon).
 import { computed, ref } from 'vue';
-import { addIdea, state, toast } from '../lib/store.js';
+import { addIdea, addNote, state, toast } from '../lib/store.js';
 import Icon from './Icon.vue';
 
 const isOpen = ref(false);
+const mode = ref('notiz');
 const text = ref('');
 const fieldId = ref('');
 const sheet = ref(null);
@@ -15,7 +16,8 @@ const isWindows = /Windows/.test(navigator.userAgent);
 
 let hideTimer = null;
 
-function open() {
+function open(m = 'notiz') {
+  mode.value = m === 'idee' ? 'idee' : 'notiz';
   clearTimeout(hideTimer);
   sheet.value.style.visibility = 'visible';
   sheet.value.inert = false;
@@ -34,10 +36,12 @@ function close() {
 
 function save() {
   if (!text.value.trim()) return close();
-  addIdea({ text: text.value, searchFieldId: fieldId.value });
+  if (mode.value === 'idee') addIdea({ text: text.value, searchFieldId: fieldId.value });
+  else addNote(text.value);
   text.value = '';
   close();
-  toast(state.online ? 'Notiz gespeichert' : 'Offline gespeichert – wird später abgeglichen');
+  const was = mode.value === 'idee' ? 'Idee' : 'Notiz';
+  toast(state.online ? `${was} gespeichert` : 'Offline gespeichert – wird später abgeglichen');
 }
 
 function onKey(e) {
@@ -50,19 +54,22 @@ defineExpose({ open });
 
 <template>
   <div class="backdrop" :class="{ open: isOpen }" @click="close"></div>
-  <section ref="sheet" class="sheet" :class="{ open: isOpen }" inert style="visibility: hidden" aria-label="Neue Notiz" @keydown="onKey">
+  <section ref="sheet" class="sheet" :class="{ open: isOpen }" inert style="visibility: hidden" aria-label="Schnellerfassung" @keydown="onKey">
     <div class="head">
-      <h2>Neue Notiz</h2>
+      <div class="segmented" role="group" aria-label="Art">
+        <button type="button" :aria-pressed="mode === 'notiz'" @click="mode = 'notiz'; area.focus()">Notiz</button>
+        <button type="button" :aria-pressed="mode === 'idee'" @click="mode = 'idee'; area.focus()">Idee</button>
+      </div>
       <button class="icon-btn" type="button" aria-label="Schließen" @click="close"><Icon name="close" /></button>
     </div>
-    <label class="visually-hidden" for="qc-text">Notiz</label>
+    <label class="visually-hidden" for="qc-text">{{ mode === 'idee' ? 'Idee' : 'Notiz' }}</label>
     <textarea
       id="qc-text"
       ref="area"
       v-model="text"
       class="textarea"
       rows="5"
-      placeholder="Kurz notieren … Die erste Zeile wird zum Titel."
+      :placeholder="mode === 'idee' ? 'Idee kurz beschreiben … Die erste Zeile wird zum Titel.' : 'Gedanken festhalten …'"
     ></textarea>
     <p class="hint small muted">
       <Icon name="mic" :size="16" />
@@ -70,13 +77,14 @@ defineExpose({ open });
       <span v-else>Diktieren: Mikrofon auf der Tastatur</span>
     </p>
     <div class="row">
-      <label class="field grow">
+      <label v-if="mode === 'idee'" class="field grow">
         <span>Suchfeld</span>
         <select v-model="fieldId" class="select">
           <option value="">– ohne –</option>
           <option v-for="f in fields" :key="f.id" :value="f.id">{{ f.name }}</option>
         </select>
       </label>
+      <span v-else class="grow"></span>
       <button class="btn primary save" type="button" :disabled="!text.trim()" @click="save">Speichern</button>
     </div>
   </section>

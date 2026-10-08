@@ -91,12 +91,12 @@ function wiederOeffnen() {
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <router-link :to="`/idee/${id}`" class="icon-btn" aria-label="Zurück zur Notiz"><Icon name="back" /></router-link>
+      <router-link :to="`/idee/${id}`" class="icon-btn" aria-label="Zurück zur Idee"><Icon name="back" /></router-link>
       <h1 class="grow ellipsis">Bewertung</h1>
     </div>
   </header>
 
-  <main v-if="!idea || !me || !anderer" class="page"><p class="empty">Diese Notiz gibt es nicht (mehr).</p></main>
+  <main v-if="!idea || !me || !anderer" class="page"><p class="empty">Diese Idee gibt es nicht (mehr).</p></main>
 
   <main v-else class="page">
     <div class="stack tight">
@@ -141,7 +141,7 @@ function wiederOeffnen() {
 
       <section v-if="kos.length" class="card stack">
         <h2>KO-Kriterien</h2>
-        <p class="small muted">Trifft eines zu, ist die Notiz unabhängig von der Punktzahl ausgeschlossen.</p>
+        <p class="small muted">Trifft eines zu, ist die Idee unabhängig von der Punktzahl ausgeschlossen.</p>
         <label v-for="k in kos" :key="k.id" class="check">
           <input type="checkbox" :checked="meineKo.includes(k.id)" @change="toggleKo(id, k.id, $event.target.checked)">
           <span>{{ k.name }}</span>

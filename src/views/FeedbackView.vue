@@ -49,7 +49,7 @@ function loeschen(f) {
       <h1 class="grow">Pilot-Feedback</h1>
     </div>
   </header>
-  <main v-if="!idea" class="page"><p class="empty">Diese Notiz gibt es nicht (mehr).</p></main>
+  <main v-if="!idea" class="page"><p class="empty">Diese Idee gibt es nicht (mehr).</p></main>
   <main v-else class="page">
     <h2 class="idea-title">{{ idea.title || 'Ohne Titel' }}</h2>
 

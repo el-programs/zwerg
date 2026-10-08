@@ -38,7 +38,7 @@ function uebernehmen(run, v, i) {
   });
   updateIdea(ideaId, { tags: ['KI-Vorschlag'] });
   uebernommen.value = new Set([...uebernommen.value, `${run.id}-${i}`]);
-  toast('Als Notiz übernommen');
+  toast('Als Idee übernommen');
 }
 </script>
 
@@ -46,12 +46,12 @@ function uebernehmen(run, v, i) {
   <header class="topbar">
     <div class="topbar-inner">
       <router-link to="/ideen" class="icon-btn" aria-label="Zurück"><Icon name="back" /></router-link>
-      <h1 class="grow">Vorschläge von der KI</h1>
+      <h1 class="grow">Ideen von der KI</h1>
       <span class="chip ki">KI</span>
     </div>
   </header>
   <main class="page">
-    <p class="muted">Die KI macht sechs Vorschläge – mit Haken und einem ersten günstigen Test. Übernehmt nur, was euch wirklich anspricht.</p>
+    <p class="muted">Die KI schlägt sechs Ideen vor – mit Haken und einem ersten günstigen Test. Übernehmt nur, was euch wirklich anspricht.</p>
     <p v-if="!kiSichtbar" class="card small note">Du hast die KI ausgeschaltet (Einstellungen → KI-Unterstützung).</p>
     <p v-else-if="state.kiStatus?.configured === false" class="card small note">Die KI ist noch nicht eingerichtet (Anleitung Teil E).</p>
     <p v-else-if="limitErreicht" class="card small note">Das Monatslimit ist erreicht.</p>
@@ -87,7 +87,7 @@ function uebernehmen(run, v, i) {
           <p class="small"><span class="muted">Größter Haken:</span> {{ v.haken }}</p>
           <p class="small"><span class="muted">Erster Test:</span> {{ v.erster_test }}</p>
           <button class="btn" type="button" :disabled="uebernommen.has(`${run.id}-${i}`)" @click="uebernehmen(run, v, i)">
-            {{ uebernommen.has(`${run.id}-${i}`) ? 'Übernommen' : 'Als Notiz übernehmen' }}
+            {{ uebernommen.has(`${run.id}-${i}`) ? 'Übernommen' : 'Als Idee übernehmen' }}
           </button>
         </article>
       </template>

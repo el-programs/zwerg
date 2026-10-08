@@ -11,7 +11,7 @@ export const MODELLE = [
 export const STUFEN = [
   { id: 'aus', name: 'Aus', info: 'Keine KI-Funktionen für dich.' },
   { id: 'anfrage', name: 'Nur auf Anfrage', info: 'Die KI arbeitet nur, wenn du sie ausdrücklich fragst.' },
-  { id: 'aktiv', name: 'Aktiv mit Hinweisen', info: 'Neue Notizen bekommen automatisch einen kurzen kritischen Check (je Notiz einmal, wenige Cent).' },
+  { id: 'aktiv', name: 'Aktiv mit Hinweisen', info: 'Neue Ideen bekommen automatisch einen kurzen kritischen Check (je Idee einmal, wenige Cent).' },
 ];
 
 export async function callKi(action, body = {}) {

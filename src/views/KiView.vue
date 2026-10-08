@@ -90,7 +90,7 @@ function wer(m) {
     </div>
   </header>
 
-  <main v-if="!idea" class="page"><p class="empty">Diese Notiz gibt es nicht (mehr).</p></main>
+  <main v-if="!idea" class="page"><p class="empty">Diese Idee gibt es nicht (mehr).</p></main>
 
   <main v-else class="page">
     <h2 class="idea-title">{{ idea.title || 'Ohne Titel' }}</h2>
@@ -102,7 +102,7 @@ function wer(m) {
 
     <!-- Einschätzung -->
     <template v-if="tab === 'einschaetzung'">
-      <p class="small muted">Die KI prüft die Notiz kritisch: Stärken, Schwächen, Risiken – getrennt nach Fakten, Schätzungen und Annahmen – und schlägt je Faktor eine Bewertung vor.</p>
+      <p class="small muted">Die KI prüft die Idee kritisch: Stärken, Schwächen, Risiken – getrennt nach Fakten, Schätzungen und Annahmen – und schlägt je Faktor eine Bewertung vor.</p>
       <button class="btn primary" type="button" :disabled="gesperrt || busy || einschaetzung?.status === 'laeuft'" @click="los('einschaetzung', {}, 'Einschätzung angefordert')">
         {{ einschaetzung ? 'Neu einschätzen lassen' : 'Kritisch einschätzen' }}
       </button>
@@ -173,7 +173,7 @@ function wer(m) {
 
     <!-- Chat -->
     <template v-else>
-      <p class="small muted">Sparring zur Notiz. Der Verlauf ist für euch beide sichtbar.</p>
+      <p class="small muted">Sparring zur Idee. Der Verlauf ist für euch beide sichtbar.</p>
       <div class="chat">
         <div v-for="m in chat" :key="m.id" class="msg" :class="m.role">
           <span class="who small">{{ wer(m) }}</span>
@@ -181,7 +181,7 @@ function wer(m) {
           <div v-else-if="m.role === 'assistant'" class="bubble md" :class="{ error: m.status === 'fehler' }" v-html="markdown(m.content)"></div>
           <div v-else class="bubble">{{ m.content }}</div>
         </div>
-        <p v-if="!chat.length" class="empty">Noch keine Nachrichten. Frag die KI zum Beispiel: „Was ist der größte Denkfehler bei dieser Notiz?“</p>
+        <p v-if="!chat.length" class="empty">Noch keine Nachrichten. Frag die KI zum Beispiel: „Was ist der größte Denkfehler bei dieser Idee?“</p>
       </div>
       <form class="composer" @submit.prevent="senden">
         <label class="visually-hidden" for="ki-msg">Nachricht an die KI</label>

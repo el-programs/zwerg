@@ -77,9 +77,9 @@ function removeComment(c) {
 }
 
 function removeIdea() {
-  if (!confirm('Diese Notiz mit allen Kommentaren endgültig löschen?')) return;
+  if (!confirm('Diese Idee mit allen Kommentaren endgültig löschen?')) return;
   deleteIdea(idea.value.id);
-  toast('Notiz gelöscht');
+  toast('Idee gelöscht');
   router.replace('/ideen');
 }
 
@@ -141,10 +141,10 @@ const zeigeEntscheidungen = ref(false);
 const entscheidungen = computed(() => (idea.value ? state.decisions.filter((d) => d.idea_id === idea.value.id).length : 0));
 
 function parken() {
-  const grund = prompt('Warum wird die Notiz geparkt? (Begründung bleibt erhalten)');
+  const grund = prompt('Warum wird die Idee geparkt? (Begründung bleibt erhalten)');
   if (grund === null) return;
   parkIdea(idea.value.id, grund || 'ohne Begründung');
-  toast('Notiz auf den Parkplatz gestellt');
+  toast('Idee auf den Parkplatz gestellt');
 }
 
 function host(url) {
@@ -176,7 +176,7 @@ watch(
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <router-link to="/ideen" class="icon-btn back"><Icon name="back" /><span>Gedanken</span></router-link>
+      <router-link to="/ideen" class="icon-btn back"><Icon name="back" /><span>Ideen</span></router-link>
       <span class="grow"></span>
       <button
         v-if="idea && idea.status !== 'geparkt'"
@@ -190,7 +190,7 @@ watch(
   </header>
 
   <main v-if="!idea" class="page">
-    <p class="empty">Diese Notiz gibt es nicht (mehr).</p>
+    <p class="empty">Diese Idee gibt es nicht (mehr).</p>
   </main>
 
   <main v-else class="page detail">
@@ -212,7 +212,7 @@ watch(
         </template>
       </p>
       <label class="row wrap phase-row">
-        <span class="small muted">Phase der Notiz</span>
+        <span class="small muted">Phase der Idee</span>
         <select class="select phase-select" :value="idea.phase" @change="setIdeaPhase(idea.id, Number($event.target.value))">
           <option v-for="p in PHASEN" :key="p.nr" :value="p.nr">{{ p.nr }} · {{ state.phases.find((x) => x.nr === p.nr)?.name ?? phaseName(p.nr) }}</option>
         </select>
@@ -222,7 +222,7 @@ watch(
     <div v-if="idea.status === 'geparkt'" class="card parked-banner">
       <strong>Auf dem Parkplatz</strong>
       <p class="small">Begründung: {{ idea.park_reason || '–' }} <span class="muted">({{ profile(idea.parked_by)?.name }})</span></p>
-      <button class="btn" type="button" @click="unparkIdea(idea.id); toast('Notiz reaktiviert')">Reaktivieren</button>
+      <button class="btn" type="button" @click="unparkIdea(idea.id); toast('Idee reaktiviert')">Reaktivieren</button>
     </div>
 
     <router-link v-else :to="`/idee/${idea.id}/bewertung`" class="card rating-card">
@@ -338,7 +338,7 @@ watch(
 
     <section class="danger-zone row wrap">
       <button v-if="idea.status !== 'geparkt'" class="btn" type="button" @click="parken">Auf den Parkplatz</button>
-      <button class="btn danger" type="button" @click="removeIdea"><Icon name="trash" :size="18" />Notiz löschen</button>
+      <button class="btn danger" type="button" @click="removeIdea"><Icon name="trash" :size="18" />Idee löschen</button>
     </section>
   </main>
 
