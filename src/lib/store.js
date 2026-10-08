@@ -34,6 +34,12 @@ export const state = reactive({
   aiResults: [],
   aiChat: [],
   kiStatus: null,
+  phases: [],
+  appState: [],
+  tasks: [],
+  businessCases: [],
+  feedback: [],
+  decisions: [],
   outbox: [],
   online: navigator.onLine,
   syncing: false,
@@ -230,6 +236,12 @@ export const TABLES = {
   ai_usage: { key: 'aiUsage', id: byId },
   ai_results: { key: 'aiResults', id: byId, front: true },
   ai_chat: { key: 'aiChat', id: byId },
+  phases: { key: 'phases', id: (r) => r.nr, sort: (a, b) => a.nr - b.nr },
+  app_state: { key: 'appState', id: byId },
+  tasks: { key: 'tasks', id: byId },
+  business_cases: { key: 'businessCases', id: (r) => r.idea_id },
+  pilot_feedback: { key: 'feedback', id: byId },
+  decisions: { key: 'decisions', id: byId },
 };
 
 function replayOutbox() {
@@ -656,10 +668,14 @@ export function setEvaluation(ideaId, patch) {
 
 export function parkIdea(id, reason) {
   updateIdea(id, { status: 'geparkt', park_reason: reason.trim(), parked_at: now(), parked_by: state.me.id, is_favorite: false });
+  const idea = state.ideas.find((i) => i.id === id);
+  addDecision({ title: `Idee „${idea?.title || 'Ohne Titel'}“ geparkt`, reason: reason.trim(), idea_id: id, automatic: true });
 }
 
 export function unparkIdea(id) {
   updateIdea(id, { status: 'aktiv', park_reason: null, parked_at: null, parked_by: null });
+  const idea = state.ideas.find((i) => i.id === id);
+  addDecision({ title: `Idee „${idea?.title || 'Ohne Titel'}“ reaktiviert`, idea_id: id, automatic: true });
 }
 
 export function setFavorite(id, value) {
@@ -672,4 +688,161 @@ async function afterSync(fn) {
     await new Promise((r) => setTimeout(r, 250));
   }
   if (!state.outbox.length) fn();
+}
+
+// ---------------------------------------------------------------------------
+// Etappe 4: Phasen, Aufgaben, Business Case, Pilot-Feedback, Entscheidungen
+// ---------------------------------------------------------------------------
+
+export function heute() {
+  return new Date().toLocaleDateString('sv-SE'); // JJJJ-MM-TT in lokaler Zeit
+}
+
+function queueInsert(table, row) {
+  upsertLocal(table, row);
+  saveCache();
+  enqueue({ op: 'insert', table, row });
+}
+
+function queueUpdate(table, id, patch) {
+  upsertLocal(table, { id, ...patch });
+  saveCache();
+  const pending = state.outbox.find((op) => op.op === 'insert' && op.table === table && op.row.id === id);
+  if (pending) {
+    Object.assign(pending.row, patch);
+    set(OUTBOX_KEY, JSON.parse(JSON.stringify(state.outbox))).catch(() => {});
+    flush();
+    return;
+  }
+  enqueue({ op: 'update', table, id, patch });
+}
+
+function queueDelete(table, id) {
+  state[TABLES[table].key] = state[TABLES[table].key].filter((r) => r.id !== id);
+  saveCache();
+  enqueue({ op: 'delete', table, id });
+}
+
+export function currentPhase() {
+  return state.appState[0]?.current_phase ?? 1;
+}
+
+export function updatePhase(nr, patch) {
+  const full = { ...patch, updated_by: state.me.id, updated_at: now() };
+  upsertLocal('phases', { nr, ...full });
+  saveCache();
+  enqueue({ op: 'update', table: 'phases', match: { nr }, patch: full });
+}
+
+export function toggleCriterion(nr, critId, done) {
+  const phase = state.phases.find((p) => p.nr === nr);
+  const criteria = phase.criteria.map((c) =>
+    c.id === critId ? { ...c, done, done_by: done ? state.me.id : null, done_at: done ? now() : null } : c,
+  );
+  updatePhase(nr, { criteria });
+}
+
+export function setCurrentPhase(nr, reason) {
+  const from = currentPhase();
+  const patch = { current_phase: nr, updated_by: state.me.id, updated_at: now() };
+  upsertLocal('app_state', { id: 1, ...patch });
+  saveCache();
+  enqueue({ op: 'update', table: 'app_state', id: 1, patch });
+  const name = state.phases.find((p) => p.nr === nr)?.name ?? '';
+  addDecision({ title: `Projekt wechselt von Phase ${from} in Phase ${nr} (${name})`, reason, phase: nr, automatic: true });
+}
+
+export function setIdeaPhase(id, nr) {
+  const idea = state.ideas.find((i) => i.id === id);
+  if (!idea || idea.phase === nr) return;
+  updateIdea(id, { phase: nr });
+  addDecision({ title: `Idee „${idea.title || 'Ohne Titel'}“ in Phase ${nr} verschoben`, idea_id: id, phase: nr, automatic: true });
+}
+
+export function addTask(fields) {
+  const row = {
+    id: crypto.randomUUID(),
+    title: fields.title.trim(),
+    notes: fields.notes ?? '',
+    assignee: fields.assignee ?? state.me.id,
+    due_date: fields.due_date || null,
+    status: 'offen',
+    idea_id: fields.idea_id || null,
+    phase: fields.phase ?? null,
+    created_by: state.me.id,
+    created_at: now(),
+    updated_at: now(),
+  };
+  queueInsert('tasks', row);
+  return row.id;
+}
+
+export function updateTask(id, patch) {
+  const extra = 'status' in patch ? { done_at: patch.status === 'erledigt' ? now() : null } : {};
+  queueUpdate('tasks', id, { ...patch, ...extra, updated_at: now() });
+}
+
+export function deleteTask(id) {
+  queueDelete('tasks', id);
+}
+
+export function saveBusinessCase(ideaId, patch) {
+  const existing = state.businessCases.find((b) => b.idea_id === ideaId) ?? { scenarios: {}, notes: '', unit: 'Stück' };
+  const row = { ...existing, idea_id: ideaId, ...patch, updated_by: state.me.id, updated_at: now() };
+  delete row.id;
+  upsertLocal('business_cases', row);
+  saveCache();
+  enqueue({ op: 'upsert', table: 'business_cases', row, onConflict: 'idea_id' });
+}
+
+export function addFeedback(fields) {
+  const row = {
+    id: crypto.randomUUID(),
+    kind: 'gespraech',
+    contact: '',
+    held_on: heute(),
+    summary: '',
+    problem: null,
+    interest: null,
+    price: '',
+    quote: '',
+    learnings: '',
+    ...fields,
+    created_by: state.me.id,
+    created_at: now(),
+  };
+  queueInsert('pilot_feedback', row);
+}
+
+export function updateFeedback(id, patch) {
+  queueUpdate('pilot_feedback', id, patch);
+}
+
+export function deleteFeedback(id) {
+  queueDelete('pilot_feedback', id);
+}
+
+export function addDecision(fields) {
+  const row = {
+    id: crypto.randomUUID(),
+    title: fields.title.trim().slice(0, 300),
+    decision: fields.decision ?? '',
+    reason: fields.reason ?? '',
+    decided_on: fields.decided_on || heute(),
+    idea_id: fields.idea_id ?? null,
+    phase: fields.phase ?? null,
+    automatic: !!fields.automatic,
+    created_by: state.me.id,
+    created_at: now(),
+    updated_at: now(),
+  };
+  queueInsert('decisions', row);
+}
+
+export function updateDecision(id, patch) {
+  queueUpdate('decisions', id, { ...patch, updated_at: now() });
+}
+
+export function deleteDecision(id) {
+  queueDelete('decisions', id);
 }

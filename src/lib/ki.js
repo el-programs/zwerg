@@ -40,7 +40,8 @@ export async function ladeStatus() {
 }
 
 export const meineStufe = computed(() => state.me?.ai_level ?? 'anfrage');
-export const kiSichtbar = computed(() => meineStufe.value !== 'aus');
+// KI-Knöpfe erscheinen erst, wenn ein Schlüssel hinterlegt ist und die Person die KI nicht ausgeschaltet hat.
+export const kiSichtbar = computed(() => meineStufe.value !== 'aus' && state.kiStatus?.configured === true);
 export const einstellungen = computed(() => state.aiSettings[0] ?? { model: 'claude-opus-5-5', monthly_limit_eur: 10 });
 
 export const verbrauchMonat = computed(() => {

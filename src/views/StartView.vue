@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { addIdea, neuigkeiten, partner, state, toast } from '../lib/store.js';
+import { addIdea, currentPhase, heute, neuigkeiten, partner, state, toast } from '../lib/store.js';
 import { relativ } from '../lib/format.js';
 import ZLogo from '../components/ZLogo.vue';
 import Icon from '../components/Icon.vue';
@@ -12,6 +12,9 @@ const area = ref(null);
 const fields = computed(() => state.fields.filter((f) => !f.archived));
 const neu = computed(() => neuigkeiten());
 const aktive = computed(() => state.ideas.filter((i) => i.status !== 'geparkt').length);
+const phase = computed(() => state.phases.find((p) => p.nr === currentPhase()));
+const meineAufgaben = computed(() => state.tasks.filter((t) => t.status !== 'erledigt' && t.assignee === state.me?.id));
+const ueberfaellig = computed(() => meineAufgaben.value.filter((t) => t.due_date && t.due_date < heute()).length);
 const favoriten = computed(() => state.ideas.filter((i) => i.is_favorite && i.status !== 'geparkt').length);
 const anderer = computed(() => partner());
 const isWindows = /Windows/.test(navigator.userAgent);
@@ -99,7 +102,12 @@ function save() {
       </router-link>
       <router-link to="/phasen" class="card tile">
         <span class="small muted">Aktuelle Phase</span>
-        <span class="mid">1 · Ideenfindung</span>
+        <span class="mid">{{ currentPhase() }} · {{ phase?.name ?? 'Ideenfindung' }}</span>
+      </router-link>
+      <router-link to="/phasen?tab=aufgaben" class="card tile">
+        <span class="small muted">Meine Aufgaben</span>
+        <span class="big">{{ meineAufgaben.length }}</span>
+        <span v-if="ueberfaellig" class="small late">{{ ueberfaellig }} überfällig</span>
       </router-link>
     </section>
 
@@ -127,5 +135,6 @@ function save() {
 .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .tile { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: inherit; }
 .big { font-size: 24px; font-weight: 600; }
+.late { color: var(--danger); font-weight: 600; }
 .mid { font-size: 16px; font-weight: 600; }
 </style>

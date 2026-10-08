@@ -124,6 +124,17 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Bewertung | Nach beiden Abgaben zeigt der Vergleich auch den KI-Vorschlag je Faktor – erst dann, damit eure Bewertung unbeeinflusst bleibt. |
 | Kostenbremse | **Mehr → KI-Unterstützung**: Verbrauch des Monats und Limit. Ist es erreicht, sperrt Zwerg die KI bis Monatsende. |
 
+### Etappe 4 testen
+
+| Was | So testet ihr es |
+|---|---|
+| Phasen | **Plan → Phasen**: Ziel, Ergebnis, Hinweise und Abschlusskriterien je Phase. Kriterien abhaken, über **Bearbeiten** Texte und Kriterien ändern. **In Phase X wechseln** fragt nach einer Begründung und protokolliert den Wechsel. Nichts wird erzwungen. |
+| Phase je Idee | In der Idee oben **Phase der Idee** wählen (wird ebenfalls protokolliert). |
+| Aufgaben | **Plan → Aufgaben** oder in der Idee unter **Aufgaben**: mit Zuständigkeit, Fälligkeit, Status, Idee und Phase. Überfällige stehen oben in Rot; auf der Startseite steht „Meine Aufgaben“. |
+| Business Case | Idee → **Business Case**: Investition, Fixkosten, variable Kosten, Preis und Absatz je Szenario (vorsichtig/realistisch/optimistisch) → Umsatz, Marge, Ergebnis, Break-even, Amortisation. |
+| Pilot-Feedback | Idee → **Pilot-Feedback**: Gespräche und Tests mit Problemstärke, Kaufinteresse, Zahlungsbereitschaft, Zitat und Erkenntnissen. |
+| Entscheidungen | **Plan → Entscheidungen**: wer hat wann was entschieden und warum. Phasenwechsel und Parken landen automatisch im Protokoll. Ändern und löschen kann nur, wer den Eintrag angelegt hat. |
+
 ---
 
 ## Teil C – Updates

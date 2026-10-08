@@ -3,11 +3,14 @@ import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   addComment, commentsOf, deleteComment, deleteIdea, markSeen, newComments, parkIdea, partner, profile, setFavorite,
-  state, toast, unparkIdea, updateIdea,
+  setIdeaPhase, state, toast, unparkIdea, updateIdea,
 } from '../lib/store.js';
 import { hasSubmittedRating, ideaResult, RESULT_LABEL } from '../lib/score.js';
 import { callKi, ergebnisse, kiSichtbar, ladeStatus, limitErreicht, meineStufe } from '../lib/ki.js';
-import { datum, phaseName, relativ } from '../lib/format.js';
+import { datum, phaseName, relativ, PHASEN } from '../lib/format.js';
+import { eur, rechne } from '../lib/business.js';
+import TaskList from '../components/TaskList.vue';
+import DecisionList from '../components/DecisionList.vue';
 import Icon from '../components/Icon.vue';
 
 const route = useRoute();
@@ -118,6 +121,25 @@ async function autoCheck() {
   }
 }
 
+const bc = computed(() => (idea.value ? state.businessCases.find((b) => b.idea_id === idea.value.id) : null));
+const bcText = computed(() => {
+  const r = rechne(bc.value?.scenarios?.realistisch);
+  if (!r) return 'Investition, Kosten, Preis, Absatz → Umsatz, Marge, Break-even';
+  return `Realistisch: ${eur(r.gewinnMonat)} Ergebnis/Monat · Break-even ${r.breakEven ?? '–'} ${bc.value.unit || 'Stück'}/Monat`;
+});
+const feedback = computed(() => (idea.value ? state.feedback.filter((f) => f.idea_id === idea.value.id) : []));
+const feedbackText = computed(() => {
+  const n = feedback.value.length;
+  if (!n) return 'Kundengespräche und Testergebnisse erfassen';
+  const k = feedback.value.map((f) => f.interest).filter(Boolean);
+  const avg = k.length ? (k.reduce((a, b) => a + b, 0) / k.length).toLocaleString('de-DE', { maximumFractionDigits: 1 }) : '–';
+  return `${n} Eintr${n === 1 ? 'ag' : 'äge'} · Ø Kaufinteresse ${avg}`;
+});
+const offeneAufgaben = computed(() => (idea.value ? state.tasks.filter((t) => t.idea_id === idea.value.id && t.status !== 'erledigt').length : 0));
+const zeigeAufgaben = ref(false);
+const zeigeEntscheidungen = ref(false);
+const entscheidungen = computed(() => (idea.value ? state.decisions.filter((d) => d.idea_id === idea.value.id).length : 0));
+
 function parken() {
   const grund = prompt('Warum wird die Idee geparkt? (Begründung bleibt erhalten)');
   if (grund === null) return;
@@ -189,9 +211,12 @@ watch(
           · zuletzt geändert von {{ profile(idea.updated_by)?.name }}, {{ relativ(idea.updated_at) }}
         </template>
       </p>
-      <div class="row wrap">
-        <span class="chip">Phase {{ idea.phase }} · {{ phaseName(idea.phase) }}</span>
-      </div>
+      <label class="row wrap phase-row">
+        <span class="small muted">Phase der Idee</span>
+        <select class="select phase-select" :value="idea.phase" @change="setIdeaPhase(idea.id, Number($event.target.value))">
+          <option v-for="p in PHASEN" :key="p.nr" :value="p.nr">{{ p.nr }} · {{ state.phases.find((x) => x.nr === p.nr)?.name ?? phaseName(p.nr) }}</option>
+        </select>
+      </label>
     </section>
 
     <div v-if="idea.status === 'geparkt'" class="card parked-banner">
@@ -211,6 +236,17 @@ watch(
       </span>
       <span v-else class="btn primary">Bewerten</span>
     </router-link>
+
+    <div v-if="idea.status !== 'geparkt'" class="tools">
+      <router-link :to="`/idee/${idea.id}/business-case`" class="card tool">
+        <strong>Business Case</strong>
+        <span class="small muted">{{ bcText }}</span>
+      </router-link>
+      <router-link :to="`/idee/${idea.id}/feedback`" class="card tool">
+        <strong>Pilot-Feedback</strong>
+        <span class="small muted">{{ feedbackText }}</span>
+      </router-link>
+    </div>
 
     <router-link v-if="kiSichtbar && idea.status !== 'geparkt'" :to="`/idee/${idea.id}/ki`" class="card ki-card">
       <span class="grow">
@@ -267,6 +303,20 @@ watch(
         <input id="link-label" v-model="neuerLink.label" class="input" placeholder="Bezeichnung (optional)">
         <button class="btn" type="submit" :disabled="!neuerLink.url.trim()">Hinzufügen</button>
       </form>
+    </section>
+
+    <section class="stack">
+      <button class="fold" type="button" :aria-expanded="zeigeAufgaben" @click="zeigeAufgaben = !zeigeAufgaben">
+        <h2>Aufgaben ({{ offeneAufgaben }} offen)</h2><Icon :name="zeigeAufgaben ? 'up' : 'down'" :size="18" />
+      </button>
+      <TaskList v-if="zeigeAufgaben" :idea-id="idea.id" :show-filter="false" compact />
+    </section>
+
+    <section class="stack">
+      <button class="fold" type="button" :aria-expanded="zeigeEntscheidungen" @click="zeigeEntscheidungen = !zeigeEntscheidungen">
+        <h2>Entscheidungen ({{ entscheidungen }})</h2><Icon :name="zeigeEntscheidungen ? 'up' : 'down'" :size="18" />
+      </button>
+      <DecisionList v-if="zeigeEntscheidungen" :idea-id="idea.id" />
     </section>
 
     <section class="stack">
@@ -333,6 +383,11 @@ p { margin: 0; }
 .comment .avatar { width: 30px; height: 30px; }
 .body { white-space: pre-wrap; overflow-wrap: anywhere; }
 .link-btn { border: 0; background: none; padding: 0; margin-left: auto; cursor: pointer; text-decoration: underline; }
+.tools { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.tool { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: inherit; }
+.phase-row { gap: 8px; }
+.phase-select { width: auto; min-height: 36px; padding: 4px 10px; font-size: 14px; }
+.fold { display: flex; align-items: center; justify-content: space-between; border: 0; background: none; padding: 0; cursor: pointer; color: var(--text); }
 .ki-card { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
 .chip.ki { background: transparent; border: 1px solid var(--accent); color: var(--accent); font-weight: 600; margin-left: 4px; }
 .clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

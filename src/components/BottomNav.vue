@@ -17,7 +17,7 @@ defineEmits(['plus']);
     <div class="center mobile-only">
       <button class="plus" type="button" aria-label="Neue Idee" @click="$emit('plus')"><Icon name="plus" :size="26" /></button>
     </div>
-    <router-link to="/phasen" class="item" active-class="active"><Icon name="phases" /><span>Phasen</span></router-link>
+    <router-link to="/phasen" class="item" active-class="active"><Icon name="phases" /><span>Plan</span></router-link>
     <router-link to="/mehr" class="item" active-class="active"><Icon name="more" /><span>Mehr</span></router-link>
   </nav>
 </template>
