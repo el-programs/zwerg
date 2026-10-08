@@ -1,17 +1,25 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { state } from './lib/store.js';
+// Die Hauptbereiche werden direkt mitgeladen, damit ein Menüklick nie auf Nachladen warten muss.
+import StartView from './views/StartView.vue';
+import IdeasView from './views/IdeasView.vue';
+import IdeaView from './views/IdeaView.vue';
+import RatingView from './views/RatingView.vue';
+import WeightsView from './views/WeightsView.vue';
+import PhasesView from './views/PhasesView.vue';
+import SettingsView from './views/SettingsView.vue';
 
 // Hash-Adressen (#/ideen …), damit die App auf GitHub Pages ohne Server-Regeln läuft.
 export const router = createRouter({
   history: createWebHashHistory(),
   routes: [
-    { path: '/', name: 'start', component: () => import('./views/StartView.vue') },
-    { path: '/ideen', name: 'ideen', component: () => import('./views/IdeasView.vue') },
-    { path: '/idee/:id/bewertung', name: 'bewertung', component: () => import('./views/RatingView.vue') },
-    { path: '/gewichtung', name: 'gewichtung', component: () => import('./views/WeightsView.vue') },
-    { path: '/idee/:id', name: 'idee', component: () => import('./views/IdeaView.vue'), meta: { nav: false } },
-    { path: '/phasen', name: 'phasen', component: () => import('./views/PhasesView.vue') },
-    { path: '/mehr', name: 'mehr', component: () => import('./views/SettingsView.vue') },
+    { path: '/', name: 'start', component: StartView },
+    { path: '/ideen', name: 'ideen', component: IdeasView },
+    { path: '/idee/:id/bewertung', name: 'bewertung', component: RatingView },
+    { path: '/gewichtung', name: 'gewichtung', component: WeightsView },
+    { path: '/idee/:id', name: 'idee', component: IdeaView, meta: { nav: false } },
+    { path: '/phasen', name: 'phasen', component: PhasesView },
+    { path: '/mehr', name: 'mehr', component: SettingsView },
     { path: '/koppeln/:linkId?/:code?', name: 'koppeln', component: () => import('./views/LinkApproveView.vue'), meta: { nav: false } },
     { path: '/anmelden', name: 'anmelden', component: () => import('./views/LoginView.vue'), meta: { public: true, nav: false } },
     { path: '/einladung/:token', name: 'einladung', component: () => import('./views/InviteView.vue'), meta: { public: true, nav: false } },

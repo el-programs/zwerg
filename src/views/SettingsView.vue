@@ -6,6 +6,8 @@ import { AKZENTE, relativ } from '../lib/format.js';
 import Icon from '../components/Icon.vue';
 
 const error = ref('');
+// eslint-disable-next-line no-undef
+const version = __ZWERG_VERSION__;
 const modes = [
   { id: 'system', label: 'System' },
   { id: 'hell', label: 'Hell' },
@@ -172,7 +174,7 @@ function abmelden() {
 
     <section class="stack">
       <h2 class="section-title">Konto</h2>
-      <p class="small muted">Angemeldet als {{ state.me?.name }}.</p>
+      <p class="small muted">Angemeldet als {{ state.me?.name }}. Version vom {{ version }} (UTC).</p>
       <button class="btn" type="button" @click="abmelden">Auf diesem Gerät abmelden</button>
     </section>
   </main>

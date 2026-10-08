@@ -2,8 +2,11 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+
 export default defineConfig({
   base: '/zwerg/',
+  define: { __ZWERG_VERSION__: JSON.stringify(stamp) },
   plugins: [
     vue(),
     VitePWA({

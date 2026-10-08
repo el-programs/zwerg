@@ -36,6 +36,7 @@ export const state = reactive({
   error: '',
   notice: '',
   toast: '',
+  fatal: '',
 });
 
 let toastTimer = null;
