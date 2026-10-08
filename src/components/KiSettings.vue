@@ -87,7 +87,7 @@ function limitSpeichern() {
     </div>
 
     <p class="small muted">
-      Datenschutz: Nur wenn ihr eine KI-Funktion nutzt, wird die betroffene Idee (Titel, Beschreibung, Kommentare) an Anthropic
+      Datenschutz: Nur wenn ihr eine KI-Funktion nutzt, wird die betroffene Notiz (Titel, Beschreibung, Kommentare) an Anthropic
       übermittelt. Anthropic nutzt API-Daten nicht zum Training. KI-Bewertungen sind immer als Vorschlag gekennzeichnet und fließen nie
       automatisch in eure Wertung ein.
     </p>

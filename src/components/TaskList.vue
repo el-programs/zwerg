@@ -63,7 +63,7 @@ function abhaken(t, e) {
   updateTask(t.id, { status: e.target.checked ? 'erledigt' : 'offen' });
 }
 function ideaTitle(id) {
-  return state.ideas.find((i) => i.id === id)?.title || 'Idee';
+  return state.ideas.find((i) => i.id === id)?.title || 'Notiz';
 }
 function loeschen(t) {
   if (confirm(`Aufgabe „${t.title}“ löschen?`)) deleteTask(t.id);
@@ -88,7 +88,7 @@ function loeschen(t) {
           <input v-model="neu.due_date" class="input" type="date">
         </label>
         <label v-if="!ideaId && !compact" class="field">
-          <span>Idee</span>
+          <span>Notiz</span>
           <select v-model="neu.idea_id" class="select">
             <option value="">– keine –</option>
             <option v-for="i in ideen" :key="i.id" :value="i.id">{{ i.title || 'Ohne Titel' }}</option>
@@ -155,7 +155,7 @@ function loeschen(t) {
               </select>
             </label>
             <label v-if="!ideaId" class="field">
-              <span>Idee</span>
+              <span>Notiz</span>
               <select class="select" :value="t.idea_id ?? ''" @change="updateTask(t.id, { idea_id: $event.target.value || null })">
                 <option value="">– keine –</option>
                 <option v-for="i in ideen" :key="i.id" :value="i.id">{{ i.title || 'Ohne Titel' }}</option>
@@ -163,7 +163,7 @@ function loeschen(t) {
             </label>
           </div>
           <div class="row">
-            <router-link v-if="t.idea_id && !ideaId" :to="`/idee/${t.idea_id}`" class="btn">Zur Idee</router-link>
+            <router-link v-if="t.idea_id && !ideaId" :to="`/idee/${t.idea_id}`" class="btn">Zur Notiz</router-link>
             <button class="btn danger" type="button" @click="loeschen(t)"><Icon name="trash" :size="18" />Löschen</button>
           </div>
         </div>

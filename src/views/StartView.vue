@@ -30,7 +30,7 @@ function save() {
   if (!text.value.trim()) return;
   addIdea({ text: text.value, searchFieldId: fieldId.value });
   text.value = '';
-  toast(state.online ? 'Idee gespeichert' : 'Offline gespeichert – wird später abgeglichen');
+  toast(state.online ? 'Notiz gespeichert' : 'Offline gespeichert – wird später abgeglichen');
 }
 </script>
 
@@ -53,7 +53,7 @@ function save() {
         v-model="text"
         class="textarea"
         rows="4"
-        placeholder="Idee kurz notieren … Die erste Zeile wird zum Titel."
+        placeholder="Kurz notieren … Die erste Zeile wird zum Titel."
         @keydown.enter.meta.prevent="save"
         @keydown.enter.ctrl.prevent="save"
       ></textarea>
@@ -85,7 +85,7 @@ function save() {
         <span class="dot"></span>
         <span class="grow">
           <span class="news-title">
-            <template v-if="n.kind === 'idee'">Neue Idee: „{{ n.idea.title || 'Ohne Titel' }}“</template>
+            <template v-if="n.kind === 'idee'">Neue Notiz: „{{ n.idea.title || 'Ohne Titel' }}“</template>
             <template v-else-if="n.kind === 'bewertung'">„{{ n.idea.title || 'Ohne Titel' }}“ wurde bewertet – du bist dran</template>
             <template v-else>{{ n.count === 1 ? 'Neuer Kommentar' : `${n.count} neue Kommentare` }} zu „{{ n.idea.title || 'Ohne Titel' }}“</template>
           </span>

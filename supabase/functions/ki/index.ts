@@ -136,7 +136,7 @@ function ensureAnswer(message: any) {
 
 async function ideaContext(ideaId: string) {
   const idea = check(await db.from('ideas').select('*').eq('id', ideaId).maybeSingle());
-  if (!idea) throw new Fehler('Idee nicht gefunden.', 404);
+  if (!idea) throw new Fehler('Notiz nicht gefunden.', 404);
   const field = idea.search_field_id
     ? check(await db.from('search_fields').select('name').eq('id', idea.search_field_id).maybeSingle())
     : null;

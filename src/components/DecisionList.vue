@@ -23,7 +23,7 @@ function speichern() {
   toast('Entscheidung protokolliert');
 }
 function ideaTitle(id) {
-  return state.ideas.find((i) => i.id === id)?.title || 'Idee';
+  return state.ideas.find((i) => i.id === id)?.title || 'Notiz';
 }
 function loeschen(d) {
   if (confirm('Diesen Protokolleintrag löschen?')) deleteDecision(d.id);
@@ -40,7 +40,7 @@ function loeschen(d) {
       <div class="two">
         <label class="field"><span>Datum</span><input v-model="neu.decided_on" class="input" type="date"></label>
         <label v-if="!ideaId" class="field">
-          <span>Zu Idee (optional)</span>
+          <span>Zu Notiz (optional)</span>
           <select v-model="neu.idea_id" class="select">
             <option value="">– keine –</option>
             <option v-for="i in ideen" :key="i.id" :value="i.id">{{ i.title || 'Ohne Titel' }}</option>

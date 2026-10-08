@@ -669,13 +669,13 @@ export function setEvaluation(ideaId, patch) {
 export function parkIdea(id, reason) {
   updateIdea(id, { status: 'geparkt', park_reason: reason.trim(), parked_at: now(), parked_by: state.me.id, is_favorite: false });
   const idea = state.ideas.find((i) => i.id === id);
-  addDecision({ title: `Idee „${idea?.title || 'Ohne Titel'}“ geparkt`, reason: reason.trim(), idea_id: id, automatic: true });
+  addDecision({ title: `Notiz „${idea?.title || 'Ohne Titel'}“ geparkt`, reason: reason.trim(), idea_id: id, automatic: true });
 }
 
 export function unparkIdea(id) {
   updateIdea(id, { status: 'aktiv', park_reason: null, parked_at: null, parked_by: null });
   const idea = state.ideas.find((i) => i.id === id);
-  addDecision({ title: `Idee „${idea?.title || 'Ohne Titel'}“ reaktiviert`, idea_id: id, automatic: true });
+  addDecision({ title: `Notiz „${idea?.title || 'Ohne Titel'}“ reaktiviert`, idea_id: id, automatic: true });
 }
 
 export function setFavorite(id, value) {
@@ -756,7 +756,7 @@ export function setIdeaPhase(id, nr) {
   const idea = state.ideas.find((i) => i.id === id);
   if (!idea || idea.phase === nr) return;
   updateIdea(id, { phase: nr });
-  addDecision({ title: `Idee „${idea.title || 'Ohne Titel'}“ in Phase ${nr} verschoben`, idea_id: id, phase: nr, automatic: true });
+  addDecision({ title: `Notiz „${idea.title || 'Ohne Titel'}“ in Phase ${nr} verschoben`, idea_id: id, phase: nr, automatic: true });
 }
 
 export function addTask(fields) {

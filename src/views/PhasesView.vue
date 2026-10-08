@@ -86,7 +86,7 @@ function wechseln(p) {
             <span class="grow">
               <strong>{{ p.name }}</strong>
               <span class="small muted block">
-                {{ fortschritt(p).done }}/{{ fortschritt(p).n }} Kriterien · {{ ideenIn(p.nr).length }} Ideen · {{ aufgabenIn(p.nr) }} offene Aufgaben
+                {{ fortschritt(p).done }}/{{ fortschritt(p).n }} Kriterien · {{ ideenIn(p.nr).length }} Notizen · {{ aufgabenIn(p.nr) }} offene Aufgaben
               </span>
             </span>
             <span v-if="p.nr === aktuell" class="badge-new">aktuell</span>
@@ -125,7 +125,7 @@ function wechseln(p) {
             </form>
 
             <template v-if="ideenIn(p.nr).length">
-              <h3>Ideen in dieser Phase</h3>
+              <h3>Notizen in dieser Phase</h3>
               <div class="row wrap">
                 <router-link v-for="i in ideenIn(p.nr)" :key="i.id" :to="`/idee/${i.id}`" class="chip outline idea-chip">{{ i.is_favorite ? '★ ' : '' }}{{ i.title || 'Ohne Titel' }}</router-link>
               </div>

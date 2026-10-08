@@ -157,7 +157,7 @@ function abmelden() {
 
     <section class="stack">
       <h2 class="section-title">Suchfelder</h2>
-      <p class="small muted">Gelten für euch beide. Archivierte Einträge bleiben an bestehenden Ideen erhalten.</p>
+      <p class="small muted">Gelten für euch beide. Archivierte Einträge bleiben an bestehenden Notizen erhalten.</p>
       <ListEditor table="search_fields" placeholder="Neues Suchfeld" @error="error = $event" />
     </section>
 
@@ -169,7 +169,7 @@ function abmelden() {
 
     <section class="stack">
       <h2 class="section-title">KO-Kriterien</h2>
-      <p class="small muted">Trifft eines davon zu, ist eine Idee unabhängig von der Punktzahl ausgeschlossen.</p>
+      <p class="small muted">Trifft eines davon zu, ist eine Notiz unabhängig von der Punktzahl ausgeschlossen.</p>
       <ListEditor table="ko_criteria" placeholder="Neues KO-Kriterium" @error="error = $event" />
     </section>
 

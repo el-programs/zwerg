@@ -11,11 +11,11 @@ defineEmits(['plus']);
       <ZLogo :size="34" :echoes="1" />
       <span>Zwerg</span>
     </div>
-    <button class="new side-only" type="button" @click="$emit('plus')"><Icon name="plus" :size="20" />Neue Idee</button>
+    <button class="new side-only" type="button" @click="$emit('plus')"><Icon name="plus" :size="20" />Neue Notiz</button>
     <router-link to="/" class="item" exact-active-class="active"><Icon name="home" /><span>Start</span></router-link>
     <router-link to="/ideen" class="item" active-class="active"><Icon name="list" /><span class="side-label">Gedanken &amp; Notizen</span><span class="mobile-label">Gedanken</span></router-link>
     <div class="center mobile-only">
-      <button class="plus" type="button" aria-label="Neue Idee" @click="$emit('plus')"><Icon name="plus" :size="26" /></button>
+      <button class="plus" type="button" aria-label="Neue Notiz" @click="$emit('plus')"><Icon name="plus" :size="26" /></button>
     </div>
     <router-link to="/phasen" class="item" active-class="active"><Icon name="phases" /><span>Plan</span></router-link>
     <router-link to="/mehr" class="item" active-class="active"><Icon name="more" /><span>Mehr</span></router-link>

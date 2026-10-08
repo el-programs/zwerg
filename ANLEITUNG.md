@@ -5,7 +5,7 @@ Zwerg läuft komplett kostenlos:
 | Teil | Wo | Wofür |
 |---|---|---|
 | App (Oberfläche) | GitHub Pages: <https://el-programs.github.io/zwerg/> | Wird bei jeder Änderung automatisch neu veröffentlicht |
-| Daten, Anmeldung | Supabase, Rechenzentrum Frankfurt | Ideen, Kommentare, Passkeys – geschützt durch Zugriffsregeln |
+| Daten, Anmeldung | Supabase, Rechenzentrum Frankfurt | Notizen, Kommentare, Passkeys – geschützt durch Zugriffsregeln |
 | Backups | Privates Repository `el-programs/zwerg-backup` | Jede Nacht verschlüsselt, 30 Tage aufbewahrt |
 
 Der Programmcode ist öffentlich, eure Daten nicht: Ohne Anmeldung mit Passkey bzw. gekoppeltem Gerät
@@ -88,13 +88,13 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 | Was | So testet ihr es |
 |---|---|
-| Schnellerfassung | Auf der Startseite oder über das **Plus** eine Idee notieren. Erste Zeile = Titel. |
+| Schnellerfassung | Auf der Startseite oder über das **Plus** eine Notiz notieren. Erste Zeile = Titel. |
 | Diktat | iPhone: Mikrofon auf der Tastatur. Windows: im Textfeld **Windows-Taste + H**. |
-| Live-Abgleich | Beide gleichzeitig in Zwerg: Eine neue Idee des einen erscheint beim anderen sofort. |
-| „Neu“-Markierung | Neue Ideen und Kommentare des anderen stehen auf der Startseite unter „Neu von …“ und tragen ein **neu**-Schild, bis man die Idee öffnet. |
-| Kommentare | Idee öffnen → unten kommentieren. Eigene Kommentare lassen sich löschen. |
-| Ideen bearbeiten | Titel, Beschreibung, Suchfeld, Schlagworte und Links direkt in der Idee ändern – wird beim Verlassen des Feldes gespeichert. |
-| Offline | iPhone in den Flugmodus, Idee erfassen („Offline gespeichert“), Flugmodus aus → die Idee wird automatisch abgeglichen. |
+| Live-Abgleich | Beide gleichzeitig in Zwerg: Eine neue Notiz des einen erscheint beim anderen sofort. |
+| „Neu“-Markierung | Neue Notizen und Kommentare des anderen stehen auf der Startseite unter „Neu von …“ und tragen ein **neu**-Schild, bis man die Notiz öffnet. |
+| Kommentare | Notiz öffnen → unten kommentieren. Eigene Kommentare lassen sich löschen. |
+| Notizen bearbeiten | Titel, Beschreibung, Suchfeld, Schlagworte und Links direkt in der Notiz ändern – wird beim Verlassen des Feldes gespeichert. |
+| Offline | iPhone in den Flugmodus, Notiz erfassen („Offline gespeichert“), Flugmodus aus → die Notiz wird automatisch abgeglichen. |
 | Suchfelder | **Mehr → Suchfelder**: umbenennen, sortieren, archivieren, neu anlegen. |
 | Darstellung | **Mehr → Darstellung**: System/Hell/Dunkel und eure persönliche Akzentfarbe. |
 | Geräte | **Mehr → Geräte**: alle angemeldeten Geräte, einzeln sperrbar. |
@@ -105,11 +105,11 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Was | So testet ihr es |
 |---|---|
 | Gewichtung | **Gedanken & Notizen → Ranking → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
-| Bewertung | Idee öffnen → **Bewertung**. Jeder bewertet alle Faktoren 1–5 (5 = gut für uns) und markiert ggf. KO-Kriterien. Die Werte des anderen bleiben verborgen, bis man selbst abgegeben hat – das prüft die Datenbank. |
+| Bewertung | Notiz öffnen → **Bewertung**. Jeder bewertet alle Faktoren 1–5 (5 = gut für uns) und markiert ggf. KO-Kriterien. Die Werte des anderen bleiben verborgen, bis man selbst abgegeben hat – das prüft die Datenbank. |
 | Vergleich & Endbewertung | Nach beiden Abgaben: Abweichungen ab 2 Punkten sind hervorgehoben. Gemeinsame Punkte wählen (oder Mittelwerte übernehmen), KO gemeinsam festlegen, **Endbewertung festlegen**. |
-| Ranking | **Gedanken & Notizen → Ranking**: sortiert nach Punkten (0–100). „vorläufig“ = Mittel der Einzelbewertungen. KO-Ideen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
-| Vergleich | **Gedanken & Notizen → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
-| Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Gedanken & Notizen → Liste → Parkplatz** jederzeit reaktivieren. |
+| Ranking | **Gedanken & Notizen → Ranking**: sortiert nach Punkten (0–100). „vorläufig“ = Mittel der Einzelbewertungen. KO-Notizen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
+| Vergleich | **Gedanken & Notizen → Vergleich**: bis zu drei Notizen als Netzdiagramm und Tabelle. |
+| Parkplatz | Notiz öffnen → **Auf den Parkplatz** mit Begründung. Unter **Gedanken & Notizen → Liste → Parkplatz** jederzeit reaktivieren. |
 | Faktoren & KO-Kriterien | **Mehr → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |
 
 ### Etappe 3 testen (nach Teil E)
@@ -117,10 +117,10 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Was | So testet ihr es |
 |---|---|
 | Stufe je Person | **Mehr → KI-Unterstützung**: Aus / Nur auf Anfrage / Aktiv mit Hinweisen. Bei „Aus“ verschwinden alle KI-Knöpfe für diese Person. |
-| Ideen vorschlagen | **Gedanken & Notizen → KI-Vorschläge**: Suchfeld wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Idee übernehmen“. |
-| Kritische Einschätzung | Idee öffnen → **KI-Sparring → Einschätzung**. Getrennt nach Fakten, Schätzungen, Annahmen, mit Bewertungsvorschlag je Faktor (klar als KI-Vorschlag markiert, fließt nicht in eure Wertung ein). |
+| Vorschläge der KI | **Gedanken & Notizen → KI-Vorschläge**: Suchfeld wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Notiz übernehmen“. |
+| Kritische Einschätzung | Notiz öffnen → **KI-Sparring → Einschätzung**. Getrennt nach Fakten, Schätzungen, Annahmen, mit Bewertungsvorschlag je Faktor (klar als KI-Vorschlag markiert, fließt nicht in eure Wertung ein). |
 | Marktrecherche | **KI-Sparring → Recherche**, optional mit eigener Frage. Ergebnis mit Quellenliste. |
-| Chat | **KI-Sparring → Chat**: Sparring zur Idee, für beide sichtbar. |
+| Chat | **KI-Sparring → Chat**: Sparring zur Notiz, für beide sichtbar. |
 | Bewertung | Nach beiden Abgaben zeigt der Vergleich auch den KI-Vorschlag je Faktor – erst dann, damit eure Bewertung unbeeinflusst bleibt. |
 | Kostenbremse | **Mehr → KI-Unterstützung**: Verbrauch des Monats und Limit. Ist es erreicht, sperrt Zwerg die KI bis Monatsende. |
 
@@ -129,10 +129,10 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Was | So testet ihr es |
 |---|---|
 | Phasen | **Plan → Phasen**: Ziel, Ergebnis, Hinweise und Abschlusskriterien je Phase. Kriterien abhaken, über **Bearbeiten** Texte und Kriterien ändern. **In Phase X wechseln** fragt nach einer Begründung und protokolliert den Wechsel. Nichts wird erzwungen. |
-| Phase je Idee | In der Idee oben **Phase der Idee** wählen (wird ebenfalls protokolliert). |
-| Aufgaben | **Plan → Aufgaben** oder in der Idee unter **Aufgaben**: mit Zuständigkeit, Fälligkeit, Status, Idee und Phase. Überfällige stehen oben in Rot; auf der Startseite steht „Meine Aufgaben“. |
-| Business Case | Idee → **Business Case**: Investition, Fixkosten, variable Kosten, Preis und Absatz je Szenario (vorsichtig/realistisch/optimistisch) → Umsatz, Marge, Ergebnis, Break-even, Amortisation. |
-| Pilot-Feedback | Idee → **Pilot-Feedback**: Gespräche und Tests mit Problemstärke, Kaufinteresse, Zahlungsbereitschaft, Zitat und Erkenntnissen. |
+| Phase je Notiz | In der Notiz oben **Phase der Notiz** wählen (wird ebenfalls protokolliert). |
+| Aufgaben | **Plan → Aufgaben** oder in der Notiz unter **Aufgaben**: mit Zuständigkeit, Fälligkeit, Status, Notiz und Phase. Überfällige stehen oben in Rot; auf der Startseite steht „Meine Aufgaben“. |
+| Business Case | Notiz → **Business Case**: Investition, Fixkosten, variable Kosten, Preis und Absatz je Szenario (vorsichtig/realistisch/optimistisch) → Umsatz, Marge, Ergebnis, Break-even, Amortisation. |
+| Pilot-Feedback | Notiz → **Pilot-Feedback**: Gespräche und Tests mit Problemstärke, Kaufinteresse, Zahlungsbereitschaft, Zitat und Erkenntnissen. |
 | Entscheidungen | **Plan → Entscheidungen**: wer hat wann was entschieden und warum. Phasenwechsel und Parken landen automatisch im Protokoll. Ändern und löschen kann nur, wer den Eintrag angelegt hat. |
 
 ---
@@ -176,7 +176,7 @@ Server (Supabase), nie in der App oder im Browser.
    öffnen → **Add new secret** → Name `ANTHROPIC_API_KEY`, Wert: der Schlüssel → **Save**.
 6. In Zwerg unter **Mehr → KI-Unterstützung** Modell und Monatslimit prüfen. Fertig.
 
-Datenschutz: Nur beim Benutzen einer KI-Funktion wird die betroffene Idee (Titel, Beschreibung, Kommentare) an Anthropic
+Datenschutz: Nur beim Benutzen einer KI-Funktion wird die betroffene Notiz (Titel, Beschreibung, Kommentare) an Anthropic
 (USA) übermittelt; Anthropic verwendet API-Daten nicht zum Training. Ein Auftragsverarbeitungsvertrag (DPA) ist in den
 Anthropic-Bedingungen enthalten.
 

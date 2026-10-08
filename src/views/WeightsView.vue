@@ -65,7 +65,7 @@ function mittelwerteUebernehmen() {
 
     <p class="muted intro">
       Wie wichtig ist euch jeder Faktor? <strong>0</strong> = spielt keine Rolle, <strong>5</strong> = sehr wichtig.
-      Die Gewichtung gilt für alle Ideen.
+      Die Gewichtung gilt für alle Notizen.
     </p>
 
     <template v-if="schritt === 1">

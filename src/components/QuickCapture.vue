@@ -37,7 +37,7 @@ function save() {
   addIdea({ text: text.value, searchFieldId: fieldId.value });
   text.value = '';
   close();
-  toast(state.online ? 'Idee gespeichert' : 'Offline gespeichert – wird später abgeglichen');
+  toast(state.online ? 'Notiz gespeichert' : 'Offline gespeichert – wird später abgeglichen');
 }
 
 function onKey(e) {
@@ -50,19 +50,19 @@ defineExpose({ open });
 
 <template>
   <div class="backdrop" :class="{ open: isOpen }" @click="close"></div>
-  <section ref="sheet" class="sheet" :class="{ open: isOpen }" inert style="visibility: hidden" aria-label="Neue Idee" @keydown="onKey">
+  <section ref="sheet" class="sheet" :class="{ open: isOpen }" inert style="visibility: hidden" aria-label="Neue Notiz" @keydown="onKey">
     <div class="head">
-      <h2>Neue Idee</h2>
+      <h2>Neue Notiz</h2>
       <button class="icon-btn" type="button" aria-label="Schließen" @click="close"><Icon name="close" /></button>
     </div>
-    <label class="visually-hidden" for="qc-text">Idee</label>
+    <label class="visually-hidden" for="qc-text">Notiz</label>
     <textarea
       id="qc-text"
       ref="area"
       v-model="text"
       class="textarea"
       rows="5"
-      placeholder="Idee kurz notieren … Die erste Zeile wird zum Titel."
+      placeholder="Kurz notieren … Die erste Zeile wird zum Titel."
     ></textarea>
     <p class="hint small muted">
       <Icon name="mic" :size="16" />
