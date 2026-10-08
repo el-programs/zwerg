@@ -40,6 +40,8 @@ export const state = reactive({
   businessCases: [],
   feedback: [],
   decisions: [],
+  meetings: [],
+  meetingItems: [],
   outbox: [],
   online: navigator.onLine,
   syncing: false,
@@ -242,6 +244,8 @@ export const TABLES = {
   business_cases: { key: 'businessCases', id: (r) => r.idea_id },
   pilot_feedback: { key: 'feedback', id: byId },
   decisions: { key: 'decisions', id: byId },
+  meetings: { key: 'meetings', id: byId },
+  meeting_items: { key: 'meetingItems', id: byId, sort: bySort },
 };
 
 function replayOutbox() {
@@ -769,6 +773,7 @@ export function addTask(fields) {
     status: 'offen',
     idea_id: fields.idea_id || null,
     phase: fields.phase ?? null,
+    meeting_id: fields.meeting_id ?? null,
     created_by: state.me.id,
     created_at: now(),
     updated_at: now(),
@@ -832,6 +837,7 @@ export function addDecision(fields) {
     idea_id: fields.idea_id ?? null,
     phase: fields.phase ?? null,
     automatic: !!fields.automatic,
+    meeting_id: fields.meeting_id ?? null,
     created_by: state.me.id,
     created_at: now(),
     updated_at: now(),
@@ -845,4 +851,105 @@ export function updateDecision(id, patch) {
 
 export function deleteDecision(id) {
   queueDelete('decisions', id);
+}
+
+// ---------------------------------------------------------------------------
+// Besprechungen mit Tagesordnungspunkten
+// ---------------------------------------------------------------------------
+
+export function itemsOf(meetingId) {
+  return state.meetingItems.filter((i) => i.meeting_id === meetingId).sort(bySort);
+}
+
+export function addMeeting(fields = {}) {
+  const row = {
+    id: crypto.randomUUID(),
+    title: '',
+    held_on: heute(),
+    start_time: null,
+    attendees: state.profiles.map((p) => p.id),
+    guests: '',
+    place: '',
+    idea_ids: [],
+    ...fields,
+    created_by: state.me.id,
+    created_at: now(),
+    updated_at: now(),
+  };
+  queueInsert('meetings', row);
+  return row.id;
+}
+
+export function updateMeeting(id, patch) {
+  queueUpdate('meetings', id, { ...patch, updated_at: now() });
+}
+
+export function deleteMeeting(id) {
+  // Tagesordnungspunkte löscht die Datenbank mit; lokal gleich mit entfernen.
+  state.meetingItems = state.meetingItems.filter((i) => i.meeting_id !== id);
+  queueDelete('meetings', id);
+}
+
+export function addMeetingItem(meetingId, fields = {}) {
+  const list = itemsOf(meetingId);
+  const row = {
+    id: crypto.randomUUID(),
+    meeting_id: meetingId,
+    sort: list.length ? list[list.length - 1].sort + 1 : 1,
+    title: '',
+    notes: '',
+    result: '',
+    carried_from: null,
+    ...fields,
+    created_by: state.me.id,
+    created_at: now(),
+    updated_at: now(),
+  };
+  queueInsert('meeting_items', row);
+  return row.id;
+}
+
+export function updateMeetingItem(id, patch) {
+  queueUpdate('meeting_items', id, { ...patch, updated_at: now() });
+}
+
+export function deleteMeetingItem(id) {
+  queueDelete('meeting_items', id);
+}
+
+export function moveMeetingItem(id, dir) {
+  const item = state.meetingItems.find((i) => i.id === id);
+  const list = itemsOf(item.meeting_id);
+  const i = list.findIndex((x) => x.id === id);
+  const j = i + dir;
+  if (j < 0 || j >= list.length) return;
+  const other = list[j];
+  const a = item.sort;
+  const b = other.sort === a ? a + dir : other.sort;
+  updateMeetingItem(item.id, { sort: b });
+  updateMeetingItem(other.id, { sort: a });
+}
+
+// Die letzte Besprechung vor dieser (nach Datum, dann Anlagezeit).
+export function previousMeeting(meetingId) {
+  const m = state.meetings.find((x) => x.id === meetingId);
+  if (!m) return null;
+  const key = (x) => `${x.held_on}|${x.created_at}`;
+  return state.meetings
+    .filter((x) => x.id !== m.id && key(x) < key(m))
+    .sort((a, b) => (key(a) < key(b) ? 1 : -1))[0] ?? null;
+}
+
+// Punkte ohne Ergebnis aus der vorigen Besprechung, die hier noch nicht übernommen sind.
+export function openItemsFromPrevious(meetingId) {
+  const prev = previousMeeting(meetingId);
+  if (!prev) return [];
+  const schon = new Set(itemsOf(meetingId).map((i) => i.carried_from).filter(Boolean));
+  return itemsOf(prev.id).filter((i) => !i.result.trim() && i.title.trim() && !schon.has(i.id));
+}
+
+export function carryOverOpenItems(meetingId) {
+  const offen = openItemsFromPrevious(meetingId);
+  for (const i of offen) addMeetingItem(meetingId, { title: i.title, carried_from: i.id });
+  return offen.length;
 }

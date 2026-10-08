@@ -7,13 +7,14 @@ import {
 } from '../lib/score.js';
 import { datum } from '../lib/format.js';
 import IdeaCard from '../components/IdeaCard.vue';
+import MeetingList from '../components/MeetingList.vue';
 import RadarChart from '../components/RadarChart.vue';
 import Icon from '../components/Icon.vue';
 import { kiSichtbar } from '../lib/ki.js';
 
 const route = useRoute();
 const router = useRouter();
-const ansicht = ref(['liste', 'ranking', 'vergleich'].includes(route.query.ansicht) ? route.query.ansicht : 'liste');
+const ansicht = ref(['liste', 'ranking', 'vergleich', 'meetings'].includes(route.query.ansicht) ? route.query.ansicht : 'liste');
 watch(ansicht, (a) => router.replace({ query: a === 'liste' ? {} : { ansicht: a } }));
 
 const filter = ref('alle');
@@ -125,6 +126,7 @@ function stern(idea) {
       <button role="tab" type="button" :aria-selected="ansicht === 'liste'" @click="ansicht = 'liste'">Liste</button>
       <button role="tab" type="button" :aria-selected="ansicht === 'ranking'" @click="ansicht = 'ranking'">Ranking</button>
       <button role="tab" type="button" :aria-selected="ansicht === 'vergleich'" @click="ansicht = 'vergleich'">Vergleich</button>
+      <button role="tab" type="button" :aria-selected="ansicht === 'meetings'" @click="ansicht = 'meetings'">Meetings</button>
     </div>
 
     <!-- Liste -->
@@ -203,7 +205,7 @@ function stern(idea) {
     </template>
 
     <!-- Vergleich -->
-    <template v-else>
+    <template v-else-if="ansicht === 'vergleich'">
       <p class="small muted">Bis zu drei bewertete Notizen auswählen. Gezeigt wird die Endbewertung, sonst der Mittelwert eurer Einzelbewertungen.</p>
       <div class="segmented wrap" role="group" aria-label="Notizen auswählen">
         <button v-for="i in vergleichbar" :key="i.id" type="button" :aria-pressed="auswahl.includes(i.id)" @click="toggleAuswahl(i.id)">{{ i.title || 'Ohne Titel' }}</button>
@@ -241,6 +243,7 @@ function stern(idea) {
         </div>
       </template>
     </template>
+    <MeetingList v-else-if="ansicht === 'meetings'" />
   </main>
 </template>
 
@@ -249,7 +252,7 @@ function stern(idea) {
 .ki-btn { min-height: 36px; padding: 0 12px; font-size: 14px; border-color: var(--accent); color: var(--accent); }
 .block { display: block; }
 p { margin: 0; }
-.tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: var(--chip); max-width: 480px; }
+.tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: var(--chip); max-width: 560px; }
 .tabs button { height: 38px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-weight: 500; cursor: pointer; }
 .tabs button[aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
 .segmented.wrap { flex-wrap: wrap; }

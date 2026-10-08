@@ -135,6 +135,16 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Pilot-Feedback | Notiz → **Pilot-Feedback**: Gespräche und Tests mit Problemstärke, Kaufinteresse, Zahlungsbereitschaft, Zitat und Erkenntnissen. |
 | Entscheidungen | **Plan → Entscheidungen**: wer hat wann was entschieden und warum. Phasenwechsel und Parken landen automatisch im Protokoll. Ändern und löschen kann nur, wer den Eintrag angelegt hat. |
 
+### Besprechungen testen
+
+| Was | So testet ihr es |
+|---|---|
+| Anlegen | **Gedanken & Notizen → Meetings → Neue Besprechung**: Titel, Datum, Uhrzeit, Ort, wer dabei war, Gäste. |
+| Tagesordnung | Punkte hinzufügen, je Punkt **Notiz** und **Ergebnis** eintragen, mit den Pfeilen umsortieren. Punkte ohne Ergebnis haben links einen gelben Rand, erledigte einen farbigen. |
+| Aufgaben und Entscheidungen | Am Punkt **+ Aufgabe** (erscheint auch unter Plan → Aufgaben) oder **+ Entscheidung** (übernimmt Ergebnis und Notiz ins Entscheidungsprotokoll; geht erst, wenn ein Ergebnis drinsteht). |
+| Offene Punkte übernehmen | Neue Besprechung anlegen → oben erscheint **Offene Punkte übernehmen**, wenn die vorige Besprechung Punkte ohne Ergebnis hat. Übernommene Punkte zeigen, woher sie stammen. |
+| Live | Beide in derselben Besprechung: Änderungen des anderen erscheinen, sobald er ein Feld verlässt. |
+
 ---
 
 ## Teil C – Updates
