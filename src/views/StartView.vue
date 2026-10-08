@@ -1,16 +1,13 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { addIdea, addNote, currentPhase, heute, neuigkeiten, newNotes, partner, state, toast } from '../lib/store.js';
+import { addNote, currentPhase, heute, neuigkeiten, newNotes, partner, state, toast } from '../lib/store.js';
 import { relativ } from '../lib/format.js';
 import ZLogo from '../components/ZLogo.vue';
 import Icon from '../components/Icon.vue';
 import SyncStatus from '../components/SyncStatus.vue';
 
 const text = ref('');
-const mode = ref('notiz');
-const fieldId = ref('');
 const area = ref(null);
-const fields = computed(() => state.fields.filter((f) => !f.archived));
 const neueNotizen = computed(() => newNotes());
 const neu = computed(() => {
   const items = neuigkeiten();
@@ -35,11 +32,9 @@ onMounted(() => {
 
 function save() {
   if (!text.value.trim()) return;
-  if (mode.value === 'idee') addIdea({ text: text.value, searchFieldId: fieldId.value });
-  else addNote(text.value);
+  addNote(text.value);
   text.value = '';
-  const was = mode.value === 'idee' ? 'Idee' : 'Notiz';
-  toast(state.online ? `${was} gespeichert` : 'Offline gespeichert – wird später abgeglichen');
+  toast(state.online ? 'Notiz gespeichert' : 'Offline gespeichert – wird später abgeglichen');
 }
 </script>
 
@@ -55,20 +50,14 @@ function save() {
 
   <main class="page start">
     <section class="card stack capture">
-      <div class="row between">
-        <label for="start-text" class="title">Was ist dir eingefallen?</label>
-        <div class="segmented" role="group" aria-label="Art">
-          <button type="button" :aria-pressed="mode === 'notiz'" @click="mode = 'notiz'">Notiz</button>
-          <button type="button" :aria-pressed="mode === 'idee'" @click="mode = 'idee'">Idee</button>
-        </div>
-      </div>
+      <label for="start-text" class="title">Was ist dir eingefallen?</label>
       <textarea
         id="start-text"
         ref="area"
         v-model="text"
         class="textarea"
         rows="4"
-        :placeholder="mode === 'idee' ? 'Idee kurz beschreiben … Die erste Zeile wird zum Titel.' : 'Gedanken festhalten …'"
+        placeholder="Gedanken festhalten …"
         @keydown.enter.meta.prevent="save"
         @keydown.enter.ctrl.prevent="save"
       ></textarea>
@@ -78,14 +67,7 @@ function save() {
         <span v-else>Diktieren: Mikrofon auf der Tastatur</span>
       </p>
       <div class="row">
-        <label v-if="mode === 'idee'" class="field grow">
-          <span>Suchfeld</span>
-          <select v-model="fieldId" class="select">
-            <option value="">– ohne –</option>
-            <option v-for="f in fields" :key="f.id" :value="f.id">{{ f.name }}</option>
-          </select>
-        </label>
-        <span v-else class="grow"></span>
+        <span class="grow"></span>
         <button class="btn primary save" type="button" :disabled="!text.trim()" @click="save">Speichern</button>
       </div>
     </section>

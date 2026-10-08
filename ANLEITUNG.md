@@ -88,7 +88,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 | Was | So testet ihr es |
 |---|---|
-| Schnellerfassung | Auf der Startseite oder über das **Plus** eine Notiz festhalten. Mit dem Umschalter **Idee** wird stattdessen eine Idee daraus (erste Zeile = Titel). |
+| Schnellerfassung | Auf der Startseite oder über das **Plus** eine Notiz festhalten. Ideen legt ihr unter **Gedanken & Ideen → +** an (erste Zeile = Titel). |
 | Diktat | iPhone: Mikrofon auf der Tastatur. Windows: im Textfeld **Windows-Taste + H**. |
 | Live-Abgleich | Beide gleichzeitig in Zwerg: Eine neue Idee des einen erscheint beim anderen sofort. |
 | „Neu“-Markierung | Neue Ideen und Kommentare des anderen stehen auf der Startseite unter „Neu von …“ und tragen ein **neu**-Schild, bis man die Idee öffnet. |
@@ -142,7 +142,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Notiz festhalten | **Plus** antippen, Gedanken eintippen oder diktieren, **Speichern**. Notizen sind für euch beide sichtbar. |
 | Notizen ansehen | Unten **Notizen**: Angeheftete oben, sonst die neuesten zuerst. Neue Notizen des anderen tragen ein **neu**-Schild und stehen auf der Startseite unter „Neu von …“. |
 | Bearbeiten | Notiz antippen → Text ändern, **Anheften**, **Zur Idee machen** (legt eine Idee an, die Notiz bleibt und verweist darauf) oder löschen. |
-| Neue Idee direkt | **Gedanken & Ideen → +** oben rechts, oder im Plus-Fenster auf **Idee** umschalten. |
+| Neue Idee direkt | **Gedanken & Ideen → +** oben rechts,. |
 | Einstellungen | Am Handy über euren Kürzel-Kreis oben rechts auf der Startseite, am Laptop in der Seitenleiste. |
 
 ### Besprechungen testen

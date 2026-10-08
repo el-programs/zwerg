@@ -1,5 +1,5 @@
 <script setup>
-// Schnellerfassung hinter dem Plus-Knopf: standardmäßig eine Notiz, umschaltbar auf eine Idee. Das Textfeld ist immer vorhanden und wird direkt
+// Schnellerfassung: das Plus legt immer eine Notiz an; aus „Gedanken & Ideen“ heraus eine Idee. Das Textfeld ist immer vorhanden und wird direkt
 // beim Antippen fokussiert – nur so öffnet das iPhone sofort die Tastatur (mit Diktat-Mikrofon).
 import { computed, ref } from 'vue';
 import { addIdea, addNote, state, toast } from '../lib/store.js';
@@ -56,10 +56,7 @@ defineExpose({ open });
   <div class="backdrop" :class="{ open: isOpen }" @click="close"></div>
   <section ref="sheet" class="sheet" :class="{ open: isOpen }" inert style="visibility: hidden" aria-label="Schnellerfassung" @keydown="onKey">
     <div class="head">
-      <div class="segmented" role="group" aria-label="Art">
-        <button type="button" :aria-pressed="mode === 'notiz'" @click="mode = 'notiz'; area.focus()">Notiz</button>
-        <button type="button" :aria-pressed="mode === 'idee'" @click="mode = 'idee'; area.focus()">Idee</button>
-      </div>
+      <h2>{{ mode === 'idee' ? 'Neue Idee' : 'Neue Notiz' }}</h2>
       <button class="icon-btn" type="button" aria-label="Schließen" @click="close"><Icon name="close" /></button>
     </div>
     <label class="visually-hidden" for="qc-text">{{ mode === 'idee' ? 'Idee' : 'Notiz' }}</label>
