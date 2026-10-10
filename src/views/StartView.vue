@@ -1,7 +1,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { addNote, currentPhase, heute, neuigkeiten, newNotes, partner, state, toast } from '../lib/store.js';
-import { relativ } from '../lib/format.js';
+import { datum, relativ } from '../lib/format.js';
+import { rankedIdeas } from '../lib/score.js';
 import ZLogo from '../components/ZLogo.vue';
 import Icon from '../components/Icon.vue';
 import SyncStatus from '../components/SyncStatus.vue';
@@ -21,6 +22,10 @@ const meineAufgaben = computed(() => state.tasks.filter((t) => t.status !== 'erl
 const ueberfaellig = computed(() => meineAufgaben.value.filter((t) => t.due_date && t.due_date < heute()).length);
 const favoriten = computed(() => state.ideas.filter((i) => i.is_favorite && i.status !== 'geparkt').length);
 const anderer = computed(() => partner());
+const top = computed(() => rankedIdeas().bewertet.slice(0, 3));
+const naechste = computed(() =>
+  [...meineAufgaben.value].sort((a, b) => ((a.due_date ?? '9') < (b.due_date ?? '9') ? -1 : 1)).slice(0, 3),
+);
 const isWindows = /Windows/.test(navigator.userAgent);
 const stunde = new Date().getHours();
 const gruss = stunde < 11 ? 'Guten Morgen' : stunde < 18 ? 'Guten Tag' : 'Guten Abend';
@@ -93,6 +98,29 @@ function save() {
       </router-link>
     </section>
 
+    <section v-if="top.length" class="stack">
+      <div class="row between">
+        <h2>Beste Ideen</h2>
+        <router-link to="/ideen?ansicht=ranking" class="small more">Ranking</router-link>
+      </div>
+      <router-link v-for="(r, n) in top" :key="r.idea.id" :to="`/idee/${r.idea.id}`" class="card line">
+        <span class="pos">{{ n + 1 }}</span>
+        <span class="grow ellipsis">{{ r.idea.title || 'Ohne Titel' }}<template v-if="r.idea.is_favorite"> ★</template></span>
+        <strong>{{ r.result.score }}</strong>
+      </router-link>
+    </section>
+
+    <section v-if="naechste.length" class="stack">
+      <div class="row between">
+        <h2>Als Nächstes</h2>
+        <router-link to="/phasen?tab=aufgaben" class="small more">Alle Aufgaben</router-link>
+      </div>
+      <router-link v-for="t in naechste" :key="t.id" to="/phasen?tab=aufgaben" class="card line">
+        <span class="grow ellipsis">{{ t.title }}</span>
+        <span class="small" :class="t.due_date && t.due_date < heute() ? 'late' : 'muted'">{{ t.due_date ? datum(t.due_date) : 'ohne Datum' }}</span>
+      </router-link>
+    </section>
+
     <section class="tiles">
       <router-link to="/ideen" class="card tile">
         <span class="small muted">Gedanken &amp; Ideen</span>
@@ -136,6 +164,10 @@ function save() {
 .news { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; padding: 12px 14px; }
 .news .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
 .news-title { display: block; font-weight: 500; }
+.line { display: flex; align-items: center; gap: 12px; padding: 11px 14px; text-decoration: none; color: inherit; }
+.pos { width: 18px; color: var(--muted); font-weight: 600; text-align: center; }
+.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.more { color: var(--accent); text-decoration: none; }
 .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .tile { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: inherit; }
 .big { font-size: 24px; font-weight: 600; }

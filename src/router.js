@@ -14,6 +14,7 @@ import FeedbackView from './views/FeedbackView.vue';
 import KiSuggestView from './views/KiSuggestView.vue';
 import MeetingView from './views/MeetingView.vue';
 import NotesView from './views/NotesView.vue';
+import ReportView from './views/ReportView.vue';
 
 // Hash-Adressen (#/ideen …), damit die App auf GitHub Pages ohne Server-Regeln läuft.
 export const router = createRouter({
@@ -22,6 +23,8 @@ export const router = createRouter({
     { path: '/', name: 'start', component: StartView },
     { path: '/ideen', name: 'ideen', component: IdeasView },
     { path: '/notizen', name: 'notizen', component: NotesView },
+    { path: '/bericht', name: 'bericht', component: ReportView, meta: { nav: false } },
+    { path: '/bericht/idee/:id', name: 'steckbrief', component: ReportView, meta: { nav: false } },
     { path: '/notizen/besprechung/:id', name: 'besprechung', component: MeetingView },
     { path: '/idee/:id/bewertung', name: 'bewertung', component: RatingView },
     { path: '/idee/:id/ki', name: 'ki', component: KiView },

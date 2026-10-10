@@ -5,10 +5,22 @@ import ListEditor from '../components/ListEditor.vue';
 import KiSettings from '../components/KiSettings.vue';
 import { AKZENTE, relativ } from '../lib/format.js';
 import Icon from '../components/Icon.vue';
+import { excelExport } from '../lib/export.js';
 
 const error = ref('');
 // eslint-disable-next-line no-undef
 const version = __ZWERG_VERSION__;
+const exportLaeuft = ref(false);
+async function exportieren() {
+  exportLaeuft.value = true;
+  try {
+    await excelExport();
+  } catch (e) {
+    error.value = `Export fehlgeschlagen: ${e.message}`;
+  } finally {
+    exportLaeuft.value = false;
+  }
+}
 const modes = [
   { id: 'system', label: 'System' },
   { id: 'hell', label: 'Hell' },
@@ -174,6 +186,15 @@ function abmelden() {
     </section>
 
     <KiSettings @error="error = $event" />
+
+    <section class="stack">
+      <h2 class="section-title">Export &amp; Berichte</h2>
+      <p class="small muted">Alles als Excel-Datei (Ideen, Bewertungen, Business Cases, Aufgaben, Entscheidungen, Pilot-Feedback, Notizen, Meetings) oder als PDF-Bericht, z. B. für Bank oder Steuerberater. Den Steckbrief einer Idee findet ihr in der Idee ganz unten.</p>
+      <div class="row wrap">
+        <button class="btn" type="button" :disabled="exportLaeuft" @click="exportieren">{{ exportLaeuft ? 'Wird erstellt …' : 'Excel-Export' }}</button>
+        <router-link to="/bericht" class="btn">Projektbericht (PDF)</router-link>
+      </div>
+    </section>
 
     <section class="stack">
       <h2 class="section-title">Konto</h2>

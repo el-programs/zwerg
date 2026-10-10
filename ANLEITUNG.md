@@ -156,6 +156,15 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Offene Punkte übernehmen | Neue Besprechung anlegen → oben erscheint **Offene Punkte übernehmen**, wenn die vorige Besprechung Punkte ohne Ergebnis hat. Übernommene Punkte zeigen, woher sie stammen. |
 | Live | Beide in derselben Besprechung: Änderungen des anderen erscheinen, sobald er ein Feld verlässt. |
 
+### Etappe 5 testen
+
+| Was | So testet ihr es |
+|---|---|
+| Übersicht | Startseite: Neues vom anderen, **Beste Ideen** (Top 3 aus dem Ranking), **Als Nächstes** (deine nächsten Aufgaben, Überfälliges rot) und die Kacheln. |
+| Projektbericht (PDF) | **Einstellungen → Export & Berichte → Projektbericht**: Phasen mit Abschlusskriterien, Ranking, Gewichtung, Entscheidungen, offene Aufgaben, Parkplatz. **Als PDF speichern** öffnet den Druckdialog: am Laptop „Als PDF speichern“ wählen, am iPhone im Druckfenster über das Teilen-Symbol „In Dateien sichern“. |
+| Steckbrief (PDF) | In einer Idee ganz unten **Steckbrief (PDF)**: Beschreibung, Bewertung je Faktor, Business Case mit drei Szenarien, Pilot-Feedback, Entscheidungen, Aufgaben – z. B. für Bank oder Steuerberater. |
+| Excel-Export | **Einstellungen → Export & Berichte → Excel-Export**: eine Datei mit den Blättern Ideen, Bewertungen, Business Case, Aufgaben, Entscheidungen, Pilot-Feedback, Notizen und Meetings. Am iPhone öffnet sich das Teilen-Menü (z. B. „In Dateien sichern“ oder per Mail). |
+
 ---
 
 ## Teil C – Updates

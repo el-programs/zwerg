@@ -100,3 +100,14 @@ export const RESULT_LABEL = {
   teilweise: 'erst eine Bewertung',
   offen: 'noch nicht bewertet',
 };
+
+// Aktive Ideen mit Ergebnis, die bewerteten nach Punkten sortiert (ohne KO), dahinter KO und offene.
+export function rankedIdeas() {
+  const rows = state.ideas.filter((i) => i.status !== 'geparkt').map((idea) => ({ idea, result: ideaResult(idea.id) }));
+  const bewertet = rows.filter((r) => r.result.score !== null && !r.result.ko).sort((a, b) => b.result.score - a.result.score);
+  return {
+    bewertet,
+    ko: rows.filter((r) => r.result.ko),
+    offen: rows.filter((r) => r.result.score === null && !r.result.ko),
+  };
+}

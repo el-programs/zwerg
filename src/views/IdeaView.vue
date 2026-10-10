@@ -337,6 +337,7 @@ watch(
     </section>
 
     <section class="danger-zone row wrap">
+      <router-link :to="`/bericht/idee/${idea.id}`" class="btn">Steckbrief (PDF)</router-link>
       <button v-if="idea.status !== 'geparkt'" class="btn" type="button" @click="parken">Auf den Parkplatz</button>
       <button class="btn danger" type="button" @click="removeIdea"><Icon name="trash" :size="18" />Idee löschen</button>
     </section>
