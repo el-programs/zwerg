@@ -93,7 +93,7 @@ defineExpose({ open });
       v-model="text"
       class="textarea"
       rows="5"
-      :placeholder="mode === 'idee' ? 'Idee kurz beschreiben … Die erste Zeile wird zum Titel.' : 'Gedanken festhalten …'"
+      :placeholder="mode === 'idee' ? 'Idee kurz beschreiben … Die erste Zeile wird zum Titel.' : 'Notiz schreiben …'"
     ></textarea>
     <p class="hint small muted">
       <Icon name="mic" :size="16" />

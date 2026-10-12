@@ -62,7 +62,7 @@ function save() {
         v-model="text"
         class="textarea"
         rows="4"
-        placeholder="Gedanken festhalten …"
+        placeholder="Notiz schreiben …"
         @keydown.enter.meta.prevent="save"
         @keydown.enter.ctrl.prevent="save"
       ></textarea>
