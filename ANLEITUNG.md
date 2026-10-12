@@ -88,7 +88,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 | Was | So testet ihr es |
 |---|---|
-| Schnellerfassung | Auf der Startseite oder über das **Plus** eine Notiz festhalten. Ideen legt ihr unter **Gedanken & Ideen → +** an (erste Zeile = Titel). |
+| Schnellerfassung | Auf der Startseite oder über das **Plus** eine Notiz festhalten. Ideen legt ihr unter **Geschäftsideen → +** an (erste Zeile = Titel). |
 | Diktat | iPhone: Mikrofon auf der Tastatur. Windows: im Textfeld **Windows-Taste + H**. |
 | Live-Abgleich | Beide gleichzeitig in Zwerg: Eine neue Idee des einen erscheint beim anderen sofort. |
 | „Neu“-Markierung | Neue Ideen und Kommentare des anderen stehen auf der Startseite unter „Neu von …“ und tragen ein **neu**-Schild, bis man die Idee öffnet. |
@@ -104,12 +104,12 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 | Was | So testet ihr es |
 |---|---|
-| Gewichtung | **Gedanken & Ideen → Ranking → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
+| Gewichtung | **Geschäftsideen → Ranking → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
 | Bewertung | Idee öffnen → **Bewertung**. Jeder bewertet alle Faktoren 1–5 (5 = gut für uns) und markiert ggf. KO-Kriterien. Die Werte des anderen bleiben verborgen, bis man selbst abgegeben hat – das prüft die Datenbank. |
 | Vergleich & Endbewertung | Nach beiden Abgaben: Abweichungen ab 2 Punkten sind hervorgehoben. Gemeinsame Punkte wählen (oder Mittelwerte übernehmen), KO gemeinsam festlegen, **Endbewertung festlegen**. |
-| Ranking | **Gedanken & Ideen → Ranking**: sortiert nach Punkten (0–100). „vorläufig“ = Mittel der Einzelbewertungen. KO-Ideen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
-| Vergleich | **Gedanken & Ideen → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
-| Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Gedanken & Ideen → Liste → Parkplatz** jederzeit reaktivieren. |
+| Ranking | **Geschäftsideen → Ranking**: sortiert nach Punkten (0–100). „vorläufig“ = Mittel der Einzelbewertungen. KO-Ideen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
+| Vergleich | **Geschäftsideen → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
+| Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Geschäftsideen → Liste → Parkplatz** jederzeit reaktivieren. |
 | Faktoren & KO-Kriterien | **Einstellungen → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |
 
 ### Etappe 3 testen (nach Teil E)
@@ -117,7 +117,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Was | So testet ihr es |
 |---|---|
 | Stufe je Person | **Einstellungen → KI-Unterstützung**: Aus / Nur auf Anfrage / Aktiv mit Hinweisen. Bei „Aus“ verschwinden alle KI-Knöpfe für diese Person. |
-| Ideen vorschlagen | **Gedanken & Ideen → KI-Vorschläge**: Suchfeld wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Idee übernehmen“. |
+| Ideen vorschlagen | **Geschäftsideen → KI-Vorschläge**: Suchfeld wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Idee übernehmen“. |
 | Kritische Einschätzung | Idee öffnen → **KI-Sparring → Einschätzung**. Getrennt nach Fakten, Schätzungen, Annahmen, mit Bewertungsvorschlag je Faktor (klar als KI-Vorschlag markiert, fließt nicht in eure Wertung ein). |
 | Marktrecherche | **KI-Sparring → Recherche**, optional mit eigener Frage. Ergebnis mit Quellenliste. |
 | Chat | **KI-Sparring → Chat**: Sparring zur Idee, für beide sichtbar. |
@@ -142,7 +142,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Notiz festhalten | **Plus** antippen, Gedanken eintippen oder diktieren, **Speichern**. Notizen sind für euch beide sichtbar. |
 | Notizen ansehen | Unten **Notizen**: Angeheftete oben, sonst die neuesten zuerst. Neue Notizen des anderen tragen ein **neu**-Schild und stehen auf der Startseite unter „Neu von …“. |
 | Bearbeiten | Notiz antippen → Text ändern, **Anheften**, **Zur Idee machen** (legt eine Idee an, die Notiz bleibt und verweist darauf) oder löschen. |
-| Neue Idee direkt | **Gedanken & Ideen → +** oben rechts,. |
+| Neue Idee direkt | **Geschäftsideen → +** oben rechts,. |
 | Einstellungen | Am Handy über euren Kürzel-Kreis oben rechts auf der Startseite, am Laptop in der Seitenleiste. |
 
 ### Besprechungen testen

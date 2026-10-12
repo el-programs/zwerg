@@ -116,7 +116,7 @@ function stern(idea) {
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <h1 class="grow">Gedanken &amp; Ideen</h1>
+      <h1 class="grow">Geschäftsideen</h1>
       <button class="icon-btn" type="button" aria-label="Neue Idee" title="Neue Idee" @click="openCapture('idee')"><Icon name="plus" /></button>
       <router-link v-if="kiSichtbar && ansicht === 'liste'" to="/ki/vorschlaege" class="btn ki-btn">KI-Vorschläge</router-link>
       <button v-if="ansicht === 'liste'" class="icon-btn" type="button" :aria-pressed="sucheOffen" aria-label="Suchen" @click="sucheOffen = !sucheOffen"><Icon name="search" /></button>
@@ -152,7 +152,7 @@ function stern(idea) {
           <IdeaCard v-for="i in liste" :key="i.id" :idea="i" />
         </template>
         <p v-if="!liste.length" class="empty">
-          {{ filter === 'parkplatz' ? 'Der Parkplatz ist leer.' : state.ideas.length ? 'Keine Idee passt zu diesem Filter.' : 'Noch keine Ideen. Tippe auf das Plus, um die erste zu notieren.' }}
+          {{ filter === 'parkplatz' ? 'Der Parkplatz ist leer.' : state.ideas.length ? 'Keine Idee passt zu diesem Filter.' : 'Noch keine Geschäftsideen. Tippe oben rechts auf das +, um die erste anzulegen.' }}
         </p>
       </div>
     </template>

@@ -123,7 +123,7 @@ function save() {
 
     <section class="tiles">
       <router-link to="/ideen" class="card tile">
-        <span class="small muted">Gedanken &amp; Ideen</span>
+        <span class="small muted">Geschäftsideen</span>
         <span class="big">{{ aktive }}</span>
         <span v-if="favoriten" class="small muted">davon {{ favoriten }} Favorit{{ favoriten > 1 ? 'en' : '' }}</span>
       </router-link>
