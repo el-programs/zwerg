@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  addComment, commentsOf, deleteComment, deleteIdea, markSeen, newComments, parkIdea, partner, profile, setFavorite,
+  addComment, commentsOf, currentPhase, deleteComment, deleteIdea, markSeen, newComments, parkIdea, partner, profile, setFavorite,
   setIdeaPhase, state, toast, unparkIdea, updateIdea,
 } from '../lib/store.js';
 import { hasSubmittedRating, ideaResult, RESULT_LABEL } from '../lib/score.js';
@@ -212,10 +212,11 @@ watch(
         </template>
       </p>
       <label class="row wrap phase-row">
-        <span class="small muted">Phase der Idee</span>
+        <span class="small muted">Diese Idee steht in</span>
         <select class="select phase-select" :value="idea.phase" @change="setIdeaPhase(idea.id, Number($event.target.value))">
           <option v-for="p in PHASEN" :key="p.nr" :value="p.nr">{{ p.nr }} · {{ state.phases.find((x) => x.nr === p.nr)?.name ?? phaseName(p.nr) }}</option>
         </select>
+        <span v-if="idea.phase !== currentPhase()" class="small muted">Projekt: Phase {{ currentPhase() }}</span>
       </label>
     </section>
 

@@ -129,7 +129,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Was | So testet ihr es |
 |---|---|
 | Phasen | **Plan → Phasen**: Ziel, Ergebnis, Hinweise und Abschlusskriterien je Phase. Kriterien abhaken, über **Bearbeiten** Texte und Kriterien ändern. **In Phase X wechseln** fragt nach einer Begründung und protokolliert den Wechsel. Nichts wird erzwungen. |
-| Phase je Idee | In der Idee oben **Phase der Idee** wählen (wird ebenfalls protokolliert). |
+| Phase je Idee | In der Idee oben **Diese Idee steht in …** wählen (wird ebenfalls protokolliert). Das ist der Stand der einzelnen Idee – unabhängig von der Projektphase unter Plan. |
 | Aufgaben | **Plan → Aufgaben** oder in der Idee unter **Aufgaben**: mit Zuständigkeit, Fälligkeit, Status, Idee und Phase. Überfällige stehen oben in Rot; auf der Startseite steht „Meine Aufgaben“. |
 | Business Case | Idee → **Business Case**: Investition, Fixkosten, variable Kosten, Preis und Absatz je Szenario (vorsichtig/realistisch/optimistisch) → Umsatz, Marge, Ergebnis, Break-even, Amortisation. |
 | Pilot-Feedback | Idee → **Pilot-Feedback**: Gespräche und Tests mit Problemstärke, Kaufinteresse, Zahlungsbereitschaft, Zitat und Erkenntnissen. |

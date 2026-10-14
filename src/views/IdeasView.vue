@@ -9,6 +9,7 @@ import { datum } from '../lib/format.js';
 import IdeaCard from '../components/IdeaCard.vue';
 import RadarChart from '../components/RadarChart.vue';
 import Icon from '../components/Icon.vue';
+import MeLink from '../components/MeLink.vue';
 import { kiSichtbar } from '../lib/ki.js';
 
 const openCapture = inject('openCapture');
@@ -120,6 +121,7 @@ function stern(idea) {
       <button class="icon-btn" type="button" aria-label="Neue Idee" title="Neue Idee" @click="openCapture('idee')"><Icon name="plus" /></button>
       <router-link v-if="kiSichtbar && ansicht === 'liste'" to="/ki/vorschlaege" class="btn ki-btn">KI-Vorschläge</router-link>
       <button v-if="ansicht === 'liste'" class="icon-btn" type="button" :aria-pressed="sucheOffen" aria-label="Suchen" @click="sucheOffen = !sucheOffen"><Icon name="search" /></button>
+      <MeLink />
     </div>
   </header>
   <main class="page">

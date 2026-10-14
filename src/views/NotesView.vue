@@ -2,10 +2,11 @@
 // Notizen: schnell festgehaltene Gedanken (für beide sichtbar) und Besprechungen.
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { deleteNote, markNotesSeen, noteToIdea, profile, state, toast, updateNote } from '../lib/store.js';
+import { deleteNote, markNotesSeen, notesSeenAt, noteToIdea, profile, state, toast, updateNote } from '../lib/store.js';
 import { relativ } from '../lib/format.js';
 import MeetingList from '../components/MeetingList.vue';
 import Icon from '../components/Icon.vue';
+import MeLink from '../components/MeLink.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -13,7 +14,7 @@ const ansicht = ref(route.query.ansicht === 'meetings' ? 'meetings' : 'notizen')
 watch(ansicht, (a) => router.replace({ query: a === 'notizen' ? {} : { ansicht: a } }));
 
 // Was beim Öffnen neu war, bleibt während des Besuchs markiert.
-const gesehenBis = state.notesSeen;
+const gesehenBis = notesSeenAt();
 markNotesSeen();
 onBeforeUnmount(markNotesSeen);
 
@@ -54,6 +55,7 @@ function ideaTitle(id) {
   <header class="topbar">
     <div class="topbar-inner">
       <h1 class="grow">Notizen</h1>
+      <MeLink />
     </div>
   </header>
   <main class="page">

@@ -6,6 +6,7 @@ import { currentPhase, profile, setCurrentPhase, state, toast, toggleCriterion, 
 import TaskList from '../components/TaskList.vue';
 import DecisionList from '../components/DecisionList.vue';
 import Icon from '../components/Icon.vue';
+import MeLink from '../components/MeLink.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -70,7 +71,7 @@ function wechseln(p) {
 
 <template>
   <header class="topbar">
-    <div class="topbar-inner"><h1>Plan</h1></div>
+    <div class="topbar-inner"><h1 class="grow">Plan</h1><MeLink /></div>
   </header>
   <main class="page">
     <div class="tabs" role="tablist" aria-label="Bereich">
@@ -78,7 +79,7 @@ function wechseln(p) {
     </div>
 
     <template v-if="tab === 'phasen'">
-      <p class="small muted">Die App führt durch die Phasen, erzwingt aber nichts. Ziele, Ergebnisse, Hinweise und Abschlusskriterien sind bearbeitbar.</p>
+      <p class="small muted">„aktuell“ ist die Phase, in der euer <strong>Projekt</strong> gerade steht. Jede Idee hat zusätzlich ihren eigenen Stand – eine Idee kann schon geprüft werden, während ihr noch sammelt. Die App führt durch die Phasen, erzwingt aber nichts; alle Texte und Kriterien sind bearbeitbar.</p>
       <ol class="phasen">
         <li v-for="p in state.phases" :key="p.nr" class="card phase" :class="{ current: p.nr === aktuell }">
           <button class="phase-head" type="button" :aria-expanded="offen === p.nr" @click="offen = offen === p.nr ? null : p.nr">

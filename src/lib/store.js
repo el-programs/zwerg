@@ -43,7 +43,6 @@ export const state = reactive({
   meetings: [],
   meetingItems: [],
   notes: [],
-  notesSeen: readNotesSeen(),
   outbox: [],
   online: navigator.onLine,
   syncing: false,
@@ -962,14 +961,22 @@ export function carryOverOpenItems(meetingId) {
 // Schnellnotizen
 // ---------------------------------------------------------------------------
 
+// Bis wann die Notizen gelesen sind, steht im eigenen Profil – so gilt es für alle Geräte.
+// Ältere Geräte hatten den Wert nur lokal; der spätere von beiden zählt.
 const NOTES_SEEN_KEY = 'zwerg-notizen-gesehen';
 
-function readNotesSeen() {
+function lokalGesehen() {
   try {
-    return localStorage.getItem('zwerg-notizen-gesehen') ?? ''; // läuft vor NOTES_SEEN_KEY
+    return localStorage.getItem(NOTES_SEEN_KEY) ?? '';
   } catch {
     return '';
   }
+}
+
+export function notesSeenAt() {
+  const server = state.me?.notes_seen_at ?? '';
+  const lokal = lokalGesehen();
+  return server > lokal ? server : lokal;
 }
 
 export function addNote(body) {
@@ -1006,14 +1013,20 @@ export function noteToIdea(id) {
 
 // Notizen des anderen, die seit dem letzten Blick in die Notizen dazugekommen sind.
 export function newNotes() {
-  return state.notes.filter((n) => n.created_by !== state.me?.id && n.created_at > state.notesSeen);
+  const seit = notesSeenAt();
+  return state.notes.filter((n) => n.created_by !== state.me?.id && n.created_at > seit);
 }
 
 export function markNotesSeen() {
-  state.notesSeen = now();
+  if (!state.me) return;
+  const at = now();
+  state.me = { ...state.me, notes_seen_at: at };
+  upsertLocal('profiles', { id: state.me.id, notes_seen_at: at });
+  saveCache();
+  enqueue({ op: 'update', table: 'profiles', id: state.me.id, patch: { notes_seen_at: at } });
   try {
-    localStorage.setItem(NOTES_SEEN_KEY, state.notesSeen);
+    localStorage.setItem(NOTES_SEEN_KEY, at);
   } catch {
-    // Ohne Speicher bleibt die Markierung bis zum Neuladen.
+    // Ohne lokalen Speicher genügt der Wert im Profil.
   }
 }
