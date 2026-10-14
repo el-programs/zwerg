@@ -147,7 +147,7 @@ async function ideaContext(ideaId: string) {
     text: [
       `Titel: ${idea.title || '(ohne Titel)'}`,
       `Beschreibung: ${idea.description || '(keine)'}`,
-      field ? `Suchfeld: ${field.name}` : '',
+      field ? `Branche: ${field.name}` : '',
       idea.tags?.length ? `Schlagworte: ${idea.tags.join(', ')}` : '',
       links ? `Links:\n${links}` : '',
       comments.length ? `Bisherige Kommentare der Gründer:\n${comments.map((c: { body: string }) => `- ${c.body}`).join('\n')}` : '',
@@ -226,7 +226,7 @@ const actions: Record<string, (body: any, req: Request) => Promise<unknown>> = {
         system: HALTUNG,
         messages: [{
           role: 'user',
-          content: `Schlage 6 unterschiedliche, konkrete Geschäftsideen vor${field ? ` aus dem Suchfeld „${field.name}“` : ''}.
+          content: `Schlage 6 unterschiedliche, konkrete Geschäftsideen vor${field ? ` aus der Branche „${field.name}“` : ''}.
 Rahmen: nebenberuflich startbar, geringes Anfangsrisiko, mit echten Kunden günstig testbar, Standort Süddeutschland.
 ${hint ? `Zusätzliche Hinweise der Gründer: ${hint}\n` : ''}Diese Ideen gibt es schon (nicht wiederholen): ${existing.map((i: { title: string }) => i.title).filter(Boolean).join('; ') || 'keine'}.
 Je Idee: Titel (kurz), Beschreibung (2–3 Sätze), warum es passen könnte, der größte Haken, ein erster günstiger Test.`,

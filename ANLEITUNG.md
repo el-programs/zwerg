@@ -93,9 +93,9 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Live-Abgleich | Beide gleichzeitig in Zwerg: Eine neue Idee des einen erscheint beim anderen sofort. |
 | „Neu“-Markierung | Neue Ideen und Kommentare des anderen stehen auf der Startseite unter „Neu von …“ und tragen ein **neu**-Schild, bis man die Idee öffnet. |
 | Kommentare | Idee öffnen → unten kommentieren. Eigene Kommentare lassen sich löschen. |
-| Ideen bearbeiten | Titel, Beschreibung, Suchfeld, Schlagworte und Links direkt in der Idee ändern – wird beim Verlassen des Feldes gespeichert. |
+| Ideen bearbeiten | Titel, Beschreibung, Branche, Schlagworte und Links direkt in der Idee ändern – wird beim Verlassen des Feldes gespeichert. |
 | Offline | iPhone in den Flugmodus, Idee erfassen („Offline gespeichert“), Flugmodus aus → die Idee wird automatisch abgeglichen. |
-| Suchfelder | **Einstellungen → Suchfelder**: umbenennen, sortieren, archivieren, neu anlegen. |
+| Branchen | **Einstellungen → Branchen**: die NACE-Abschnitte A–V mit Sektor; umbenennen, sortieren, archivieren, neu anlegen. |
 | Darstellung | **Einstellungen → Darstellung**: System/Hell/Dunkel und eure persönliche Akzentfarbe. |
 | Geräte | **Einstellungen → Geräte**: alle angemeldeten Geräte, einzeln sperrbar. |
 | Neues iPhone | **Einstellungen → Geräte → Link für …** erzeugt einen 24-Stunden-Einladungslink. |
@@ -117,7 +117,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Was | So testet ihr es |
 |---|---|
 | Stufe je Person | **Einstellungen → KI-Unterstützung**: Aus / Nur auf Anfrage / Aktiv mit Hinweisen. Bei „Aus“ verschwinden alle KI-Knöpfe für diese Person. |
-| Ideen vorschlagen | **Geschäftsideen → KI-Vorschläge**: Suchfeld wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Idee übernehmen“. |
+| Ideen vorschlagen | **Geschäftsideen → KI-Vorschläge**: Branche wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Idee übernehmen“. |
 | Kritische Einschätzung | Idee öffnen → **KI-Sparring → Einschätzung**. Getrennt nach Fakten, Schätzungen, Annahmen, mit Bewertungsvorschlag je Faktor (klar als KI-Vorschlag markiert, fließt nicht in eure Wertung ein). |
 | Marktrecherche | **KI-Sparring → Recherche**, optional mit eigener Frage. Ergebnis mit Quellenliste. |
 | Chat | **KI-Sparring → Chat**: Sparring zur Idee, für beide sichtbar. |

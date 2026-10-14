@@ -7,7 +7,8 @@ const props = defineProps({ idea: { type: Object, required: true } });
 const neu = computed(() => isNewIdea(props.idea) || newComments(props.idea).length > 0);
 const anzahl = computed(() => commentsOf(props.idea.id).length);
 const von = computed(() => profile(props.idea.created_by));
-const feld = computed(() => fieldName(props.idea.search_field_id));
+// Auf der Karte ohne Sektor, z. B. „C - Verarbeitendes Gewerbe“.
+const feld = computed(() => fieldName(props.idea.search_field_id).replace(/ - (Primär|Sekundär|Tertiär)$/, ''));
 const ergebnis = computed(() => ideaResult(props.idea.id));
 </script>
 
@@ -21,7 +22,7 @@ const ergebnis = computed(() => ideaResult(props.idea.id));
     </span>
     <span v-if="idea.description" class="desc small muted">{{ idea.description }}</span>
     <span class="meta small muted">
-      <span v-if="feld" class="chip">{{ feld }}</span>
+      <span v-if="feld" class="chip branche" :title="feld">{{ feld }}</span>
       <span v-if="isPending(idea.id)" class="chip outline">wartet auf Abgleich</span>
       <span class="grow"></span>
       <span>{{ anzahl === 1 ? '1 Kommentar' : `${anzahl} Kommentare` }}</span>
@@ -32,6 +33,7 @@ const ergebnis = computed(() => ideaResult(props.idea.id));
 
 <style scoped>
 .idea { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; }
+.branche { display: inline-block; min-width: 0; max-width: 48%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 24px; }
 .top { display: flex; align-items: flex-start; gap: 8px; }
 .title { flex: 1; font-weight: 600; font-size: 16px; line-height: 1.3; }
 .star { color: var(--warn); }

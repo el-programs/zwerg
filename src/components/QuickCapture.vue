@@ -80,7 +80,7 @@ defineExpose({ open });
       <button class="icon-btn" type="button" aria-label="Schließen" @click="close"><Icon name="close" /></button>
     </div>
     <label v-if="mode === 'idee'" class="field">
-      <span>Suchfeld</span>
+      <span>Branche</span>
       <select v-model="fieldId" class="select">
         <option value="">– ohne –</option>
         <option v-for="f in fields" :key="f.id" :value="f.id">{{ f.name }}</option>

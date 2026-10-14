@@ -58,7 +58,7 @@ function uebernehmen(run, v, i) {
 
     <div class="card stack">
       <label class="field">
-        <span>Suchfeld</span>
+        <span>Branche</span>
         <select v-model="fieldId" class="select">
           <option value="">– beliebig –</option>
           <option v-for="f in fields" :key="f.id" :value="f.id">{{ f.name }}</option>
@@ -74,7 +74,7 @@ function uebernehmen(run, v, i) {
 
     <section v-for="run in laeufe.slice(0, 3)" :key="run.id" class="stack">
       <p class="small muted">
-        {{ run.search_field_id ? fieldName(run.search_field_id) : 'Beliebiges Suchfeld' }} · {{ relativ(run.created_at) }} · {{ profile(run.created_by)?.name }}
+        {{ run.search_field_id ? fieldName(run.search_field_id) : 'Beliebige Branche' }} · {{ relativ(run.created_at) }} · {{ profile(run.created_by)?.name }}
         <template v-if="run.status === 'fertig'"> · ca. {{ euro(run.cost_eur) }}</template>
       </p>
       <div v-if="run.status === 'laeuft'" class="card working">Die KI überlegt … meist 20–60 Sekunden.</div>

@@ -168,9 +168,9 @@ function abmelden() {
     </section>
 
     <section class="stack">
-      <h2 class="section-title">Suchfelder</h2>
-      <p class="small muted">Gelten für euch beide. Archivierte Einträge bleiben an bestehenden Ideen erhalten.</p>
-      <ListEditor table="search_fields" placeholder="Neues Suchfeld" @error="error = $event" />
+      <h2 class="section-title">Branchen</h2>
+      <p class="small muted">Abschnitte nach NACE mit Sektor. Gelten für euch beide. Archivierte Einträge bleiben an bestehenden Ideen erhalten.</p>
+      <ListEditor table="search_fields" placeholder="Neue Branche, z. B. W - … - Tertiär" @error="error = $event" />
     </section>
 
     <section class="stack">

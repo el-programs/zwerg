@@ -80,7 +80,7 @@ function drucken() {
       <h1>{{ idea.title || 'Ohne Titel' }}</h1>
       <p class="r-meta">
         Phase {{ idea.phase }} · {{ phaseName(idea.phase) }}
-        <template v-if="idea.search_field_id"> · Suchfeld: {{ fieldName(idea.search_field_id) }}</template>
+        <template v-if="idea.search_field_id"> · Branche: {{ fieldName(idea.search_field_id) }}</template>
         <template v-if="idea.status === 'geparkt'"> · geparkt</template>
         <template v-if="idea.is_favorite"> · Favorit</template>
         · angelegt von {{ profile(idea.created_by)?.name }} am {{ datum(idea.created_at) }}

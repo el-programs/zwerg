@@ -92,7 +92,7 @@ export function sheets() {
   }
 
   return [
-    blatt('Ideen', ['Titel', 'Beschreibung', 'Suchfeld', 'Status', 'Phase', 'Favorit', 'Punkte (0–100)', 'Bewertungsstand', 'KO', 'Parkgrund', 'Schlagworte', 'Von', 'Angelegt'], ideenRows, [32, 50, 20, 9, 26, 8, 13, 20, 5, 30, 20, 10, 11]),
+    blatt('Ideen', ['Titel', 'Beschreibung', 'Branche', 'Status', 'Phase', 'Favorit', 'Punkte (0–100)', 'Bewertungsstand', 'KO', 'Parkgrund', 'Schlagworte', 'Von', 'Angelegt'], ideenRows, [32, 50, 20, 9, 26, 8, 13, 20, 5, 30, 20, 10, 11]),
     blatt('Bewertungen', ['Idee', 'Faktor', 'Gewicht', ...state.profiles.map((p) => p.name), 'Gemeinsam', 'Notizen'], bewertungRows, [32, 30, 9, ...state.profiles.map(() => 9), 11, 40]),
     blatt('Business Case', ['Idee', 'Szenario', 'Investition €', 'Fixkosten/Monat €', 'Variable Kosten/Einheit €', 'Preis/Einheit €', 'Absatz/Monat', 'Umsatz/Monat €', 'Ergebnis/Monat €', 'Break-even (Einheiten/Monat)', 'Amortisation (Monate)'], bcRows, [32, 13, 13, 16, 20, 14, 13, 15, 16, 22, 18]),
     blatt('Aufgaben', ['Aufgabe', 'Status', 'Wer', 'Fällig', 'Idee', 'Phase', 'Notizen', 'Erledigt am'], aufgaben.map((t) => [t.title, STATUS[t.status], name(t.assignee), tag(t.due_date), ideaTitle(t.idea_id), t.phase ? `${t.phase} · ${phaseName(t.phase)}` : '', t.notes, tag(t.done_at)]), [40, 11, 10, 11, 28, 26, 40, 11]),
