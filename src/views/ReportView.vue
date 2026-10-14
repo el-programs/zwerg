@@ -4,9 +4,10 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { currentPhase, fieldName, profile, state } from '../lib/store.js';
 import {
-  activeCriteria, effectiveWeight, ideaResult, jointScores, personalScores, rankedIdeas, RESULT_LABEL,
+  activeCriteria, antwort, effectiveWeight, ideaResult, jointScores, punkte, rankedIdeas, RESULT_LABEL,
 } from '../lib/score.js';
 import { eur, prozent, rechne, SZENARIEN } from '../lib/business.js';
+import { ausgefuellt, erloesText, FELDER } from '../lib/steckbrief.js';
 import { datum, phaseName as standardPhase } from '../lib/format.js';
 import Icon from '../components/Icon.vue';
 
@@ -37,8 +38,10 @@ const ergebnis = computed(() => (idea.value ? ideaResult(idea.value.id) : null))
 const bewertung = computed(() => {
   if (!idea.value) return [];
   const joint = jointScores(idea.value.id);
-  const pers = state.profiles.map((p) => personalScores(idea.value.id, p.id));
-  return kriterien.value.map((c) => ({ c, pers: pers.map((m) => m[c.id]?.score ?? '–'), joint: joint[c.id]?.score ?? '–' }));
+  return kriterien.value.map((c) => {
+    const s = joint[c.id]?.score ?? null;
+    return { c, antwort: antwort(c, s), punkte: s ? punkte(s) : '–', note: joint[c.id]?.note ?? '' };
+  });
 });
 const bc = computed(() => state.businessCases.find((b) => b.idea_id === ideaId.value));
 const szenarien = computed(() => SZENARIEN.map((s) => ({ ...s, r: rechne(bc.value?.scenarios?.[s.id]) })));
@@ -85,7 +88,17 @@ function drucken() {
         <template v-if="idea.is_favorite"> · Favorit</template>
         · angelegt von {{ profile(idea.created_by)?.name }} am {{ datum(idea.created_at) }}
       </p>
-      <p v-if="idea.description" class="r-text">{{ idea.description }}</p>
+      <template v-if="FELDER.some((f) => ausgefuellt(idea, f))">
+        <h2>Steckbrief</h2>
+        <div v-for="f in FELDER.filter((x) => ausgefuellt(idea, x))" :key="f.key" class="r-entry">
+          <strong>{{ f.name }}</strong>
+          <p class="r-text">{{ f.erloes ? erloesText(idea) : idea[f.key] }}</p>
+        </div>
+      </template>
+      <template v-if="idea.description">
+        <h2>Weitere Gedanken</h2>
+        <p class="r-text">{{ idea.description }}</p>
+      </template>
       <p v-if="idea.tags?.length" class="r-meta">Schlagworte: {{ idea.tags.join(', ') }}</p>
       <p v-if="idea.status === 'geparkt' && idea.park_reason" class="r-text"><strong>Parkgrund:</strong> {{ idea.park_reason }}</p>
 
@@ -94,15 +107,15 @@ function drucken() {
         <strong>{{ ergebnis.score ?? '–' }}</strong> / 100 · {{ RESULT_LABEL[ergebnis.kind] }}<template v-if="ergebnis.ko"> · <span class="r-ko">KO-Kriterium zutreffend</span></template>
       </p>
       <table v-if="bewertung.length">
-        <thead><tr><th>Faktor</th><th class="num">Gewicht</th><th v-for="p in state.profiles" :key="p.id" class="num">{{ p.kuerzel }}</th><th class="num">Gemeinsam</th></tr></thead>
+        <thead><tr><th>Faktor / Frage</th><th class="num">Gewicht</th><th>Antwort</th><th class="num">Punkte</th></tr></thead>
         <tbody>
           <tr v-for="row in bewertung" :key="row.c.id">
-            <td>{{ row.c.name }}</td><td class="num">{{ gewicht(row.c) }}</td>
-            <td v-for="(v, n) in row.pers" :key="n" class="num">{{ v }}</td><td class="num">{{ row.joint }}</td>
+            <td>{{ row.c.name }}<span v-if="row.c.description" class="r-q">{{ row.c.description }}</span><span v-if="row.note" class="r-q">Begründung: {{ row.note }}</span></td>
+            <td class="num">{{ gewicht(row.c) }}</td><td>{{ row.antwort }}</td><td class="num">{{ row.punkte }}</td>
           </tr>
         </tbody>
       </table>
-      <p class="r-note">Punkte je Faktor 1–5 (5 = gut für uns), Gewicht 0–5. Gesamtwert = gewichteter Durchschnitt, umgerechnet auf 0–100.</p>
+      <p class="r-note">Gemeinsame Antwort je Faktor, 0–4 Punkte (4 = am besten für uns), Gewicht 0–5. Gesamtwert = Summe (Punkte × Gewicht) / Summe (4 × Gewicht), umgerechnet auf 0–100.</p>
 
       <template v-if="bc">
         <h2>Business Case</h2>
@@ -240,6 +253,7 @@ function drucken() {
 .r-brand { font-weight: 600; color: #c96f3b; letter-spacing: 0.02em; }
 .r-meta { color: #55575c; margin: 4px 0; font-size: 12.5px; }
 .r-text { margin: 4px 0; white-space: pre-wrap; }
+.r-q { display: block; color: #6b6d72; font-size: 11.5px; }
 .r-note { color: #6b6d72; font-size: 11.5px; margin: 6px 0 0; }
 .r-score { font-size: 15px; margin: 0 0 8px; }
 .r-score strong { font-size: 22px; }

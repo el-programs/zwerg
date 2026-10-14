@@ -105,9 +105,10 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Was | So testet ihr es |
 |---|---|
 | Gewichtung | **Geschäftsideen → Ranking → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
-| Bewertung | Idee öffnen → **Bewertung**. Jeder bewertet alle Faktoren 1–5 (5 = gut für uns) und markiert ggf. KO-Kriterien. Die Werte des anderen bleiben verborgen, bis man selbst abgegeben hat – das prüft die Datenbank. |
+| Steckbrief | **Geschäftsideen → +**: Titel (Pflicht), Branche und die Leitfragen Nutzen, Angebot, Zielkunden, Erlösmodell, optional erster Test und Auslöser. In der Idee zeigt die Karte **Steckbrief** „x von 4 ausgefüllt“; leere Felder per „+ ergänzen“ nachtragen. |
+| Bewertung | Idee öffnen → **Bewertung**. Ihr beantwortet gemeinsam je Faktor eine Frage mit fünf Antworten (z. B. keine … sehr viel); die rechte ist immer die beste (0–4 Punkte). Jede Antwort ist sofort beim anderen sichtbar. KO-Kriterien ankreuzen, dann **Abschließen**. Fragen und Antwortskala sind unter Einstellungen → Bewertungsfaktoren änderbar. |
 | Vergleich & Endbewertung | Nach beiden Abgaben: Abweichungen ab 2 Punkten sind hervorgehoben. Gemeinsame Punkte wählen (oder Mittelwerte übernehmen), KO gemeinsam festlegen, **Endbewertung festlegen**. |
-| Ranking | **Geschäftsideen → Ranking**: sortiert nach Punkten (0–100). „vorläufig“ = Mittel der Einzelbewertungen. KO-Ideen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
+| Ranking | **Geschäftsideen → Ranking**: sortiert nach Punkten (0–100). „noch nicht abgeschlossen“ = alle Fragen beantwortet, aber nicht abgeschlossen. Punktzahl = Summe (Punkte × Gewicht) / Summe (4 × Gewicht) × 100. KO-Ideen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
 | Vergleich | **Geschäftsideen → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
 | Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Geschäftsideen → Liste → Parkplatz** jederzeit reaktivieren. |
 | Faktoren & KO-Kriterien | **Einstellungen → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |
@@ -121,7 +122,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Kritische Einschätzung | Idee öffnen → **KI-Sparring → Einschätzung**. Getrennt nach Fakten, Schätzungen, Annahmen, mit Bewertungsvorschlag je Faktor (klar als KI-Vorschlag markiert, fließt nicht in eure Wertung ein). |
 | Marktrecherche | **KI-Sparring → Recherche**, optional mit eigener Frage. Ergebnis mit Quellenliste. |
 | Chat | **KI-Sparring → Chat**: Sparring zur Idee, für beide sichtbar. |
-| Bewertung | Nach beiden Abgaben zeigt der Vergleich auch den KI-Vorschlag je Faktor – erst dann, damit eure Bewertung unbeeinflusst bleibt. |
+| Bewertung | Liegt eine KI-Einschätzung vor, steht der KI-Vorschlag je Faktor klein unter der Frage. |
 | Kostenbremse | **Einstellungen → KI-Unterstützung**: Verbrauch des Monats und Limit. Ist es erreicht, sperrt Zwerg die KI bis Monatsende. |
 
 ### Etappe 4 testen

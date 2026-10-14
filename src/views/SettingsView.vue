@@ -175,8 +175,8 @@ function abmelden() {
 
     <section class="stack">
       <h2 class="section-title">Bewertungsfaktoren</h2>
-      <p class="small muted">Grundlage der Bewertungsmatrix. Neue Faktoren erscheinen in offenen Bewertungen; die Gewichtung legt ihr unter Geschäftsideen → Ranking fest.</p>
-      <ListEditor table="criteria" placeholder="Neuer Faktor" with-description @error="error = $event" />
+      <p class="small muted">Je Faktor eine Frage und die passende Antwortskala – die rechte Antwort ist immer die beste für euch. Neue Faktoren erscheinen in offenen Bewertungen; die Gewichtung legt ihr unter Geschäftsideen → Ranking fest.</p>
+      <ListEditor table="criteria" placeholder="Neuer Faktor" with-description with-scale description-placeholder="Frage für die Bewertung, z. B. Wie gut …?" @error="error = $event" />
     </section>
 
     <section class="stack">

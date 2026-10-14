@@ -1,5 +1,5 @@
 <script setup>
-// Bearbeitbare Liste für Suchfelder, Bewertungsfaktoren und KO-Kriterien.
+// Bearbeitbare Liste für Branchen, Bewertungsfaktoren und KO-Kriterien.
 import { computed, reactive, ref } from 'vue';
 import { addListItem, moveListItem, state, TABLES, updateListItem } from '../lib/store.js';
 import Icon from './Icon.vue';
@@ -8,6 +8,9 @@ const props = defineProps({
   table: { type: String, required: true },
   placeholder: { type: String, default: 'Neuer Eintrag' },
   withDescription: { type: Boolean, default: false },
+  descriptionPlaceholder: { type: String, default: 'Kurze Erklärung (optional)' },
+  // Bewertungsfaktoren: Antwortskala wählbar
+  withScale: { type: Boolean, default: false },
 });
 const emit = defineEmits(['error']);
 const items = computed(() => [...state[TABLES[props.table].key]].sort((a, b) => a.sort - b.sort));
@@ -64,12 +67,19 @@ function add() {
         v-if="withDescription"
         class="input desc"
         :value="value(item, 'description')"
-        placeholder="Kurze Erklärung (optional)"
+        :placeholder="descriptionPlaceholder"
         :aria-label="`Erklärung zu ${item.name}`"
         @input="drafts[`${item.id}.description`] = $event.target.value"
         @blur="commit(item, 'description')"
         @keydown.enter.prevent="$event.target.blur()"
       >
+      <label v-if="withScale" class="scale-row small muted">
+        <span>Antworten:</span>
+        <select class="select scale" :value="item.scale ?? 'qualitaet'" @change="run(() => updateListItem(table, item.id, { scale: $event.target.value }))">
+          <option value="menge">keine · wenig · mittel · viel · sehr viel</option>
+          <option value="qualitaet">sehr schlecht · schlecht · mittel · gut · sehr gut</option>
+        </select>
+      </label>
     </div>
     <form class="row" @submit.prevent="add">
       <label class="visually-hidden" :for="`${table}-neu`">{{ placeholder }}</label>
@@ -87,4 +97,6 @@ function add() {
 .desc { font-size: 14px; min-height: 38px; padding: 6px 12px; color: var(--muted); }
 .archived .input { color: var(--muted); text-decoration: line-through; }
 .small-btn { padding: 0 10px; font-size: 13px; }
+.scale-row { display: flex; align-items: center; gap: 8px; }
+.scale { flex: 1; min-width: 0; min-height: 36px; font-size: 13px; }
 </style>

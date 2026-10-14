@@ -416,7 +416,7 @@ export function isPending(id) {
 // Ideen und Kommentare
 // ---------------------------------------------------------------------------
 
-export function addIdea({ text = '', title = '', description = '', searchFieldId = null }) {
+export function addIdea({ text = '', title = '', description = '', searchFieldId = null, steckbrief = {} }) {
   if (text) {
     const lines = text.trim().split('\n');
     title = lines[0].trim().slice(0, 200);
@@ -430,6 +430,7 @@ export function addIdea({ text = '', title = '', description = '', searchFieldId
     search_field_id: searchFieldId || null,
     tags: [],
     links: [],
+    ...steckbrief,
     created_by: state.me.id,
     created_at: now,
   };
@@ -526,12 +527,6 @@ export function neuigkeiten() {
   const items = [];
   for (const idea of state.ideas) {
     if (isNewIdea(idea)) items.push({ idea, kind: 'idee', at: idea.created_at });
-    const andererAbgegeben = state.ratingSubs.some((r) => r.idea_id === idea.id && r.profile_id !== state.me?.id);
-    const ichAbgegeben = state.ratingSubs.some((r) => r.idea_id === idea.id && r.profile_id === state.me?.id);
-    if (andererAbgegeben && !ichAbgegeben && idea.status !== 'geparkt') {
-      const sub = state.ratingSubs.find((r) => r.idea_id === idea.id && r.profile_id !== state.me?.id);
-      items.push({ idea, kind: 'bewertung', at: sub.submitted_at });
-    }
     const nc = newComments(idea);
     if (nc.length) items.push({ idea, kind: 'kommentar', count: nc.length, at: nc[nc.length - 1].created_at });
   }
@@ -665,6 +660,13 @@ export function submitRating(ideaId) {
 
 export function setJointRating(ideaId, criterionId, score) {
   queueUpsert('joint_ratings', { idea_id: ideaId, criterion_id: criterionId, score, updated_by: state.me.id, updated_at: now() }, 'idea_id,criterion_id');
+}
+
+// Begründung zur gemeinsamen Antwort (nur möglich, wenn schon geantwortet wurde).
+export function setJointNote(ideaId, criterionId, note) {
+  const row = state.jointRatings.find((r) => r.idea_id === ideaId && r.criterion_id === criterionId);
+  if (!row) return;
+  queueUpsert('joint_ratings', { ...row, note, updated_by: state.me.id, updated_at: now() }, 'idea_id,criterion_id');
 }
 
 export function setEvaluation(ideaId, patch) {

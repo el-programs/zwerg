@@ -3,7 +3,7 @@ import { computed, inject, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fieldName, partner, setFavorite, state, unparkIdea, profile, toast } from '../lib/store.js';
 import {
-  activeCriteria, hasSubmittedWeights, ideaResult, jointScores, jointWeightsSet, personalScores, RESULT_LABEL,
+  activeCriteria, hasSubmittedWeights, ideaResult, jointScores, jointWeightsSet, RESULT_LABEL,
 } from '../lib/score.js';
 import { datum } from '../lib/format.js';
 import IdeaCard from '../components/IdeaCard.vue';
@@ -95,16 +95,8 @@ const serien = computed(() =>
   auswahl.value.map((id, i) => {
     const idea = state.ideas.find((x) => x.id === id);
     const result = ideaResult(id);
-    let values = {};
-    if (result.kind === 'final') {
-      for (const [k, v] of Object.entries(jointScores(id))) values[k] = v.score;
-    } else {
-      const subs = state.profiles.map((p) => personalScores(id, p.id)).filter((m) => Object.keys(m).length);
-      for (const c of activeCriteria()) {
-        const vals = subs.map((m) => m[c.id]?.score).filter(Boolean);
-        if (vals.length) values[c.id] = Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10;
-      }
-    }
+    const values = {};
+    for (const [k, v] of Object.entries(jointScores(id))) values[k] = v.score;
     return { id, name: idea?.title || 'Ohne Titel', color: FARBEN[i], values, result };
   }),
 );
@@ -193,7 +185,7 @@ function stern(idea) {
         <h2>Ausgeschlossen (KO)</h2>
         <router-link v-for="r in ranking.ko" :key="r.idea.id" :to="`/idee/${r.idea.id}/bewertung`" class="card ko-row">
           <span class="grow">{{ r.idea.title || 'Ohne Titel' }}</span>
-          <span class="chip outline">{{ r.result.kind === 'final' ? 'KO' : 'KO-Hinweis' }}</span>
+          <span class="chip outline">{{ r.result.kind === 'final' ? 'KO' : 'KO, nicht abgeschlossen' }}</span>
         </router-link>
       </section>
 
@@ -201,14 +193,14 @@ function stern(idea) {
         <h2>Noch nicht bewertet</h2>
         <router-link v-for="r in ranking.offen" :key="r.idea.id" :to="`/idee/${r.idea.id}/bewertung`" class="card ko-row">
           <span class="grow">{{ r.idea.title || 'Ohne Titel' }}</span>
-          <span class="small muted">{{ r.result.submitted?.length ? 'wartet auf Abgabe' : 'Bewerten' }}</span>
+          <span class="small muted">{{ r.result.rated ? `in Arbeit (${r.result.rated}/${r.result.of})` : 'Bewerten' }}</span>
         </router-link>
       </section>
     </template>
 
     <!-- Vergleich -->
     <template v-else-if="ansicht === 'vergleich'">
-      <p class="small muted">Bis zu drei bewertete Ideen auswählen. Gezeigt wird die Endbewertung, sonst der Mittelwert eurer Einzelbewertungen.</p>
+      <p class="small muted">Bis zu drei bewertete Ideen auswählen. Gezeigt werden eure gemeinsamen Antworten als Punkte 0–4.</p>
       <div class="segmented wrap" role="group" aria-label="Ideen auswählen">
         <button v-for="i in vergleichbar" :key="i.id" type="button" :aria-pressed="auswahl.includes(i.id)" @click="toggleAuswahl(i.id)">{{ i.title || 'Ohne Titel' }}</button>
       </div>
@@ -234,7 +226,7 @@ function stern(idea) {
             <tbody>
               <tr v-for="a in achsen" :key="a.id">
                 <th scope="row">{{ a.name }}</th>
-                <td v-for="s in serien" :key="s.id">{{ s.values[a.id] ?? '–' }}</td>
+                <td v-for="s in serien" :key="s.id">{{ s.values[a.id] ? s.values[a.id] - 1 : '–' }}</td>
               </tr>
               <tr class="sum">
                 <th scope="row">Gesamt (0–100)</th>

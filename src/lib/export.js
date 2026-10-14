@@ -1,7 +1,8 @@
 // Excel-Export aller Daten. Die Bibliothek wird erst beim Export nachgeladen.
 import { state, fieldName, profile } from './store.js';
-import { activeCriteria, effectiveWeight, ideaResult, jointScores, personalScores, RESULT_LABEL } from './score.js';
+import { activeCriteria, antwort, effectiveWeight, ideaResult, jointScores, punkte, RESULT_LABEL } from './score.js';
 import { rechne, SZENARIEN, zahl } from './business.js';
+import { erloesText } from './steckbrief.js';
 import { phaseName as standardPhase } from './format.js';
 
 const phaseName = (nr) => state.phases.find((p) => p.nr === nr)?.name ?? standardPhase(nr);
@@ -47,7 +48,7 @@ export function sheets() {
   const ideenRows = ideen.map((i) => {
     const r = ideaResult(i.id);
     return [
-      i.title || 'Ohne Titel', i.description, fieldName(i.search_field_id), i.status === 'geparkt' ? 'geparkt' : 'aktiv',
+      i.title || 'Ohne Titel', i.benefit, i.offer, i.customers, erloesText(i), i.first_test, i.origin, i.description, fieldName(i.search_field_id), i.status === 'geparkt' ? 'geparkt' : 'aktiv',
       `${i.phase} · ${phaseName(i.phase)}`, i.is_favorite ? 'ja' : '', r.score, RESULT_LABEL[r.kind], r.ko ? 'ja' : '',
       i.park_reason ?? '', (i.tags ?? []).join(', '), name(i.created_by), tag(i.created_at),
     ];
@@ -56,11 +57,10 @@ export function sheets() {
   const bewertungRows = [];
   for (const i of ideen) {
     const joint = jointScores(i.id);
-    const pers = state.profiles.map((p) => personalScores(i.id, p.id));
-    if (!Object.keys(joint).length && pers.every((m) => !Object.keys(m).length)) continue;
+    if (!Object.keys(joint).length) continue;
     for (const c of crit) {
-      const notizen = state.profiles.map((p, n) => (pers[n][c.id]?.note ? `${p.kuerzel}: ${pers[n][c.id].note}` : '')).filter(Boolean).join(' · ');
-      bewertungRows.push([i.title || 'Ohne Titel', c.name, Math.round(effectiveWeight(c) * 10) / 10, ...pers.map((m) => m[c.id]?.score ?? null), joint[c.id]?.score ?? null, notizen]);
+      const s = joint[c.id]?.score ?? null;
+      bewertungRows.push([i.title || 'Ohne Titel', c.name, c.description, Math.round(effectiveWeight(c) * 10) / 10, s ? antwort(c, s) : '', s ? punkte(s) : null, joint[c.id]?.note ?? '']);
     }
   }
 
@@ -92,8 +92,8 @@ export function sheets() {
   }
 
   return [
-    blatt('Ideen', ['Titel', 'Beschreibung', 'Branche', 'Status', 'Phase', 'Favorit', 'Punkte (0–100)', 'Bewertungsstand', 'KO', 'Parkgrund', 'Schlagworte', 'Von', 'Angelegt'], ideenRows, [32, 50, 20, 9, 26, 8, 13, 20, 5, 30, 20, 10, 11]),
-    blatt('Bewertungen', ['Idee', 'Faktor', 'Gewicht', ...state.profiles.map((p) => p.name), 'Gemeinsam', 'Notizen'], bewertungRows, [32, 30, 9, ...state.profiles.map(() => 9), 11, 40]),
+    blatt('Ideen', ['Titel', 'Nutzen', 'Angebot', 'Zielkunden', 'Erlösmodell', 'Erster Test', 'Auslöser', 'Weitere Gedanken', 'Branche', 'Status', 'Phase', 'Favorit', 'Punkte (0–100)', 'Bewertungsstand', 'KO', 'Parkgrund', 'Schlagworte', 'Von', 'Angelegt'], ideenRows, [32, 40, 40, 30, 24, 34, 30, 40, 30, 9, 26, 8, 13, 22, 5, 30, 20, 10, 11]),
+    blatt('Bewertungen', ['Idee', 'Faktor', 'Frage', 'Gewicht', 'Antwort', 'Punkte (0–4)', 'Begründung'], bewertungRows, [32, 28, 45, 9, 14, 12, 40]),
     blatt('Business Case', ['Idee', 'Szenario', 'Investition €', 'Fixkosten/Monat €', 'Variable Kosten/Einheit €', 'Preis/Einheit €', 'Absatz/Monat', 'Umsatz/Monat €', 'Ergebnis/Monat €', 'Break-even (Einheiten/Monat)', 'Amortisation (Monate)'], bcRows, [32, 13, 13, 16, 20, 14, 13, 15, 16, 22, 18]),
     blatt('Aufgaben', ['Aufgabe', 'Status', 'Wer', 'Fällig', 'Idee', 'Phase', 'Notizen', 'Erledigt am'], aufgaben.map((t) => [t.title, STATUS[t.status], name(t.assignee), tag(t.due_date), ideaTitle(t.idea_id), t.phase ? `${t.phase} · ${phaseName(t.phase)}` : '', t.notes, tag(t.done_at)]), [40, 11, 10, 11, 28, 26, 40, 11]),
     blatt('Entscheidungen', ['Datum', 'Entscheidung', 'Details', 'Begründung', 'Idee', 'Von', 'Automatisch'], entscheidungen.map((d) => [tag(d.decided_on), d.title, d.decision, d.reason, ideaTitle(d.idea_id), name(d.created_by), d.automatic ? 'ja' : '']), [11, 45, 45, 45, 28, 10, 11]),

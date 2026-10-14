@@ -146,7 +146,15 @@ async function ideaContext(ideaId: string) {
     idea,
     text: [
       `Titel: ${idea.title || '(ohne Titel)'}`,
-      `Beschreibung: ${idea.description || '(keine)'}`,
+      idea.benefit ? `Nutzen: ${idea.benefit}` : '',
+      idea.offer ? `Angebot: ${idea.offer}` : '',
+      idea.customers ? `Zielkunden: ${idea.customers}` : '',
+      idea.revenue_model?.length || idea.revenue_note
+        ? `Erlösmodell: ${[(idea.revenue_model ?? []).join(', '), idea.revenue_note].filter(Boolean).join(' · ')}`
+        : '',
+      idea.first_test ? `Erster Test: ${idea.first_test}` : '',
+      idea.origin ? `Auslöser: ${idea.origin}` : '',
+      `Weitere Gedanken: ${idea.description || '(keine)'}`,
       field ? `Branche: ${field.name}` : '',
       idea.tags?.length ? `Schlagworte: ${idea.tags.join(', ')}` : '',
       links ? `Links:\n${links}` : '',
@@ -244,7 +252,7 @@ Je Idee: Titel (kurz), Beschreibung (2–3 Sätze), warum es passen könnte, der
     const profile = await requireMember(req);
     const model = await guard(profile);
     const ctx = await ideaContext(body.ideaId);
-    const criteria = check(await db.from('criteria').select('id, name, description').eq('archived', false).order('sort'));
+    const criteria = check(await db.from('criteria').select('id, name, description, scale').eq('archived', false).order('sort'));
     const kurz = !!body.kurz;
     const resultId = await newResult('einschaetzung', profile.id, model, { idea_id: ctx.idea.id, prompt: kurz ? 'kurz' : '' });
     background(resultId, async () => {
@@ -291,9 +299,10 @@ Je Idee: Titel (kurz), Beschreibung (2–3 Sätze), warum es passen könnte, der
 
 ${ctx.text}
 
-Bewerte zusätzlich jeden Faktor von 1 bis 5 (5 = sehr günstig für die Gründer, auch bei Risiko, Wettbewerb oder Aufwand) mit einem Satz Begründung.
-Faktoren (faktor_id: Name – Erklärung):
-${criteria.map((c: { id: string; name: string; description: string }) => `${c.id}: ${c.name}${c.description ? ` – ${c.description}` : ''}`).join('\n')}`,
+Beantworte zusätzlich die Frage jedes Faktors mit einer der fünf Antworten und einem Satz Begründung.
+„punkte“ ist die Nummer der Antwort: 1 = erste (schlechteste) bis 5 = letzte (beste für die Gründer).
+Faktoren (faktor_id: Name – Frage [Antworten 1–5]):
+${criteria.map((c: { id: string; name: string; description: string; scale: string }) => `${c.id}: ${c.name}${c.description ? ` – ${c.description}` : ''} [${c.scale === 'menge' ? 'keine, wenig, mittel, viel, sehr viel' : 'sehr schlecht, schlecht, mittel, gut, sehr gut'}]`).join('\n')}`,
         }],
       });
       ensureAnswer(msg);

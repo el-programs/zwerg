@@ -1,8 +1,10 @@
 <script setup>
-// Schnellerfassung: das Plus legt immer eine Notiz an; aus „Geschäftsideen“ heraus eine Idee. Das Textfeld ist immer vorhanden und wird direkt
-// beim Antippen fokussiert – nur so öffnet das iPhone sofort die Tastatur (mit Diktat-Mikrofon).
-import { computed, ref } from 'vue';
+// Schnellerfassung: das Plus legt immer eine Notiz an; aus „Geschäftsideen“ heraus eine Idee mit Steckbrief.
+// Das Notizfeld ist immer vorhanden und wird direkt beim Antippen fokussiert – nur so öffnet das iPhone
+// sofort die Tastatur (mit Diktat-Mikrofon).
+import { computed, nextTick, reactive, ref } from 'vue';
 import { addIdea, addNote, state, toast } from '../lib/store.js';
+import { ERLOESMODELLE, FELDER, leererSteckbrief } from '../lib/steckbrief.js';
 import Icon from './Icon.vue';
 
 const isOpen = ref(false);
@@ -11,6 +13,11 @@ const text = ref('');
 const fieldId = ref('');
 const sheet = ref(null);
 const area = ref(null);
+const titleEl = ref(null);
+const titel = ref('');
+const steckbrief = reactive(leererSteckbrief());
+const textFelder = FELDER.filter((f) => !f.erloes);
+const kannSpeichern = computed(() => (mode.value === 'idee' ? !!titel.value.trim() : !!text.value.trim()));
 const fields = computed(() => state.fields.filter((f) => !f.archived));
 const isWindows = /Windows/.test(navigator.userAgent);
 
@@ -38,7 +45,12 @@ function open(m = 'notiz') {
   clearTimeout(hideTimer);
   sheet.value.style.visibility = 'visible';
   sheet.value.inert = false;
-  area.value.focus();
+  if (mode.value === 'notiz') {
+    area.value.style.display = ''; // sofort sichtbar machen, damit der Fokus noch im Antippen greift
+    area.value.focus();
+  } else {
+    nextTick(() => titleEl.value?.focus());
+  }
   isOpen.value = true;
   watchViewport(true);
 }
@@ -46,18 +58,32 @@ function open(m = 'notiz') {
 function close() {
   isOpen.value = false;
   watchViewport(false);
-  area.value.blur();
+  document.activeElement?.blur?.();
   sheet.value.inert = true;
   hideTimer = setTimeout(() => {
     if (!isOpen.value) sheet.value.style.visibility = 'hidden';
   }, 250);
 }
 
+function toggleErloes(m) {
+  const list = new Set(steckbrief.revenue_model);
+  if (list.has(m)) list.delete(m);
+  else list.add(m);
+  steckbrief.revenue_model = ERLOESMODELLE.filter((x) => list.has(x));
+}
+
 function save() {
-  if (!text.value.trim()) return close();
-  if (mode.value === 'idee') addIdea({ text: text.value, searchFieldId: fieldId.value });
-  else addNote(text.value);
-  text.value = '';
+  if (!kannSpeichern.value) return close();
+  if (mode.value === 'idee') {
+    const felder = Object.fromEntries(Object.entries(steckbrief).map(([k, v]) => [k, Array.isArray(v) ? [...v] : v.trim()]));
+    addIdea({ title: titel.value.trim().slice(0, 200), searchFieldId: fieldId.value, steckbrief: felder });
+    titel.value = '';
+    fieldId.value = '';
+    Object.assign(steckbrief, leererSteckbrief());
+  } else {
+    addNote(text.value);
+    text.value = '';
+  }
   close();
   const was = mode.value === 'idee' ? 'Idee' : 'Notiz';
   toast(state.online ? `${was} gespeichert` : 'Offline gespeichert – wird später abgeglichen');
@@ -76,24 +102,47 @@ defineExpose({ open });
   <section ref="sheet" class="sheet" :class="{ open: isOpen }" inert style="visibility: hidden" aria-label="Schnellerfassung" @keydown="onKey">
     <div class="head">
       <h2 class="grow">{{ mode === 'idee' ? 'Neue Idee' : 'Neue Notiz' }}</h2>
-      <button class="btn primary save" type="button" :disabled="!text.trim()" @click="save">Speichern</button>
+      <button class="btn primary save" type="button" :disabled="!kannSpeichern" @click="save">Speichern</button>
       <button class="icon-btn" type="button" aria-label="Schließen" @click="close"><Icon name="close" /></button>
     </div>
-    <label v-if="mode === 'idee'" class="field">
-      <span>Branche</span>
-      <select v-model="fieldId" class="select">
-        <option value="">– ohne –</option>
-        <option v-for="f in fields" :key="f.id" :value="f.id">{{ f.name }}</option>
-      </select>
-    </label>
-    <label class="visually-hidden" for="qc-text">{{ mode === 'idee' ? 'Idee' : 'Notiz' }}</label>
+    <template v-if="mode === 'idee'">
+      <label class="field">
+        <span>Titel</span>
+        <input ref="titleEl" v-model="titel" class="input" maxlength="200" placeholder="Wie nennen wir die Idee?">
+      </label>
+      <label class="field">
+        <span>Branche</span>
+        <select v-model="fieldId" class="select">
+          <option value="">– ohne –</option>
+          <option v-for="f in fields" :key="f.id" :value="f.id">{{ f.name }}</option>
+        </select>
+      </label>
+      <p class="sep">Steckbrief – kann auch später ergänzt werden</p>
+      <template v-for="f in FELDER" :key="f.key">
+        <div v-if="f.erloes" class="field">
+          <span class="lbl">{{ f.name }}</span>
+          <span class="frage">{{ f.frage }}</span>
+          <div class="chips" role="group" :aria-label="f.name">
+            <button v-for="m in ERLOESMODELLE" :key="m" type="button" class="pill" :aria-pressed="steckbrief.revenue_model.includes(m)" @click="toggleErloes(m)">{{ m }}</button>
+          </div>
+          <input v-model="steckbrief.revenue_note" class="input" placeholder="Ergänzung, z. B. Tagespreis + Kaution" aria-label="Ergänzung zum Erlösmodell">
+        </div>
+        <label v-else class="field">
+          <span class="lbl">{{ f.name }} <span v-if="f.optional" class="opt">optional</span></span>
+          <span class="frage">{{ f.frage }}</span>
+          <textarea v-model="steckbrief[f.key]" class="textarea small-area" rows="2" :placeholder="f.beispiel ?? ''"></textarea>
+        </label>
+      </template>
+    </template>
+    <label v-show="mode === 'notiz'" class="visually-hidden" for="qc-text">Notiz</label>
     <textarea
+      v-show="mode === 'notiz'"
       id="qc-text"
       ref="area"
       v-model="text"
       class="textarea"
       rows="5"
-      :placeholder="mode === 'idee' ? 'Idee kurz beschreiben … Die erste Zeile wird zum Titel.' : 'Notiz schreiben …'"
+      placeholder="Notiz schreiben …"
     ></textarea>
     <p class="hint small muted">
       <Icon name="mic" :size="16" />
@@ -134,14 +183,25 @@ defineExpose({ open });
   transition: opacity 0.18s, transform 0.18s;
 }
 .sheet.open { opacity: 1; transform: none; pointer-events: auto; }
-.head { display: flex; align-items: center; gap: 8px; }
+.head { display: flex; align-items: center; gap: 8px; position: sticky; top: -10px; z-index: 1; margin: -10px 0 0; padding: 10px 0 6px; background: var(--surface); }
 .head h2 { margin: 0; }
 /* Textfeld füllt den Platz über der Tastatur, bleibt aber immer ganz sichtbar. */
-.sheet .textarea { min-height: 96px; max-height: calc(var(--vv-h, 100vh) - env(safe-area-inset-top, 0px) - 150px); }
+#qc-text { min-height: 96px; max-height: calc(var(--vv-h, 100vh) - env(safe-area-inset-top, 0px) - 150px); }
+/* Die Idee hat mehrere Felder: das Fenster scrollt dann innerhalb des sichtbaren Bereichs. */
+.sheet { max-height: calc(var(--vv-h, 100vh) - env(safe-area-inset-top, 0px) - 16px); overflow-y: auto; overscroll-behavior: contain; }
+.sep { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12.5px; margin: 4px 0 0; }
+.sep::before, .sep::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.lbl { font-size: 14px; font-weight: 600; color: var(--text) !important; }
+.opt { font-weight: 400; color: var(--muted); font-size: 12px; }
+.frage { font-size: 12.5px; color: var(--muted); }
+.small-area { min-height: 0; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 2px 0 4px; }
+.pill { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13.5px; color: var(--text); background: transparent; cursor: pointer; }
+.pill[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
 .hint { display: flex; align-items: center; gap: 6px; margin: 0; }
 .grow { flex: 1; min-width: 0; }
 .save { min-height: 38px; padding: 0 14px; font-size: 15px; }
 @media (min-width: 700px) {
-  .sheet { top: 12vh; padding-bottom: 16px; }
+  .sheet { top: 12vh; padding-bottom: 16px; max-height: 80vh; }
 }
 </style>

@@ -2,13 +2,14 @@
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  addComment, commentsOf, currentPhase, deleteComment, deleteIdea, markSeen, newComments, parkIdea, partner, profile, setFavorite,
+  addComment, commentsOf, currentPhase, deleteComment, deleteIdea, markSeen, newComments, parkIdea, profile, setFavorite,
   setIdeaPhase, state, toast, unparkIdea, updateIdea,
 } from '../lib/store.js';
-import { hasSubmittedRating, ideaResult, RESULT_LABEL } from '../lib/score.js';
+import { ideaResult, RESULT_LABEL } from '../lib/score.js';
 import { callKi, ergebnisse, kiSichtbar, ladeStatus, limitErreicht, meineStufe } from '../lib/ki.js';
 import { datum, phaseName, relativ, PHASEN } from '../lib/format.js';
 import { eur, rechne } from '../lib/business.js';
+import SteckbriefCard from '../components/SteckbriefCard.vue';
 import TaskList from '../components/TaskList.vue';
 import DecisionList from '../components/DecisionList.vue';
 import Icon from '../components/Icon.vue';
@@ -85,14 +86,11 @@ function removeIdea() {
 
 const ergebnis = computed(() => (idea.value ? ideaResult(idea.value.id) : null));
 const bewertungText = computed(() => {
-  if (!idea.value || !state.me) return '';
-  const ich = hasSubmittedRating(idea.value.id, state.me.id);
-  const anderer = partner();
-  const er = anderer && hasSubmittedRating(idea.value.id, anderer.id);
-  if (ergebnis.value?.kind === 'final') return 'Endbewertung festgelegt';
-  if (ich && er) return 'Beide haben bewertet – jetzt gemeinsam festlegen';
-  if (ich) return `Du hast bewertet – warte auf ${anderer?.name}`;
-  if (er) return `${anderer?.name} hat bewertet – du bist dran`;
+  const e = ergebnis.value;
+  if (!e) return '';
+  if (e.kind === 'final') return 'Bewertung abgeschlossen';
+  if (e.kind === 'vorlaeufig') return 'Alle Fragen beantwortet – noch abschließen';
+  if (e.kind === 'teilweise') return `In Arbeit: ${e.rated} von ${e.of} Fragen beantwortet`;
   return 'Noch nicht bewertet';
 });
 
@@ -220,6 +218,8 @@ watch(
       </label>
     </section>
 
+    <SteckbriefCard :idea="idea" />
+
     <div v-if="idea.status === 'geparkt'" class="card parked-banner">
       <strong>Auf dem Parkplatz</strong>
       <p class="small">Begründung: {{ idea.park_reason || '–' }} <span class="muted">({{ profile(idea.parked_by)?.name }})</span></p>
@@ -258,12 +258,12 @@ watch(
     </router-link>
 
     <label class="field">
-      <span>Kurzbeschreibung</span>
+      <span>Weitere Gedanken</span>
       <textarea
         v-model="draft.description"
         class="textarea"
         rows="5"
-        placeholder="Worum geht es? Für wen? Warum könnte das funktionieren?"
+        placeholder="Alles, was nicht in den Steckbrief passt …"
         @focus="editing = 'description'"
         @blur="commit('description')"
       ></textarea>

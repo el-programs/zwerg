@@ -1,5 +1,5 @@
 <script setup>
-// Netzdiagramm: eine Achse je Bewertungsfaktor (1–5), eine Fläche je Idee.
+// Netzdiagramm: eine Achse je Bewertungsfaktor (gespeichert 1–5, beschriftet als 0–4 Punkte), eine Fläche je Idee.
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -44,7 +44,7 @@ const shapes = computed(() =>
         <polygon v-for="(p, i) in ringPaths" :key="i" :points="p" />
         <line v-for="(s, i) in spokes" :key="`s${i}`" :x1="C" :y1="C" :x2="s[0]" :y2="s[1]" />
       </g>
-      <text v-for="v in [1, 3, 5]" :key="`r${v}`" class="ring-label" :x="C + 4" :y="C - (R * v) / 5 - 3">{{ v }}</text>
+      <text v-for="v in [1, 3, 5]" :key="`r${v}`" class="ring-label" :x="C + 4" :y="C - (R * v) / 5 - 3">{{ v - 1 }}</text>
       <g v-for="s in shapes" :key="s.id">
         <polygon :points="s.path" class="area" :style="{ fill: s.color, stroke: s.color }" />
         <circle
