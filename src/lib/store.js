@@ -437,7 +437,7 @@ export function addIdea({ text = '', title = '', description = '', searchFieldId
     created_by: state.me.id,
     created_at: now,
   };
-  upsertLocal('ideas', { ...row, phase: 1, status: 'aktiv', park_reason: null, updated_by: state.me.id, updated_at: now });
+  upsertLocal('ideas', { ...row, phase: 1, status: 'aktiv', shortlist: 'offen', park_reason: null, updated_by: state.me.id, updated_at: now });
   state.reads[row.id] = now;
   saveCache();
   enqueue({ op: 'insert', table: 'ideas', row });
@@ -692,6 +692,19 @@ export function unparkIdea(id) {
   const idea = state.ideas.find((i) => i.id === id);
   addDecision({ title: `Idee „${idea?.title || 'Ohne Titel'}“ reaktiviert`, idea_id: id, automatic: true });
 }
+
+// Runde 1: Vorauswahl. Weiterverfolgte Ideen kommen in die Bewertung, verworfene auf den Parkplatz (parkIdea).
+export function shortlistIdea(id) {
+  updateIdea(id, { shortlist: 'weiter', shortlisted_at: now(), shortlisted_by: state.me.id });
+  const idea = state.ideas.find((i) => i.id === id);
+  addDecision({ title: `Idee „${idea?.title || 'Ohne Titel'}“ kommt in die Bewertungsrunde`, idea_id: id, automatic: true });
+}
+
+export function backToShortlist(id) {
+  updateIdea(id, { shortlist: 'offen', shortlisted_at: null, shortlisted_by: null });
+}
+
+export const inVorauswahl = (idea) => idea.status !== 'geparkt' && (idea.shortlist ?? 'offen') === 'offen';
 
 export function setFavorite(id, value) {
   updateIdea(id, { is_favorite: value });

@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  addComment, commentsOf, currentPhase, deleteComment, deleteIdea, markSeen, newComments, parkIdea, profile, setFavorite,
+  addComment, backToShortlist, commentsOf, currentPhase, deleteComment, deleteIdea, markSeen, shortlistIdea, newComments, parkIdea, profile, setFavorite,
   setIdeaPhase, state, toast, unparkIdea, updateIdea,
 } from '../lib/store.js';
 import { ideaResult, RESULT_LABEL } from '../lib/score.js';
@@ -139,6 +139,17 @@ const zeigeAufgaben = ref(false);
 const zeigeEntscheidungen = ref(false);
 const entscheidungen = computed(() => (idea.value ? state.decisions.filter((d) => d.idea_id === idea.value.id).length : 0));
 
+function verwerfen() {
+  const grund = prompt('Warum wird die Idee verworfen? (Begründung bleibt auf dem Parkplatz erhalten)');
+  if (grund === null) return;
+  parkIdea(idea.value.id, grund || 'In der Vorauswahl verworfen');
+  toast('Idee auf den Parkplatz gestellt');
+}
+function zurueckInVorauswahl() {
+  backToShortlist(idea.value.id);
+  toast('Idee ist wieder in der Vorauswahl');
+}
+
 function parken() {
   const grund = prompt('Warum wird die Idee geparkt? (Begründung bleibt erhalten)');
   if (grund === null) return;
@@ -225,6 +236,15 @@ watch(
       <strong>Auf dem Parkplatz</strong>
       <p class="small">Begründung: {{ idea.park_reason || '–' }} <span class="muted">({{ profile(idea.parked_by)?.name }})</span></p>
       <button class="btn" type="button" @click="unparkIdea(idea.id); toast('Idee reaktiviert')">Reaktivieren</button>
+    </div>
+
+    <div v-else-if="(idea.shortlist ?? 'offen') === 'offen'" class="card stack shortlist-card">
+      <strong>Vorauswahl (Runde 1)</strong>
+      <p class="small muted">Wollt ihr diese Idee weiterverfolgen? Dann kommt sie in die Bewertung, sonst mit Begründung auf den Parkplatz.</p>
+      <div class="row wrap">
+        <button class="btn primary" type="button" @click="shortlistIdea(idea.id); toast('Idee ist in der Bewertungsrunde')">Weiterverfolgen</button>
+        <button class="btn" type="button" @click="verwerfen">Verwerfen</button>
+      </div>
     </div>
 
     <router-link v-else :to="`/idee/${idea.id}/bewertung`" class="card rating-card">
@@ -347,6 +367,7 @@ watch(
 
     <section class="danger-zone row wrap">
       <router-link :to="`/bericht/idee/${idea.id}`" class="btn">Steckbrief (PDF)</router-link>
+      <button v-if="idea.status !== 'geparkt' && idea.shortlist === 'weiter' && !ergebnis?.rated" class="btn" type="button" @click="zurueckInVorauswahl">Zurück in die Vorauswahl</button>
       <button v-if="idea.status !== 'geparkt'" class="btn" type="button" @click="parken">Auf den Parkplatz</button>
       <button class="btn danger" type="button" @click="removeIdea"><Icon name="trash" :size="18" />Idee löschen</button>
     </section>
@@ -403,6 +424,7 @@ p { margin: 0; }
 .clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .star { font-size: 22px; color: var(--warn); }
 .block { display: block; }
+.shortlist-card { border-color: var(--accent); }
 .rating-card { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
 .rating-card .score { font-size: 22px; font-weight: 600; text-align: right; }
 .parked-banner { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; border-color: var(--warn); }

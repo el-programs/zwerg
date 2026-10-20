@@ -25,6 +25,7 @@ const modell = computed(() => modelName(props.idea.business_model_id));
     <span v-if="idea.description" class="desc small muted">{{ idea.description }}</span>
     <span class="meta small muted">
       <span v-if="feld" class="chip branche" :title="feld">{{ feld }}</span>
+      <span v-if="idea.status !== 'geparkt' && (idea.shortlist ?? 'offen') === 'offen'" class="chip outline">Vorauswahl</span>
       <span v-if="isPending(idea.id)" class="chip outline">wartet auf Abgleich</span>
       <span class="grow"></span>
       <span>{{ anzahl === 1 ? '1 Kommentar' : `${anzahl} Kommentare` }}</span>

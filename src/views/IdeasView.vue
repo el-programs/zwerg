@@ -1,7 +1,9 @@
 <script setup>
 import { computed, inject, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { fieldName, modelName, partner, setFavorite, state, unparkIdea, profile, toast } from '../lib/store.js';
+import {
+  fieldName, inVorauswahl, modelName, parkIdea, partner, setFavorite, shortlistIdea, state, unparkIdea, profile, toast,
+} from '../lib/store.js';
 import {
   activeCriteria, hasSubmittedWeights, ideaResult, jointScores, jointWeightsSet, RESULT_LABEL,
 } from '../lib/score.js';
@@ -15,7 +17,7 @@ import { kiSichtbar } from '../lib/ki.js';
 const openCapture = inject('openCapture');
 const route = useRoute();
 const router = useRouter();
-const ansicht = ref(['liste', 'ranking', 'vergleich'].includes(route.query.ansicht) ? route.query.ansicht : 'liste');
+const ansicht = ref(['vorauswahl', 'liste', 'ranking', 'vergleich'].includes(route.query.ansicht) ? route.query.ansicht : 'liste');
 watch(ansicht, (a) => router.replace({ query: a === 'liste' ? {} : { ansicht: a } }));
 
 const filter = ref('alle');
@@ -55,9 +57,22 @@ const liste = computed(() => {
     .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
 });
 
-// Ranking
+// Runde 1: Vorauswahl – gemeinsam entscheiden, ob eine Idee weiterverfolgt wird.
+const vorauswahl = computed(() => aktiv.value.filter(inVorauswahl).sort((a, b) => (a.created_at < b.created_at ? -1 : 1)));
+function weiter(idea) {
+  shortlistIdea(idea.id);
+  toast(`„${idea.title || 'Ohne Titel'}“ ist in der Bewertungsrunde`);
+}
+function verwerfen(idea) {
+  const grund = prompt('Warum wird die Idee verworfen? (Begründung bleibt auf dem Parkplatz erhalten)');
+  if (grund === null) return;
+  parkIdea(idea.id, grund || 'In der Vorauswahl verworfen');
+  toast('Idee auf den Parkplatz gestellt');
+}
+
+// Ranking (Runde 2: nur weiterverfolgte Ideen)
 const ranking = computed(() => {
-  const rows = aktiv.value.map((idea) => ({ idea, result: ideaResult(idea.id) }));
+  const rows = aktiv.value.filter((i) => i.shortlist === 'weiter').map((idea) => ({ idea, result: ideaResult(idea.id) }));
   const bewertet = rows.filter((r) => r.result.score !== null && !r.result.ko).sort((a, b) => b.result.score - a.result.score);
   const ko = rows.filter((r) => r.result.ko);
   const offen = rows.filter((r) => r.result.score === null && !r.result.ko);
@@ -122,6 +137,7 @@ function stern(idea) {
   </header>
   <main class="page">
     <div class="tabs" role="tablist" aria-label="Ansicht">
+      <button role="tab" type="button" :aria-selected="ansicht === 'vorauswahl'" @click="ansicht = 'vorauswahl'">Vorauswahl<span v-if="vorauswahl.length" class="tab-count">{{ vorauswahl.length }}</span></button>
       <button role="tab" type="button" :aria-selected="ansicht === 'liste'" @click="ansicht = 'liste'">Liste</button>
       <button role="tab" type="button" :aria-selected="ansicht === 'ranking'" @click="ansicht = 'ranking'">Ranking</button>
       <button role="tab" type="button" :aria-selected="ansicht === 'vergleich'" @click="ansicht = 'vergleich'">Vergleich</button>
@@ -135,8 +151,26 @@ function stern(idea) {
       </select>
     </label>
 
+    <!-- Runde 1: Vorauswahl -->
+    <template v-if="ansicht === 'vorauswahl'">
+      <p class="small muted">Runde 1: Entscheidet gemeinsam, ob ihr eine Idee weiterverfolgt. Weiterverfolgte Ideen kommen in die Bewertung (Runde 2), verworfene mit Begründung auf den Parkplatz.</p>
+      <p v-if="!vorauswahl.length" class="empty">Alle Ideen sind entschieden. Neue Ideen erscheinen hier automatisch.</p>
+      <article v-for="i in vorauswahl" :key="i.id" class="card stack pick">
+        <span v-if="modelName(i.business_model_id)" class="pick-model">{{ modelName(i.business_model_id) }}</span>
+        <router-link :to="`/idee/${i.id}`" class="pick-title">{{ i.title || 'Ohne Titel' }}</router-link>
+        <p v-if="i.benefit" class="small"><span class="muted">Nutzen:</span> {{ i.benefit }}</p>
+        <p v-if="i.offer" class="small"><span class="muted">Angebot:</span> {{ i.offer }}</p>
+        <div class="row pick-actions">
+          <button class="btn primary" type="button" @click="weiter(i)">Weiterverfolgen</button>
+          <button class="btn" type="button" @click="verwerfen(i)">Verwerfen</button>
+          <span class="grow"></span>
+          <router-link :to="`/idee/${i.id}`" class="small more-link">Steckbrief</router-link>
+        </div>
+      </article>
+    </template>
+
     <!-- Liste -->
-    <template v-if="ansicht === 'liste'">
+    <template v-else-if="ansicht === 'liste'">
       <label v-if="sucheOffen" class="field">
         <span class="visually-hidden">Suche</span>
         <input v-model="suche" class="input" type="search" placeholder="Titel, Beschreibung, Schlagwort …" autofocus>
@@ -257,7 +291,14 @@ function stern(idea) {
 .ki-btn { min-height: 36px; padding: 0 12px; font-size: 14px; border-color: var(--accent); color: var(--accent); }
 .block { display: block; }
 p { margin: 0; }
-.tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: var(--chip); max-width: 480px; }
+.tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: var(--chip); max-width: 560px; }
+.tabs button { font-size: 14px; padding: 0 2px; position: relative; }
+.tab-count { position: absolute; top: -6px; right: -2px; min-width: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent); color: var(--on-accent); font-size: 11px; line-height: 18px; font-weight: 600; }
+.pick { gap: 8px; }
+.pick-model { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); }
+.pick-title { font-weight: 600; font-size: 16px; color: inherit; text-decoration: none; }
+.pick-actions { flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.more-link { color: var(--accent); text-decoration: none; }
 .tabs button { height: 38px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-weight: 500; cursor: pointer; }
 .tabs button[aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
 .segmented.wrap { flex-wrap: wrap; }

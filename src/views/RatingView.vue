@@ -3,7 +3,7 @@
 // dazu die KO-Kriterien. Zum Schluss wird die Bewertung abgeschlossen (Endbewertung).
 import { computed, reactive } from 'vue';
 import { useRoute } from 'vue-router';
-import { profile, setEvaluation, setJointNote, setJointRating, state, toast } from '../lib/store.js';
+import { profile, setEvaluation, setJointNote, setJointRating, shortlistIdea, state, toast } from '../lib/store.js';
 import { activeCriteria, activeKo, antwort, evaluation, jointScores, SKALEN, total } from '../lib/score.js';
 import ScoreButtons from '../components/ScoreButtons.vue';
 import { ergebnisse, kiSichtbar } from '../lib/ki.js';
@@ -71,6 +71,12 @@ function wiederOeffnen() {
         Jede Antwort wird sofort gespeichert und erscheint beim anderen.
         <template v-if="zuletzt"> Zuletzt geändert von {{ profile(zuletzt.updated_by)?.name }}, {{ relativ(zuletzt.updated_at) }}.</template>
       </p>
+    </div>
+
+    <div v-if="(idea.shortlist ?? 'offen') === 'offen' && idea.status !== 'geparkt'" class="card stack small">
+      <strong>Diese Idee ist noch in der Vorauswahl.</strong>
+      <span class="muted">Bewertet werden nur Ideen, die ihr weiterverfolgen wollt.</span>
+      <button class="btn primary" type="button" @click="shortlistIdea(idea.id); toast('Idee ist in der Bewertungsrunde')">Weiterverfolgen und bewerten</button>
     </div>
 
     <p v-if="abgeschlossen" class="card small ok-card"><Icon name="check" :size="16" /> Bewertung abgeschlossen{{ jointKo.length ? ' – wegen KO ausgeschlossen' : '' }}. Zum Ändern unten „Wieder öffnen“.</p>

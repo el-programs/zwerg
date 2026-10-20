@@ -48,7 +48,7 @@ export function sheets() {
   const ideenRows = ideen.map((i) => {
     const r = ideaResult(i.id);
     return [
-      i.title || 'Ohne Titel', i.benefit, i.offer, i.customers, erloesText(i), i.first_test, i.origin, i.description, modelName(i.business_model_id), fieldName(i.search_field_id), i.status === 'geparkt' ? 'geparkt' : 'aktiv',
+      i.title || 'Ohne Titel', i.benefit, i.offer, i.customers, erloesText(i), i.first_test, i.origin, i.description, modelName(i.business_model_id), fieldName(i.search_field_id), i.status === 'geparkt' ? 'geparkt' : i.shortlist === 'weiter' ? 'Bewertungsrunde' : 'Vorauswahl',
       `${i.phase} · ${phaseName(i.phase)}`, i.is_favorite ? 'ja' : '', r.score, RESULT_LABEL[r.kind], r.ko ? 'ja' : '',
       i.park_reason ?? '', (i.tags ?? []).join(', '), name(i.created_by), tag(i.created_at),
     ];
