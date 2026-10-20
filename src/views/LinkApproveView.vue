@@ -67,7 +67,7 @@ async function bestaetigen() {
   try {
     await approveLink(link.value.linkId, link.value.code);
     toast('Gerät ist angemeldet');
-    router.replace('/mehr');
+    router.replace('/mehr/geraete');
   } catch (e) {
     error.value = e.message;
   } finally {

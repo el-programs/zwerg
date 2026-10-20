@@ -94,6 +94,11 @@ function add() {
 .entry { display: flex; flex-direction: column; gap: 4px; }
 .row { display: flex; align-items: center; gap: 4px; }
 .row .input { flex: 1; min-width: 0; }
+/* Am Handy steht der Name über die volle Breite, die Knöpfe rücken darunter. */
+@media (max-width: 599px) {
+  .entry > .row { flex-wrap: wrap; justify-content: flex-end; }
+  .entry > .row .input { flex: 1 1 100%; }
+}
 .desc { font-size: 14px; min-height: 38px; padding: 6px 12px; color: var(--muted); }
 .archived .input { color: var(--muted); text-decoration: line-through; }
 .small-btn { padding: 0 10px; font-size: 13px; }

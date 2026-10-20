@@ -34,7 +34,7 @@ export const router = createRouter({
     { path: '/gewichtung', name: 'gewichtung', component: WeightsView },
     { path: '/idee/:id', name: 'idee', component: IdeaView, meta: { nav: false } },
     { path: '/phasen', name: 'phasen', component: PhasesView },
-    { path: '/mehr', name: 'mehr', component: SettingsView },
+    { path: '/mehr/:bereich?', name: 'mehr', component: SettingsView },
     { path: '/koppeln/:linkId?/:code?', name: 'koppeln', component: () => import('./views/LinkApproveView.vue'), meta: { nav: false } },
     { path: '/anmelden', name: 'anmelden', component: () => import('./views/LoginView.vue'), meta: { public: true, nav: false } },
     { path: '/einladung/:token', name: 'einladung', component: () => import('./views/InviteView.vue'), meta: { public: true, nav: false } },
