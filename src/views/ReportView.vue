@@ -2,7 +2,7 @@
 // Druckfertige Berichte: Projektbericht oder Steckbrief einer Idee. „Als PDF speichern“ öffnet den Druckdialog.
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { currentPhase, fieldName, profile, state } from '../lib/store.js';
+import { currentPhase, fieldName, modelName, profile, state } from '../lib/store.js';
 import {
   activeCriteria, antwort, effectiveWeight, ideaResult, jointScores, punkte, rankedIdeas, RESULT_LABEL,
 } from '../lib/score.js';
@@ -83,6 +83,7 @@ function drucken() {
       <h1>{{ idea.title || 'Ohne Titel' }}</h1>
       <p class="r-meta">
         Phase {{ idea.phase }} · {{ phaseName(idea.phase) }}
+        <template v-if="idea.business_model_id"> · {{ modelName(idea.business_model_id) }}</template>
         <template v-if="idea.search_field_id"> · Branche: {{ fieldName(idea.search_field_id) }}</template>
         <template v-if="idea.status === 'geparkt'"> · geparkt</template>
         <template v-if="idea.is_favorite"> · Favorit</template>

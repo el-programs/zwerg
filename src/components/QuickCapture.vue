@@ -11,6 +11,8 @@ const isOpen = ref(false);
 const mode = ref('notiz');
 const text = ref('');
 const fieldId = ref('');
+const modelId = ref('');
+const models = computed(() => state.models.filter((m) => !m.archived));
 const sheet = ref(null);
 const area = ref(null);
 const titleEl = ref(null);
@@ -76,9 +78,10 @@ function save() {
   if (!kannSpeichern.value) return close();
   if (mode.value === 'idee') {
     const felder = Object.fromEntries(Object.entries(steckbrief).map(([k, v]) => [k, Array.isArray(v) ? [...v] : v.trim()]));
-    addIdea({ title: titel.value.trim().slice(0, 200), searchFieldId: fieldId.value, steckbrief: felder });
+    addIdea({ title: titel.value.trim().slice(0, 200), searchFieldId: fieldId.value, businessModelId: modelId.value, steckbrief: felder });
     titel.value = '';
     fieldId.value = '';
+    modelId.value = '';
     Object.assign(steckbrief, leererSteckbrief());
   } else {
     addNote(text.value);
@@ -109,6 +112,13 @@ defineExpose({ open });
       <label class="field">
         <span>Titel</span>
         <input ref="titleEl" v-model="titel" class="input" maxlength="200" placeholder="Wie nennen wir die Idee?">
+      </label>
+      <label class="field">
+        <span>Geschäftsmodell</span>
+        <select v-model="modelId" class="select">
+          <option value="">– ohne –</option>
+          <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
+        </select>
       </label>
       <label class="field">
         <span>Branche</span>

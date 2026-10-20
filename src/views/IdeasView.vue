@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { fieldName, partner, setFavorite, state, unparkIdea, profile, toast } from '../lib/store.js';
+import { fieldName, modelName, partner, setFavorite, state, unparkIdea, profile, toast } from '../lib/store.js';
 import {
   activeCriteria, hasSubmittedWeights, ideaResult, jointScores, jointWeightsSet, RESULT_LABEL,
 } from '../lib/score.js';
@@ -23,8 +23,12 @@ const suche = ref('');
 const sucheOffen = ref(false);
 const anderer = computed(() => partner());
 
-const aktiv = computed(() => state.ideas.filter((i) => i.status !== 'geparkt'));
-const geparkt = computed(() => state.ideas.filter((i) => i.status === 'geparkt'));
+// Filter nach Geschäftsmodell gilt für Liste, Ranking und Vergleich.
+const modell = ref('');
+const models = computed(() => state.models.filter((m) => !m.archived || state.ideas.some((i) => i.business_model_id === m.id)));
+const passt = (i) => !modell.value || (modell.value === 'ohne' ? !i.business_model_id : i.business_model_id === modell.value);
+const aktiv = computed(() => state.ideas.filter((i) => i.status !== 'geparkt' && passt(i)));
+const geparkt = computed(() => state.ideas.filter((i) => i.status === 'geparkt' && passt(i)));
 const filters = computed(() => [
   { id: 'alle', label: `Alle ${aktiv.value.length}` },
   { id: 'favoriten', label: 'Favoriten' },
@@ -45,7 +49,7 @@ const liste = computed(() => {
     })
     .filter((i) => {
       if (!q) return true;
-      const text = [i.title, i.description, fieldName(i.search_field_id), i.park_reason, ...(i.tags ?? [])].join(' ').toLowerCase();
+      const text = [i.title, i.description, i.benefit, i.offer, i.customers, fieldName(i.search_field_id), modelName(i.business_model_id), i.park_reason, ...(i.tags ?? [])].join(' ').toLowerCase();
       return text.includes(q);
     })
     .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
@@ -122,6 +126,14 @@ function stern(idea) {
       <button role="tab" type="button" :aria-selected="ansicht === 'ranking'" @click="ansicht = 'ranking'">Ranking</button>
       <button role="tab" type="button" :aria-selected="ansicht === 'vergleich'" @click="ansicht = 'vergleich'">Vergleich</button>
     </div>
+    <label class="field model-filter">
+      <span class="visually-hidden">Geschäftsmodell</span>
+      <select v-model="modell" class="select">
+        <option value="">Alle Geschäftsmodelle</option>
+        <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }} ({{ state.ideas.filter((i) => i.business_model_id === m.id && i.status !== 'geparkt').length }})</option>
+        <option value="ohne">Ohne Geschäftsmodell</option>
+      </select>
+    </label>
 
     <!-- Liste -->
     <template v-if="ansicht === 'liste'">
@@ -249,6 +261,7 @@ p { margin: 0; }
 .tabs button { height: 38px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-weight: 500; cursor: pointer; }
 .tabs button[aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
 .segmented.wrap { flex-wrap: wrap; }
+.model-filter { max-width: 480px; }
 .parked { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 .parked-title { font-weight: 600; color: var(--text); text-decoration: none; }
 .status { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; border-color: var(--warn); }

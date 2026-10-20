@@ -16,6 +16,7 @@ export const state = reactive({
   me: null,
   profiles: [],
   fields: [],
+  models: [],
   ideas: [],
   comments: [],
   reads: {},
@@ -223,6 +224,7 @@ const bySort = (a, b) => a.sort - b.sort;
 export const TABLES = {
   profiles: { key: 'profiles', id: byId },
   search_fields: { key: 'fields', id: byId, sort: bySort },
+  business_models: { key: 'models', id: byId, sort: bySort },
   ideas: { key: 'ideas', id: byId, front: true },
   comments: { key: 'comments', id: byId },
   devices: { key: 'devices', id: byId },
@@ -416,7 +418,7 @@ export function isPending(id) {
 // Ideen und Kommentare
 // ---------------------------------------------------------------------------
 
-export function addIdea({ text = '', title = '', description = '', searchFieldId = null, steckbrief = {} }) {
+export function addIdea({ text = '', title = '', description = '', searchFieldId = null, businessModelId = null, steckbrief = {} }) {
   if (text) {
     const lines = text.trim().split('\n');
     title = lines[0].trim().slice(0, 200);
@@ -428,6 +430,7 @@ export function addIdea({ text = '', title = '', description = '', searchFieldId
     title,
     description,
     search_field_id: searchFieldId || null,
+    business_model_id: businessModelId || null,
     tags: [],
     links: [],
     ...steckbrief,
@@ -507,6 +510,10 @@ export function partner() {
 
 export function fieldName(id) {
   return state.fields.find((f) => f.id === id)?.name ?? '';
+}
+
+export function modelName(id) {
+  return state.models.find((m) => m.id === id)?.name ?? '';
 }
 
 export function commentsOf(ideaId) {

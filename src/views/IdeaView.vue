@@ -22,7 +22,8 @@ const comments = computed(() => commentsOf(id.value));
 const fields = computed(() => state.fields.filter((f) => !f.archived || f.id === idea.value?.search_field_id));
 
 // Entwürfe der Felder; werden von außen nur aktualisiert, solange man nicht selbst darin schreibt.
-const draft = reactive({ title: '', description: '', search_field_id: '', tags: '' });
+const draft = reactive({ title: '', description: '', search_field_id: '', business_model_id: '', tags: '' });
+const models = computed(() => state.models.filter((m) => !m.archived || m.id === idea.value?.business_model_id));
 const editing = ref('');
 const neuerLink = reactive({ url: '', label: '' });
 const kommentar = ref('');
@@ -30,7 +31,7 @@ const neuSeit = ref('');
 
 function fromIdea() {
   if (!idea.value) return;
-  for (const key of ['title', 'description', 'search_field_id']) {
+  for (const key of ['title', 'description', 'search_field_id', 'business_model_id']) {
     if (editing.value !== key) draft[key] = idea.value[key] ?? '';
   }
   if (editing.value !== 'tags') draft.tags = (idea.value.tags ?? []).join(', ');
@@ -46,7 +47,7 @@ function commit(key) {
     if (value.join(',') === (idea.value.tags ?? []).join(',')) return;
   } else {
     if (key === 'title') value = value.trim();
-    if (key === 'search_field_id') value = value || null;
+    if (key === 'search_field_id' || key === 'business_model_id') value = value || null;
     if ((idea.value[key] ?? '') === (value ?? '')) return;
   }
   updateIdea(idea.value.id, { [key]: value });
@@ -270,6 +271,13 @@ watch(
     </label>
 
     <div class="two">
+      <label class="field">
+        <span>Geschäftsmodell</span>
+        <select v-model="draft.business_model_id" class="select" @change="commit('business_model_id')">
+          <option value="">– ohne –</option>
+          <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
+        </select>
+      </label>
       <label class="field">
         <span>Branche</span>
         <select v-model="draft.search_field_id" class="select" @change="commit('search_field_id')">

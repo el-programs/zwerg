@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { commentsOf, fieldName, isNewIdea, isPending, newComments, profile } from '../lib/store.js';
+import { commentsOf, fieldName, isNewIdea, isPending, modelName, newComments, profile } from '../lib/store.js';
 import { ideaResult } from '../lib/score.js';
 
 const props = defineProps({ idea: { type: Object, required: true } });
@@ -10,10 +10,12 @@ const von = computed(() => profile(props.idea.created_by));
 // Auf der Karte ohne Sektor, z. B. „C - Verarbeitendes Gewerbe“.
 const feld = computed(() => fieldName(props.idea.search_field_id).replace(/ - (Primär|Sekundär|Tertiär)$/, ''));
 const ergebnis = computed(() => ideaResult(props.idea.id));
+const modell = computed(() => modelName(props.idea.business_model_id));
 </script>
 
 <template>
   <router-link :to="`/idee/${idea.id}`" class="card idea">
+    <span v-if="modell" class="modell">{{ modell }}</span>
     <span class="top">
       <span v-if="idea.is_favorite" class="star" aria-label="Favorit">★</span>
       <span class="title">{{ idea.title || 'Ohne Titel' }}</span>
@@ -33,6 +35,7 @@ const ergebnis = computed(() => ideaResult(props.idea.id));
 
 <style scoped>
 .idea { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; }
+.modell { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .branche { display: inline-block; min-width: 0; max-width: 48%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 24px; }
 .top { display: flex; align-items: flex-start; gap: 8px; }
 .title { flex: 1; font-weight: 600; font-size: 16px; line-height: 1.3; }

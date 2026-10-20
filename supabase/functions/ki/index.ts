@@ -140,6 +140,9 @@ async function ideaContext(ideaId: string) {
   const field = idea.search_field_id
     ? check(await db.from('search_fields').select('name').eq('id', idea.search_field_id).maybeSingle())
     : null;
+  const modell = idea.business_model_id
+    ? check(await db.from('business_models').select('name').eq('id', idea.business_model_id).maybeSingle())
+    : null;
   const comments = check(await db.from('comments').select('body, created_at').eq('idea_id', ideaId).order('created_at').limit(30));
   const links = (idea.links ?? []).map((l: { url: string; label?: string }) => `- ${l.label || l.url}: ${l.url}`).join('\n');
   return {
@@ -155,6 +158,7 @@ async function ideaContext(ideaId: string) {
       idea.first_test ? `Erster Test: ${idea.first_test}` : '',
       idea.origin ? `Auslöser: ${idea.origin}` : '',
       `Weitere Gedanken: ${idea.description || '(keine)'}`,
+      modell ? `Geschäftsmodell: ${modell.name}` : '',
       field ? `Branche: ${field.name}` : '',
       idea.tags?.length ? `Schlagworte: ${idea.tags.join(', ')}` : '',
       links ? `Links:\n${links}` : '',

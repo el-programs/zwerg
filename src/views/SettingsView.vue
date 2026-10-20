@@ -168,6 +168,12 @@ function abmelden() {
     </section>
 
     <section class="stack">
+      <h2 class="section-title">Geschäftsmodelle</h2>
+      <p class="small muted">Überbegriff für eure Ideen: Wie verdient ihr Geld? Gelten für euch beide; neue Gruppen unten hinzufügen. Archivierte bleiben an bestehenden Ideen erhalten.</p>
+      <ListEditor table="business_models" placeholder="Neues Geschäftsmodell" @error="error = $event" />
+    </section>
+
+    <section class="stack">
       <h2 class="section-title">Branchen</h2>
       <p class="small muted">Abschnitte nach NACE mit Sektor. Gelten für euch beide. Archivierte Einträge bleiben an bestehenden Ideen erhalten.</p>
       <ListEditor table="search_fields" placeholder="Neue Branche, z. B. W - … - Tertiär" @error="error = $event" />
