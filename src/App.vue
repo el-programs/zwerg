@@ -2,7 +2,6 @@
 import { computed, provide, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { state } from './lib/store.js';
-import { ladeStatus } from './lib/ki.js';
 import BottomNav from './components/BottomNav.vue';
 import QuickCapture from './components/QuickCapture.vue';
 
@@ -20,12 +19,11 @@ function neuLaden() {
   window.location.reload();
 }
 
-// Abgemeldet (z. B. Gerät gesperrt): zurück zur Anmeldung. Angemeldet: KI-Status einmal abfragen.
+// Abgemeldet (z. B. Gerät gesperrt): zurück zur Anmeldung..
 watch(
   () => state.status,
   (s) => {
     if (s === 'signedOut' && !route.meta.public) router.replace({ name: 'anmelden' });
-    if (s === 'ready') ladeStatus();
   },
   { immediate: true },
 );

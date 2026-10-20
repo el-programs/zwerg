@@ -8,10 +8,8 @@ import RatingView from './views/RatingView.vue';
 import WeightsView from './views/WeightsView.vue';
 import PhasesView from './views/PhasesView.vue';
 import SettingsView from './views/SettingsView.vue';
-import KiView from './views/KiView.vue';
 import BusinessCaseView from './views/BusinessCaseView.vue';
 import FeedbackView from './views/FeedbackView.vue';
-import KiSuggestView from './views/KiSuggestView.vue';
 import MeetingView from './views/MeetingView.vue';
 import NotesView from './views/NotesView.vue';
 import ReportView from './views/ReportView.vue';
@@ -27,10 +25,8 @@ export const router = createRouter({
     { path: '/bericht/idee/:id', name: 'steckbrief', component: ReportView, meta: { nav: false } },
     { path: '/notizen/besprechung/:id', name: 'besprechung', component: MeetingView },
     { path: '/idee/:id/bewertung', name: 'bewertung', component: RatingView },
-    { path: '/idee/:id/ki', name: 'ki', component: KiView },
     { path: '/idee/:id/business-case', name: 'business-case', component: BusinessCaseView },
     { path: '/idee/:id/feedback', name: 'feedback', component: FeedbackView },
-    { path: '/ki/vorschlaege', name: 'ki-vorschlaege', component: KiSuggestView },
     { path: '/gewichtung', name: 'gewichtung', component: WeightsView },
     { path: '/idee/:id', name: 'idee', component: IdeaView, meta: { nav: false } },
     { path: '/phasen', name: 'phasen', component: PhasesView },

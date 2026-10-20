@@ -115,18 +115,6 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Geschäftsideen → Liste → Parkplatz** jederzeit reaktivieren. |
 | Faktoren & KO-Kriterien | **Einstellungen → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |
 
-### Etappe 3 testen (nach Teil E)
-
-| Was | So testet ihr es |
-|---|---|
-| Stufe je Person | **Einstellungen → KI-Unterstützung**: Aus / Nur auf Anfrage / Aktiv mit Hinweisen. Bei „Aus“ verschwinden alle KI-Knöpfe für diese Person. |
-| Ideen vorschlagen | **Geschäftsideen → KI-Vorschläge**: Branche wählen, optional Hinweise, „Vorschläge erzeugen“. Einzelne Vorschläge „Als Idee übernehmen“. |
-| Kritische Einschätzung | Idee öffnen → **KI-Sparring → Einschätzung**. Getrennt nach Fakten, Schätzungen, Annahmen, mit Bewertungsvorschlag je Faktor (klar als KI-Vorschlag markiert, fließt nicht in eure Wertung ein). |
-| Marktrecherche | **KI-Sparring → Recherche**, optional mit eigener Frage. Ergebnis mit Quellenliste. |
-| Chat | **KI-Sparring → Chat**: Sparring zur Idee, für beide sichtbar. |
-| Bewertung | Liegt eine KI-Einschätzung vor, steht der KI-Vorschlag je Faktor klein unter der Frage. |
-| Kostenbremse | **Einstellungen → KI-Unterstützung**: Verbrauch des Monats und Limit. Ist es erreicht, sperrt Zwerg die KI bis Monatsende. |
-
 ### Etappe 4 testen
 
 | Was | So testet ihr es |
@@ -195,26 +183,6 @@ Wiederherstellen: siehe `WIEDERHERSTELLEN.md` im Repository `zwerg-backup`.
 
 ---
 
-## Teil E – KI einrichten (optional)
-
-Die KI-Funktionen sind eingebaut, bleiben aber aus, bis ein API-Schlüssel hinterlegt ist. Der Schlüssel liegt nur auf dem
-Server (Supabase), nie in der App oder im Browser.
-
-1. **Konto bei Anthropic:** <https://console.anthropic.com> öffnen und registrieren (Firmenkonto).
-2. **Guthaben:** Unter **Billing** Prepaid-Guthaben kaufen, z. B. 10 $. Es wird nur verbraucht, was ihr nutzt.
-3. **Zweite Sicherung:** Unter **Limits** ein Monatslimit setzen (z. B. 15 $) – zusätzlich zur Kostenbremse in Zwerg.
-4. **Schlüssel:** Unter **API Keys → Create Key**, Name `zwerg`. Den Schlüssel (beginnt mit `sk-ant-`) kopieren.
-   **Nicht in den Chat schreiben.**
-5. **Im Supabase-Projekt hinterlegen:** <https://supabase.com/dashboard/project/znxplygfxvghmtyqbwvb/functions/secrets>
-   öffnen → **Add new secret** → Name `ANTHROPIC_API_KEY`, Wert: der Schlüssel → **Save**.
-6. In Zwerg unter **Einstellungen → KI-Unterstützung** Modell und Monatslimit prüfen. Fertig.
-
-Datenschutz: Nur beim Benutzen einer KI-Funktion wird die betroffene Idee (Titel, Beschreibung, Kommentare) an Anthropic
-(USA) übermittelt; Anthropic verwendet API-Daten nicht zum Training. Ein Auftragsverarbeitungsvertrag (DPA) ist in den
-Anthropic-Bedingungen enthalten.
-
----
-
 ## Gut zu wissen
 
 - **Pausieren:** Kostenlose Supabase-Projekte pausieren nach etwa einer Woche ohne Zugriff. Der Ablauf
@@ -223,4 +191,4 @@ Anthropic-Bedingungen enthalten.
   Ist das Projekt doch pausiert: im Supabase-Dashboard auf **Restore project** klicken.
 - **Gerät verloren:** Am anderen Gerät **Einstellungen → Geräte → Sperren**. Für ein neues iPhone den Partner um einen
   Einladungslink bitten (oder selbst unter **Einstellungen → Geräte → Link für …** erzeugen).
-- **Kosten:** 0 €. Die KI-Funktionen (Etappe 3) bleiben aus, bis ihr einen Schlüssel hinterlegt.
+- **Kosten:** 0 €.

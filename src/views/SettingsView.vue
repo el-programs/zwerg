@@ -5,7 +5,6 @@ import { computed, onBeforeUnmount, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { createInvite, profile, revokeDevice, setAppearance, signOut, state, toast } from '../lib/store.js';
 import ListEditor from '../components/ListEditor.vue';
-import KiSettings from '../components/KiSettings.vue';
 import { AKZENTE, relativ } from '../lib/format.js';
 import Icon from '../components/Icon.vue';
 import { excelExport } from '../lib/export.js';
@@ -21,7 +20,6 @@ mq.addEventListener('change', aufBreite);
 onBeforeUnmount(() => mq.removeEventListener('change', aufBreite));
 
 const aktiv = (list) => list.filter((x) => !x.archived).length;
-const STUFE = { aus: 'aus', anfrage: 'auf Anfrage', aktiv: 'aktiv' };
 const GRUPPEN = computed(() => [
   { name: 'Ich', items: [
     { id: 'darstellung', titel: 'Darstellung', info: `${modes.find((m) => m.id === (state.me?.theme ?? 'system'))?.label} · ${AKZENTE.find((a) => a.id === state.me?.accent)?.name ?? 'Petrol'}` },
@@ -39,7 +37,6 @@ const GRUPPEN = computed(() => [
   ] },
   { name: 'Daten', items: [
     { id: 'export', titel: 'Export und Berichte', info: 'Excel, PDF' },
-    ...(state.kiStatus?.configured ? [{ id: 'ki', titel: 'KI-Unterstützung', info: STUFE[state.me?.ai_level] ?? '' }] : []),
   ] },
 ]);
 const alle = computed(() => GRUPPEN.value.flatMap((g) => g.items));
@@ -289,9 +286,6 @@ function abmelden() {
           <router-link to="/bericht" class="btn">Projektbericht (PDF)</router-link>
         </div>
       </section>
-      </div>
-      <div v-if="bereich === 'ki'" class="bereich">
-        <KiSettings @error="error = $event" />
       </div>
       </div>
     </div>

@@ -6,7 +6,6 @@ import { useRoute } from 'vue-router';
 import { profile, setEvaluation, setJointNote, setJointRating, shortlistIdea, state, toast } from '../lib/store.js';
 import { activeCriteria, activeKo, antwort, evaluation, jointScores, SKALEN, total } from '../lib/score.js';
 import ScoreButtons from '../components/ScoreButtons.vue';
-import { ergebnisse, kiSichtbar } from '../lib/ki.js';
 import { relativ } from '../lib/format.js';
 import Icon from '../components/Icon.vue';
 
@@ -27,12 +26,6 @@ const zuletzt = computed(() => {
   const rows = state.jointRatings.filter((r) => r.idea_id === id.value).sort((a, b) => (a.updated_at < b.updated_at ? 1 : -1));
   return rows[0] ?? null;
 });
-// Eine vorhandene KI-Einschätzung wird je Faktor als Hinweis gezeigt.
-const kiVorschlag = computed(() => {
-  const e = ergebnisse(id.value, 'einschaetzung').find((r) => r.status === 'fertig');
-  return kiSichtbar.value && e ? Object.fromEntries((e.content?.bewertung ?? []).map((b) => [b.faktor_id, b])) : null;
-});
-
 function antworten(c, score) {
   if (abgeschlossen.value) return;
   setJointRating(id.value, c.id, score);
@@ -94,10 +87,6 @@ function wiederOeffnen() {
           :label="c.description || c.name"
           @update:model-value="antworten(c, $event)"
         />
-        <p v-if="kiVorschlag?.[c.id]" class="small ki-hint">
-          <span class="ki-tag">KI-Vorschlag</span> <strong>{{ antwort(c, kiVorschlag[c.id].punkte) }}</strong>
-          <span class="muted"> – {{ kiVorschlag[c.id].begruendung }}</span>
-        </p>
         <button
           v-if="!notizOffen[c.id] && !gemeinsam[c.id]?.note"
           class="link-btn small"
@@ -161,7 +150,6 @@ p { margin: 0; }
   border: 1px solid var(--line);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
-.ki-tag { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--accent); color: var(--accent); }
 .ok-card { display: flex; align-items: center; gap: 8px; color: var(--ok); border-color: var(--ok); }
 @media (min-width: 900px) { .sticky-action { bottom: 12px; } }
 </style>

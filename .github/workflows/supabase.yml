@@ -31,4 +31,4 @@ jobs:
       - name: Funktionen veröffentlichen
         run: |
           supabase functions deploy auth --project-ref "$PROJECT_REF" --no-verify-jwt
-          supabase functions deploy ki --project-ref "$PROJECT_REF" --no-verify-jwt
+          supabase functions delete ki --project-ref "$PROJECT_REF" || true # alte KI-Funktion entfernen

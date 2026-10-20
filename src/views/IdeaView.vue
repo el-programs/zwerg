@@ -6,7 +6,6 @@ import {
   setIdeaPhase, state, toast, unparkIdea, updateIdea,
 } from '../lib/store.js';
 import { ideaResult, RESULT_LABEL } from '../lib/score.js';
-import { callKi, ergebnisse, kiSichtbar, ladeStatus, limitErreicht, meineStufe } from '../lib/ki.js';
 import { datum, phaseName, relativ, PHASEN } from '../lib/format.js';
 import { eur, rechne } from '../lib/business.js';
 import SteckbriefCard from '../components/SteckbriefCard.vue';
@@ -95,31 +94,6 @@ const bewertungText = computed(() => {
   return 'Noch nicht bewertet';
 });
 
-// KI: letzte Einschätzung und automatischer Kurz-Check bei Stufe „aktiv“
-const kiEinschaetzung = computed(() => (idea.value ? ergebnisse(idea.value.id, 'einschaetzung')[0] ?? null : null));
-const kiText = computed(() => {
-  const e = kiEinschaetzung.value;
-  if (!e) return meineStufe.value === 'aktiv' ? 'Kurz-Check wird angefordert, sobald möglich' : 'Kritische Einschätzung, Marktrecherche, Chat';
-  if (e.status === 'laeuft') return 'Die KI denkt nach …';
-  if (e.status === 'fehler') return 'Letzte Einschätzung fehlgeschlagen';
-  return e.content?.fazit ?? '';
-});
-async function autoCheck() {
-  const i = idea.value;
-  if (!i || meineStufe.value !== 'aktiv' || !state.online || kiEinschaetzung.value || limitErreicht.value) return;
-  if (Date.now() - new Date(i.created_at).getTime() > 14 * 86400000) return;
-  const key = `zwerg-autocheck-${i.id}`;
-  try {
-    if (localStorage.getItem(key)) return;
-    const status = await ladeStatus();
-    if (!status?.configured) return;
-    localStorage.setItem(key, '1');
-    await callKi('einschaetzung', { ideaId: i.id, kurz: true });
-  } catch {
-    /* Hinweis bleibt aus – kein Problem */
-  }
-}
-
 const bc = computed(() => (idea.value ? state.businessCases.find((b) => b.idea_id === idea.value.id) : null));
 const bcText = computed(() => {
   const r = rechne(bc.value?.scenarios?.realistisch);
@@ -170,7 +144,6 @@ onMounted(() => {
   const ungelesen = newComments(idea.value);
   neuSeit.value = ungelesen.length ? ungelesen[0].created_at : '';
   markSeen(id.value);
-  autoCheck();
 });
 
 // Kommen neue Kommentare herein, während die Idee offen ist, gelten sie als gelesen.
@@ -269,14 +242,6 @@ watch(
         <span class="small muted">{{ feedbackText }}</span>
       </router-link>
     </div>
-
-    <router-link v-if="kiSichtbar && idea.status !== 'geparkt'" :to="`/idee/${idea.id}/ki`" class="card ki-card">
-      <span class="grow">
-        <strong>KI-Sparring</strong> <span class="chip ki">KI</span>
-        <span class="small muted block clamp">{{ kiText }}</span>
-      </span>
-      <Icon name="send" :size="18" />
-    </router-link>
 
     <label class="field">
       <span>Weitere Gedanken</span>
@@ -419,8 +384,6 @@ p { margin: 0; }
 .phase-row { gap: 8px; }
 .phase-select { width: auto; min-height: 36px; padding: 4px 10px; font-size: 14px; }
 .fold { display: flex; align-items: center; justify-content: space-between; border: 0; background: none; padding: 0; cursor: pointer; color: var(--text); }
-.ki-card { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-.chip.ki { background: transparent; border: 1px solid var(--accent); color: var(--accent); font-weight: 600; margin-left: 4px; }
 .clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .star { font-size: 22px; color: var(--warn); }
 .block { display: block; }
