@@ -9,6 +9,7 @@ import {
 } from '../lib/score.js';
 import { datum } from '../lib/format.js';
 import IdeaCard from '../components/IdeaCard.vue';
+import SynergyButton from '../components/SynergyButton.vue';
 import RadarChart from '../components/RadarChart.vue';
 import Icon from '../components/Icon.vue';
 import MeLink from '../components/MeLink.vue';
@@ -155,7 +156,10 @@ function stern(idea) {
       <p v-if="!vorauswahl.length" class="empty">Alle Ideen sind entschieden. Neue Ideen erscheinen hier automatisch.</p>
       <article v-for="i in vorauswahl" :key="i.id" class="card stack pick">
         <span v-if="modelName(i.business_model_id)" class="pick-model">{{ modelName(i.business_model_id) }}</span>
-        <router-link :to="`/idee/${i.id}`" class="pick-title">{{ i.title || 'Ohne Titel' }}</router-link>
+        <div class="pick-head">
+          <router-link :to="`/idee/${i.id}`" class="pick-title">{{ i.title || 'Ohne Titel' }}</router-link>
+          <SynergyButton :idea-id="i.id" class="pick-syn" />
+        </div>
         <p v-if="i.benefit" class="small"><span class="muted">Nutzen:</span> {{ i.benefit }}</p>
         <p v-if="i.offer" class="small"><span class="muted">Angebot:</span> {{ i.offer }}</p>
         <div class="row pick-actions">
@@ -218,6 +222,7 @@ function stern(idea) {
             <span class="small muted">{{ RESULT_LABEL[r.result.kind] }}</span>
           </router-link>
           <strong class="score">{{ r.result.score }}</strong>
+          <SynergyButton :idea-id="r.idea.id" />
           <button class="icon-btn star" type="button" :aria-pressed="r.idea.is_favorite" :aria-label="r.idea.is_favorite ? 'Favorit entfernen' : 'Als Favorit markieren'" @click="stern(r.idea)">
             {{ r.idea.is_favorite ? '★' : '☆' }}
           </button>
@@ -304,6 +309,9 @@ p { margin: 0; }
 .parked-title { font-weight: 600; color: var(--text); text-decoration: none; }
 .status { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; border-color: var(--warn); }
 .status.done { border-color: var(--line); }
+.pick-head { display: flex; align-items: flex-start; gap: 8px; }
+.pick-head .pick-title { flex: 1; min-width: 0; }
+.pick-syn { margin: -10px -8px -10px 0; }
 .rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .rank-row { display: flex; align-items: center; gap: 12px; padding: 10px 6px 10px 14px; }
 .pos { width: 24px; text-align: center; font-weight: 600; color: var(--muted); }

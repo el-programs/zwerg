@@ -96,6 +96,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Ideen bearbeiten | Titel, Beschreibung, Branche, Schlagworte und Links direkt in der Idee ändern – wird beim Verlassen des Feldes gespeichert. |
 | Offline | iPhone in den Flugmodus, Idee erfassen („Offline gespeichert“), Flugmodus aus → die Idee wird automatisch abgeglichen. |
 | Geschäftsmodelle | **Einstellungen → Geschäftsmodelle**: Überbegriffe wie „Vermietung, Sharing und Selbstbedienung“; neue anlegen, umbenennen, sortieren, archivieren. In der Ideenliste filtert die Auswahl unter den Reitern nach Geschäftsmodell (gilt auch für Ranking und Vergleich). |
+| Synergien | Ideen, die sich kombinieren lassen, tragen neben dem Stern zwei Ringe (mit Zahl bei mehreren). Antippen öffnet die verbundene Idee bzw. eine Auswahl. In der Idee unter **Synergien** verbinden, begründen oder entfernen. |
 | Branchen | **Einstellungen → Branchen**: die NACE-Abschnitte A–V mit Sektor; umbenennen, sortieren, archivieren, neu anlegen. |
 | Darstellung | **Einstellungen → Darstellung**: System/Hell/Dunkel und eure persönliche Akzentfarbe. |
 | Geräte | **Einstellungen → Geräte**: alle angemeldeten Geräte, einzeln sperrbar. |

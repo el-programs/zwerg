@@ -25,6 +25,8 @@ const paths = {
   cloud: 'M7 18a4 4 0 0 1-.5-8 5.5 5.5 0 0 1 10.6 1.5A3.5 3.5 0 0 1 17 18z',
   check: 'M5 12l4 4 10-10',
   copy: 'M9 9h10v10H9zM5 15V5h10',
+  // Zwei ineinandergreifende Ringe
+  synergy: 'M13.19 9.27A5 5 0 1 1 10.45 7.21M10.81 14.73A5 5 0 1 1 13.55 16.79',
   share: 'M12 4v11M7 9l5-5 5 5M5 14v6h14v-6',
 };
 </script>

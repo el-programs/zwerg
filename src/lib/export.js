@@ -93,6 +93,7 @@ export function sheets() {
 
   return [
     blatt('Ideen', ['Titel', 'Nutzen', 'Angebot', 'Zielkunden', 'Erlösmodell', 'Erster Test', 'Auslöser', 'Weitere Gedanken', 'Geschäftsmodell', 'Branche', 'Status', 'Phase', 'Favorit', 'Punkte (0–100)', 'Bewertungsstand', 'KO', 'Parkgrund', 'Schlagworte', 'Von', 'Angelegt'], ideenRows, [32, 40, 40, 30, 24, 34, 30, 40, 28, 30, 9, 26, 8, 13, 22, 5, 30, 20, 10, 11]),
+    blatt('Synergien', ['Idee', 'Lässt sich kombinieren mit', 'Begründung'], [...state.synergies].map((x) => [ideaTitle(x.idea_a), ideaTitle(x.idea_b), x.note]).sort((a, b) => a[0].localeCompare(b[0], 'de')), [40, 40, 60]),
     blatt('Bewertungen', ['Idee', 'Faktor', 'Frage', 'Gewicht', 'Antwort', 'Punkte (0–4)', 'Begründung'], bewertungRows, [32, 28, 45, 9, 14, 12, 40]),
     blatt('Business Case', ['Idee', 'Szenario', 'Investition €', 'Fixkosten/Monat €', 'Variable Kosten/Einheit €', 'Preis/Einheit €', 'Absatz/Monat', 'Umsatz/Monat €', 'Ergebnis/Monat €', 'Break-even (Einheiten/Monat)', 'Amortisation (Monate)'], bcRows, [32, 13, 13, 16, 20, 14, 13, 15, 16, 22, 18]),
     blatt('Aufgaben', ['Aufgabe', 'Status', 'Wer', 'Fällig', 'Idee', 'Phase', 'Notizen', 'Erledigt am'], aufgaben.map((t) => [t.title, STATUS[t.status], name(t.assignee), tag(t.due_date), ideaTitle(t.idea_id), t.phase ? `${t.phase} · ${phaseName(t.phase)}` : '', t.notes, tag(t.done_at)]), [40, 11, 10, 11, 28, 26, 40, 11]),

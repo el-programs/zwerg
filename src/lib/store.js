@@ -18,6 +18,7 @@ export const state = reactive({
   fields: [],
   models: [],
   ideas: [],
+  synergies: [],
   comments: [],
   reads: {},
   devices: [],
@@ -221,6 +222,7 @@ export const TABLES = {
   search_fields: { key: 'fields', id: byId, sort: bySort },
   business_models: { key: 'models', id: byId, sort: bySort },
   ideas: { key: 'ideas', id: byId, front: true },
+  idea_synergies: { key: 'synergies', id: byId },
   comments: { key: 'comments', id: byId },
   devices: { key: 'devices', id: byId },
   criteria: { key: 'criteria', id: byId, sort: bySort },
@@ -451,8 +453,43 @@ export function updateIdea(id, patch) {
 export function deleteIdea(id) {
   state.ideas = state.ideas.filter((i) => i.id !== id);
   state.comments = state.comments.filter((c) => c.idea_id !== id);
+  state.synergies = state.synergies.filter((s) => s.idea_a !== id && s.idea_b !== id);
   saveCache();
   enqueue({ op: 'delete', table: 'ideas', id });
+}
+
+// ---------------------------------------------------------------------------
+// Synergien: Ideen, die sich kombinieren lassen (je Paar eine Zeile, idea_a < idea_b)
+// ---------------------------------------------------------------------------
+
+export function synergiesOf(ideaId) {
+  return state.synergies
+    .filter((s) => s.idea_a === ideaId || s.idea_b === ideaId)
+    .map((s) => ({ ...s, idea: state.ideas.find((i) => i.id === (s.idea_a === ideaId ? s.idea_b : s.idea_a)) }))
+    .filter((s) => s.idea)
+    .sort((a, b) => (a.idea.title || '').localeCompare(b.idea.title || '', 'de'));
+}
+
+export function addSynergy(ideaId, otherId, note = '') {
+  if (!otherId || otherId === ideaId) return;
+  const [a, b] = ideaId < otherId ? [ideaId, otherId] : [otherId, ideaId];
+  if (state.synergies.some((s) => s.idea_a === a && s.idea_b === b)) return;
+  queueInsert('idea_synergies', {
+    id: crypto.randomUUID(),
+    idea_a: a,
+    idea_b: b,
+    note: note.trim().slice(0, 500),
+    created_by: state.me.id,
+    created_at: now(),
+  });
+}
+
+export function updateSynergy(id, note) {
+  queueUpdate('idea_synergies', id, { note: note.trim().slice(0, 500) });
+}
+
+export function deleteSynergy(id) {
+  queueDelete('idea_synergies', id);
 }
 
 export function addComment(ideaId, body) {

@@ -9,6 +9,8 @@ import { ideaResult, RESULT_LABEL } from '../lib/score.js';
 import { datum, phaseName, relativ, PHASEN } from '../lib/format.js';
 import { eur, rechne } from '../lib/business.js';
 import SteckbriefCard from '../components/SteckbriefCard.vue';
+import SynergyButton from '../components/SynergyButton.vue';
+import SynergyList from '../components/SynergyList.vue';
 import TaskList from '../components/TaskList.vue';
 import DecisionList from '../components/DecisionList.vue';
 import Icon from '../components/Icon.vue';
@@ -161,6 +163,7 @@ watch(
     <div class="topbar-inner">
       <router-link to="/ideen" class="icon-btn back"><Icon name="back" /><span>Ideen</span></router-link>
       <span class="grow"></span>
+      <SynergyButton v-if="idea" :idea-id="idea.id" :size="22" />
       <button
         v-if="idea && idea.status !== 'geparkt'"
         class="icon-btn star"
@@ -282,6 +285,8 @@ watch(
         >
       </label>
     </div>
+
+    <SynergyList :idea-id="idea.id" />
 
     <section class="stack">
       <h2>Links</h2>
