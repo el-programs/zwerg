@@ -100,7 +100,7 @@ function save() {
     <section v-if="top.length" class="stack">
       <div class="row between">
         <h2>Beste Ideen</h2>
-        <router-link to="/ideen?ansicht=ranking" class="small more">Ranking</router-link>
+        <router-link to="/ideen?ansicht=ranking" class="small more">Auswertung</router-link>
       </div>
       <router-link v-for="(r, n) in top" :key="r.idea.id" :to="`/idee/${r.idea.id}`" class="card line">
         <span class="pos">{{ n + 1 }}</span>

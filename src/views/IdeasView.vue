@@ -2,7 +2,7 @@
 import { computed, inject, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  fieldName, inVorauswahl, modelName, parkIdea, partner, setFavorite, shortlistIdea, state, unparkIdea, profile, toast,
+  fieldName, inVorauswahl, modelName, parkIdea, partner, shortlistIdea, state, unparkIdea, profile, toast,
 } from '../lib/store.js';
 import {
   activeCriteria, hasSubmittedWeights, ideaResult, jointScores, jointWeightsSet, RESULT_LABEL,
@@ -11,6 +11,7 @@ import { datum } from '../lib/format.js';
 import IdeaCard from '../components/IdeaCard.vue';
 import SynergyButton from '../components/SynergyButton.vue';
 import RadarChart from '../components/RadarChart.vue';
+import Auswertung from '../components/Auswertung.vue';
 import Icon from '../components/Icon.vue';
 import MeLink from '../components/MeLink.vue';
 
@@ -25,7 +26,7 @@ const suche = ref('');
 const sucheOffen = ref(false);
 const anderer = computed(() => partner());
 
-// Filter nach Geschäftsmodell gilt für Liste, Ranking und Vergleich.
+// Filter nach Geschäftsmodell gilt für Liste, Auswertung und Vergleich.
 const modell = ref('');
 const models = computed(() => state.models.filter((m) => !m.archived || state.ideas.some((i) => i.business_model_id === m.id)));
 const passt = (i) => !modell.value || (modell.value === 'ohne' ? !i.business_model_id : i.business_model_id === modell.value);
@@ -120,9 +121,6 @@ const serien = computed(() =>
   }),
 );
 
-function stern(idea) {
-  setFavorite(idea.id, !idea.is_favorite);
-}
 </script>
 
 <template>
@@ -134,11 +132,11 @@ function stern(idea) {
       <MeLink />
     </div>
   </header>
-  <main class="page">
+  <main :class="['page', { wide: ansicht === 'ranking' }]">
     <div class="tabs" role="tablist" aria-label="Ansicht">
       <button role="tab" type="button" :aria-selected="ansicht === 'vorauswahl'" @click="ansicht = 'vorauswahl'">Vorauswahl<span v-if="vorauswahl.length" class="tab-count">{{ vorauswahl.length }}</span></button>
       <button role="tab" type="button" :aria-selected="ansicht === 'liste'" @click="ansicht = 'liste'">Liste</button>
-      <button role="tab" type="button" :aria-selected="ansicht === 'ranking'" @click="ansicht = 'ranking'">Ranking</button>
+      <button role="tab" type="button" :aria-selected="ansicht === 'ranking'" @click="ansicht = 'ranking'">Auswertung</button>
       <button role="tab" type="button" :aria-selected="ansicht === 'vergleich'" @click="ansicht = 'vergleich'">Vergleich</button>
     </div>
     <label class="field model-filter">
@@ -199,7 +197,7 @@ function stern(idea) {
       </div>
     </template>
 
-    <!-- Ranking -->
+    <!-- Auswertung (früher Ranking) -->
     <template v-else-if="ansicht === 'ranking'">
       <router-link to="/gewichtung" class="card status" :class="{ done: gewichtungStatus.done }">
         <span class="grow">
@@ -209,42 +207,11 @@ function stern(idea) {
         <Icon name="send" :size="18" />
       </router-link>
       <p class="small muted">
-        Sortiert nach Gesamtpunktzahl (0–100). Ziel der Phase 1: 2–3 Favoriten – mit dem Stern markieren
-        <template v-if="favoriten"> (aktuell {{ favoriten }})</template>.
+        Alle weiterverfolgten Ideen mit ihren Punkten je Faktor (0–4) und der Gesamtpunktzahl (0–100). Ziel der Phase 1: 2–3 Favoriten
+        mit dem Stern markieren<template v-if="favoriten"> (aktuell {{ favoriten }})</template> und mit „→ Phase 2“ in die Machbarkeitsprüfung übernehmen.
       </p>
 
-      <ol class="rank">
-        <li v-for="(r, n) in ranking.bewertet" :key="r.idea.id" class="card rank-row">
-          <span class="pos">{{ n + 1 }}</span>
-          <router-link :to="`/idee/${r.idea.id}/bewertung`" class="grow rank-main">
-            <span class="rank-title">{{ r.idea.title || 'Ohne Titel' }}</span>
-            <span class="bar" aria-hidden="true"><span :style="{ width: `${r.result.score}%` }"></span></span>
-            <span class="small muted">{{ RESULT_LABEL[r.result.kind] }}</span>
-          </router-link>
-          <strong class="score">{{ r.result.score }}</strong>
-          <SynergyButton :idea-id="r.idea.id" />
-          <button class="icon-btn star" type="button" :aria-pressed="r.idea.is_favorite" :aria-label="r.idea.is_favorite ? 'Favorit entfernen' : 'Als Favorit markieren'" @click="stern(r.idea)">
-            {{ r.idea.is_favorite ? '★' : '☆' }}
-          </button>
-        </li>
-      </ol>
-      <p v-if="!ranking.bewertet.length" class="empty">Noch keine bewerteten Ideen. Öffne eine Idee und tippe auf „Bewerten“.</p>
-
-      <section v-if="ranking.ko.length" class="stack">
-        <h2>Ausgeschlossen (KO)</h2>
-        <router-link v-for="r in ranking.ko" :key="r.idea.id" :to="`/idee/${r.idea.id}/bewertung`" class="card ko-row">
-          <span class="grow">{{ r.idea.title || 'Ohne Titel' }}</span>
-          <span class="chip outline">{{ r.result.kind === 'final' ? 'KO' : 'KO, nicht abgeschlossen' }}</span>
-        </router-link>
-      </section>
-
-      <section v-if="ranking.offen.length" class="stack">
-        <h2>Noch nicht bewertet</h2>
-        <router-link v-for="r in ranking.offen" :key="r.idea.id" :to="`/idee/${r.idea.id}/bewertung`" class="card ko-row">
-          <span class="grow">{{ r.idea.title || 'Ohne Titel' }}</span>
-          <span class="small muted">{{ r.result.rated ? `in Arbeit (${r.result.rated}/${r.result.of})` : 'Bewerten' }}</span>
-        </router-link>
-      </section>
+      <Auswertung :ideas="aktiv.filter((i) => i.shortlist === 'weiter')" />
     </template>
 
     <!-- Vergleich -->
@@ -312,16 +279,6 @@ p { margin: 0; }
 .pick-head { display: flex; align-items: flex-start; gap: 8px; }
 .pick-head .pick-title { flex: 1; min-width: 0; }
 .pick-syn { margin: -10px -8px -10px 0; }
-.rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.rank-row { display: flex; align-items: center; gap: 12px; padding: 10px 6px 10px 14px; }
-.pos { width: 24px; text-align: center; font-weight: 600; color: var(--muted); }
-.rank-main { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: inherit; }
-.rank-title { font-weight: 600; }
-.bar { display: block; height: 6px; border-radius: 3px; background: var(--chip); overflow: hidden; }
-.bar span { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
-.score { font-size: 20px; min-width: 34px; text-align: right; }
-.star { font-size: 22px; color: var(--warn); }
-.ko-row { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
 .legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .legend li { display: flex; align-items: center; gap: 10px; }
 .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; flex: none; }

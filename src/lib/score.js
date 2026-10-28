@@ -95,8 +95,11 @@ export function ideaResult(ideaId) {
   const joint = jointScores(ideaId);
   const crit = activeCriteria();
   const rated = crit.filter((c) => joint[c.id]?.score).length;
-  const ko = (ev?.ko_ids?.length ?? 0) > 0;
-  const base = { ko, koIds: ev?.ko_ids ?? [], rated, of: crit.length };
+  // Nur aktive KO-Kriterien zählen. „Trifft zu“ schließt aus, „später prüfen“ ist nur ein Hinweis.
+  const aktiv = new Set(activeKo().map((k) => k.id));
+  const koIds = (ev?.ko_ids ?? []).filter((k) => aktiv.has(k));
+  const checkIds = (ev?.ko_check_ids ?? []).filter((k) => aktiv.has(k) && !koIds.includes(k));
+  const base = { ko: koIds.length > 0, koIds, checkIds, rated, of: crit.length };
   if (ev?.finalized_at) return { ...base, kind: 'final', score: total(joint) };
   if (crit.length && rated === crit.length) return { ...base, kind: 'vorlaeufig', score: total(joint) };
   return { ...base, kind: rated ? 'teilweise' : 'offen', score: null };

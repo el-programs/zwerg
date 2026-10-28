@@ -219,7 +219,7 @@ function abmelden() {
       <div v-if="bereich === 'faktoren'" class="bereich">
       <section class="stack">
         <h2 class="section-title">Bewertungsfaktoren</h2>
-        <p class="small muted">Je Faktor eine Frage und die passende Antwortskala – die rechte Antwort ist immer die beste für euch. Neue Faktoren erscheinen in offenen Bewertungen; die Gewichtung legt ihr unter Geschäftsideen → Ranking fest.</p>
+        <p class="small muted">Je Faktor eine Frage und die passende Antwortskala – die rechte Antwort ist immer die beste für euch. Neue Faktoren erscheinen in offenen Bewertungen; die Gewichtung legt ihr unter Geschäftsideen → Auswertung fest.</p>
         <ListEditor table="criteria" placeholder="Neuer Faktor" with-description with-scale description-placeholder="Frage für die Bewertung, z. B. Wie gut …?" @error="error = $event" />
       </section>
       </div>

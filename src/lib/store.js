@@ -704,7 +704,7 @@ export function setJointNote(ideaId, criterionId, note) {
 }
 
 export function setEvaluation(ideaId, patch) {
-  const existing = state.evaluations.find((e) => e.idea_id === ideaId) ?? { ko_ids: [], ko_note: '', finalized_at: null, finalized_by: null };
+  const existing = state.evaluations.find((e) => e.idea_id === ideaId) ?? { ko_ids: [], ko_check_ids: [], ko_note: '', finalized_at: null, finalized_by: null };
   queueUpsert('idea_evaluations', { ...existing, idea_id: ideaId, ...patch, updated_at: now() }, 'idea_id');
 }
 

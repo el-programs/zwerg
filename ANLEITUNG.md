@@ -95,7 +95,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Kommentare | Idee öffnen → unten kommentieren. Eigene Kommentare lassen sich löschen. |
 | Ideen bearbeiten | Titel, Beschreibung, Branche, Schlagworte und Links direkt in der Idee ändern – wird beim Verlassen des Feldes gespeichert. |
 | Offline | iPhone in den Flugmodus, Idee erfassen („Offline gespeichert“), Flugmodus aus → die Idee wird automatisch abgeglichen. |
-| Geschäftsmodelle | **Einstellungen → Geschäftsmodelle**: Überbegriffe wie „Vermietung, Sharing und Selbstbedienung“; neue anlegen, umbenennen, sortieren, archivieren. In der Ideenliste filtert die Auswahl unter den Reitern nach Geschäftsmodell (gilt auch für Ranking und Vergleich). |
+| Geschäftsmodelle | **Einstellungen → Geschäftsmodelle**: Überbegriffe wie „Vermietung, Sharing und Selbstbedienung“; neue anlegen, umbenennen, sortieren, archivieren. In der Ideenliste filtert die Auswahl unter den Reitern nach Geschäftsmodell (gilt auch für Auswertung und Vergleich). |
 | Synergien | Ideen, die sich kombinieren lassen, tragen neben dem Stern zwei Ringe (mit Zahl bei mehreren). Antippen öffnet die verbundene Idee bzw. eine Auswahl. In der Idee unter **Synergien** verbinden, begründen oder entfernen. |
 | Branchen | **Einstellungen → Branchen**: die NACE-Abschnitte A–V mit Sektor; umbenennen, sortieren, archivieren, neu anlegen. |
 | Darstellung | **Einstellungen → Darstellung**: System/Hell/Dunkel und eure persönliche Akzentfarbe. |
@@ -106,12 +106,13 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 | Was | So testet ihr es |
 |---|---|
-| Gewichtung | **Geschäftsideen → Ranking → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
+| Gewichtung | **Geschäftsideen → Auswertung → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
 | Steckbrief | **Geschäftsideen → +**: Titel (Pflicht), Branche und die Leitfragen Nutzen, Angebot, Zielkunden, Erlösmodell, optional erster Test und Auslöser. In der Idee zeigt die Karte **Steckbrief** „x von 4 ausgefüllt“; leere Felder per „+ ergänzen“ nachtragen. |
 | Vorauswahl (Runde 1) | **Geschäftsideen → Vorauswahl**: Neue Ideen landen zuerst hier. Gemeinsam **Weiterverfolgen** (kommt in die Bewertung) oder **Verwerfen** (mit Begründung auf den Parkplatz). Geht auch direkt in der Idee. |
 | Bewertung (Runde 2) | Idee öffnen → **Bewertung**. Ihr beantwortet gemeinsam je Faktor eine Frage mit fünf Antworten (z. B. keine … sehr viel); die rechte ist immer die beste (0–4 Punkte). Jede Antwort ist sofort beim anderen sichtbar. KO-Kriterien ankreuzen, dann **Abschließen**. Fragen und Antwortskala sind unter Einstellungen → Bewertungsfaktoren änderbar. |
 | Vergleich & Endbewertung | Nach beiden Abgaben: Abweichungen ab 2 Punkten sind hervorgehoben. Gemeinsame Punkte wählen (oder Mittelwerte übernehmen), KO gemeinsam festlegen, **Endbewertung festlegen**. |
-| Ranking | **Geschäftsideen → Ranking**: sortiert nach Punkten (0–100). „noch nicht abgeschlossen“ = alle Fragen beantwortet, aber nicht abgeschlossen. Punktzahl = Summe (Punkte × Gewicht) / Summe (4 × Gewicht) × 100. KO-Ideen stehen gesondert. Mit dem Stern 2–3 Favoriten markieren. |
+| Auswertung | **Geschäftsideen → Auswertung**: alle weiterverfolgten Ideen als Tabelle (iPhone: kompakte Zeilen mit Farbstreifen). Je Faktor ein Farbfeld mit 0–4 Punkten (rot = schwach, grün = stark), dazu Gesamtpunkte (0–100). Filter: Ohne KO, Später prüfen, Mit Synergien, Favoriten, Ab Phase 2, Mindestpunktzahl. Sortieren nach Gesamtpunkten, Titel, Synergien oder einem Faktor (am Laptop auch per Klick auf die Spaltenüberschrift). **→ Phase 2** übernimmt eine Idee in die Machbarkeitsprüfung (wird als Entscheidung protokolliert). Punktzahl = Summe (Punkte × Gewicht) / Summe (4 × Gewicht) × 100. |
+| KO-Kriterien | In der Bewertung je KO-Kriterium: **Nicht relevant**, **Später prüfen** (bleibt in der Auswertung, Hinweis „prüfen“) oder **Trifft zu** (Idee ist ausgeschlossen und steht ausgegraut unten). |
 | Vergleich | **Geschäftsideen → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
 | Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Geschäftsideen → Liste → Parkplatz** jederzeit reaktivieren. |
 | Faktoren & KO-Kriterien | **Einstellungen → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |

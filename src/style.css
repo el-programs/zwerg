@@ -251,3 +251,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   :root:not([data-theme="hell"]) { --s1: #3987e5; --s2: #d95926; --s3: #199e70; }
 }
 :root[data-theme="dunkel"] { --s1: #3987e5; --s2: #d95926; --s3: #199e70; }
+
+/* Farbfelder für Punkte 0–4 in der Auswertung (rot → grün), hell und dunkel */
+:root { --h0: #E8B0A6; --h1: #F1CF9F; --h2: #E9E3C4; --h3: #BFDDC4; --h4: #86C597; --heat-text: #1C1D1F; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="hell"]) { --h0: #7A3328; --h1: #74531F; --h2: #4D4930; --h3: #2F5E3D; --h4: #2B7F48; --heat-text: #F1F1EC; }
+}
+:root[data-theme="dunkel"] { --h0: #7A3328; --h1: #74531F; --h2: #4D4930; --h3: #2F5E3D; --h4: #2B7F48; --heat-text: #F1F1EC; }
+@media (min-width: 900px) { .page.wide { max-width: 1240px; } }

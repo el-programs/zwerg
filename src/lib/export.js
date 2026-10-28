@@ -23,6 +23,7 @@ function tag(value) {
 
 const ideaTitle = (id) => (id ? state.ideas.find((i) => i.id === id)?.title || 'Ohne Titel' : '');
 const name = (id) => profile(id)?.name ?? '';
+const koName = (id) => state.koCriteria.find((k) => k.id === id)?.name ?? '';
 const kopf = (titles) => titles.map((value) => ({ value, fontWeight: 'bold' }));
 const zelle = (value) => {
   if (value === null || value === undefined || value === '') return null;
@@ -49,7 +50,7 @@ export function sheets() {
     const r = ideaResult(i.id);
     return [
       i.title || 'Ohne Titel', i.benefit, i.offer, i.customers, erloesText(i), i.first_test, i.origin, i.description, modelName(i.business_model_id), fieldName(i.search_field_id), i.status === 'geparkt' ? 'geparkt' : i.shortlist === 'weiter' ? 'Bewertungsrunde' : 'Vorauswahl',
-      `${i.phase} · ${phaseName(i.phase)}`, i.is_favorite ? 'ja' : '', r.score, RESULT_LABEL[r.kind], r.ko ? 'ja' : '',
+      `${i.phase} · ${phaseName(i.phase)}`, i.is_favorite ? 'ja' : '', r.score, RESULT_LABEL[r.kind], r.koIds.map(koName).join(', '), r.checkIds.map(koName).join(', '),
       i.park_reason ?? '', (i.tags ?? []).join(', '), name(i.created_by), tag(i.created_at),
     ];
   });
@@ -92,7 +93,7 @@ export function sheets() {
   }
 
   return [
-    blatt('Ideen', ['Titel', 'Nutzen', 'Angebot', 'Zielkunden', 'Erlösmodell', 'Erster Test', 'Auslöser', 'Weitere Gedanken', 'Geschäftsmodell', 'Branche', 'Status', 'Phase', 'Favorit', 'Punkte (0–100)', 'Bewertungsstand', 'KO', 'Parkgrund', 'Schlagworte', 'Von', 'Angelegt'], ideenRows, [32, 40, 40, 30, 24, 34, 30, 40, 28, 30, 9, 26, 8, 13, 22, 5, 30, 20, 10, 11]),
+    blatt('Ideen', ['Titel', 'Nutzen', 'Angebot', 'Zielkunden', 'Erlösmodell', 'Erster Test', 'Auslöser', 'Weitere Gedanken', 'Geschäftsmodell', 'Branche', 'Status', 'Phase', 'Favorit', 'Punkte (0–100)', 'Bewertungsstand', 'KO trifft zu', 'KO später prüfen', 'Parkgrund', 'Schlagworte', 'Von', 'Angelegt'], ideenRows, [32, 40, 40, 30, 24, 34, 30, 40, 28, 30, 9, 26, 8, 13, 22, 24, 30, 30, 20, 10, 11]),
     blatt('Synergien', ['Idee', 'Lässt sich kombinieren mit', 'Begründung'], [...state.synergies].map((x) => [ideaTitle(x.idea_a), ideaTitle(x.idea_b), x.note]).sort((a, b) => a[0].localeCompare(b[0], 'de')), [40, 40, 60]),
     blatt('Bewertungen', ['Idee', 'Faktor', 'Frage', 'Gewicht', 'Antwort', 'Punkte (0–4)', 'Begründung'], bewertungRows, [32, 28, 45, 9, 14, 12, 40]),
     blatt('Business Case', ['Idee', 'Szenario', 'Investition €', 'Fixkosten/Monat €', 'Variable Kosten/Einheit €', 'Preis/Einheit €', 'Absatz/Monat', 'Umsatz/Monat €', 'Ergebnis/Monat €', 'Break-even (Einheiten/Monat)', 'Amortisation (Monate)'], bcRows, [32, 13, 13, 16, 20, 14, 13, 15, 16, 22, 18]),

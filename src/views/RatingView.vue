@@ -4,7 +4,7 @@
 import { computed, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { profile, setEvaluation, setJointNote, setJointRating, shortlistIdea, state, toast } from '../lib/store.js';
-import { activeCriteria, activeKo, antwort, evaluation, jointScores, SKALEN, total } from '../lib/score.js';
+import { activeCriteria, activeKo, antwort, evaluation, ideaResult, jointScores, SKALEN, total } from '../lib/score.js';
 import ScoreButtons from '../components/ScoreButtons.vue';
 import { relativ } from '../lib/format.js';
 import Icon from '../components/Icon.vue';
@@ -18,9 +18,11 @@ const kos = computed(() => activeKo());
 const gemeinsam = computed(() => jointScores(id.value));
 const ev = computed(() => evaluation(id.value));
 const jointKo = computed(() => ev.value?.ko_ids ?? []);
+const pruefen = computed(() => ev.value?.ko_check_ids ?? []);
 const beantwortet = computed(() => criteria.value.filter((c) => gemeinsam.value[c.id]?.score).length);
 const offen = computed(() => criteria.value.length - beantwortet.value);
 const abgeschlossen = computed(() => !!ev.value?.finalized_at);
+const ergebnis = computed(() => ideaResult(id.value));
 const notizOffen = reactive({});
 const zuletzt = computed(() => {
   const rows = state.jointRatings.filter((r) => r.idea_id === id.value).sort((a, b) => (a.updated_at < b.updated_at ? 1 : -1));
@@ -30,14 +32,27 @@ function antworten(c, score) {
   if (abgeschlossen.value) return;
   setJointRating(id.value, c.id, score);
 }
-function toggleJointKo(koId, on) {
-  const list = new Set(jointKo.value);
-  if (on) list.add(koId);
-  else list.delete(koId);
-  setEvaluation(id.value, { ko_ids: [...list] });
+// Je KO-Kriterium: nicht relevant · später prüfen · trifft zu (schließt die Idee aus).
+const KO_STUFEN = [
+  { id: 'nein', label: 'Nicht relevant' },
+  { id: 'pruefen', label: 'Später prüfen' },
+  { id: 'trifft', label: 'Trifft zu' },
+];
+function koStufe(koId) {
+  if (jointKo.value.includes(koId)) return 'trifft';
+  if (pruefen.value.includes(koId)) return 'pruefen';
+  return 'nein';
+}
+function setKo(koId, stufe) {
+  if (abgeschlossen.value) return;
+  const ko = jointKo.value.filter((k) => k !== koId);
+  const check = pruefen.value.filter((k) => k !== koId);
+  if (stufe === 'trifft') ko.push(koId);
+  if (stufe === 'pruefen') check.push(koId);
+  setEvaluation(id.value, { ko_ids: ko, ko_check_ids: check });
 }
 function abschliessen() {
-  setEvaluation(id.value, { ko_ids: jointKo.value, finalized_at: new Date().toISOString(), finalized_by: state.me.id });
+  setEvaluation(id.value, { finalized_at: new Date().toISOString(), finalized_by: state.me.id });
   toast('Bewertung abgeschlossen');
 }
 function wiederOeffnen() {
@@ -72,7 +87,7 @@ function wiederOeffnen() {
       <button class="btn primary" type="button" @click="shortlistIdea(idea.id); toast('Idee ist in der Bewertungsrunde')">Weiterverfolgen und bewerten</button>
     </div>
 
-    <p v-if="abgeschlossen" class="card small ok-card"><Icon name="check" :size="16" /> Bewertung abgeschlossen{{ jointKo.length ? ' – wegen KO ausgeschlossen' : '' }}. Zum Ändern unten „Wieder öffnen“.</p>
+    <p v-if="abgeschlossen" class="card small ok-card"><Icon name="check" :size="16" /> Bewertung abgeschlossen{{ ergebnis.ko ? ' – wegen KO ausgeschlossen' : '' }}. Zum Ändern unten „Wieder öffnen“.</p>
 
     <div class="stack">
       <div v-for="c in criteria" :key="c.id" class="card crit">
@@ -109,11 +124,25 @@ function wiederOeffnen() {
 
     <section v-if="kos.length" class="card stack">
       <h2>KO-Kriterien</h2>
-      <p class="small muted">Trifft eines zu, ist die Idee unabhängig von der Punktzahl ausgeschlossen.</p>
-      <label v-for="k in kos" :key="k.id" class="check">
-        <input type="checkbox" :checked="jointKo.includes(k.id)" :disabled="abgeschlossen" @change="toggleJointKo(k.id, $event.target.checked)">
-        <span>{{ k.name }}</span>
-      </label>
+      <p class="small muted">
+        <strong>Später prüfen</strong>: wichtig für diese Idee, noch offen – die Idee bleibt in der Auswertung.
+        <strong>Trifft zu</strong>: das KO ist eingetreten – die Idee ist unabhängig von der Punktzahl ausgeschlossen.
+      </p>
+      <div v-for="k in kos" :key="k.id" class="ko-item">
+        <span class="ko-name">{{ k.name }}</span>
+        <div class="ko-stufen" role="radiogroup" :aria-label="k.name">
+          <button
+            v-for="st in KO_STUFEN"
+            :key="st.id"
+            type="button"
+            role="radio"
+            :class="['ko-btn', st.id]"
+            :aria-checked="koStufe(k.id) === st.id"
+            :disabled="abgeschlossen"
+            @click="setKo(k.id, st.id)"
+          >{{ st.label }}</button>
+        </div>
+      </div>
     </section>
 
     <div class="sticky-action">
@@ -135,8 +164,14 @@ p { margin: 0; }
 .question { font-weight: 600; font-size: 16px; line-height: 1.35; margin-top: 2px; }
 .link-btn { align-self: flex-start; border: 0; background: none; padding: 0; color: var(--accent); cursor: pointer; }
 .link-btn:disabled { color: var(--muted); cursor: default; }
-.check { display: flex; gap: 10px; align-items: flex-start; min-height: 32px; cursor: pointer; }
-.check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); }
+.ko-item { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1px solid var(--line); }
+.ko-name { font-weight: 600; }
+.ko-stufen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.ko-btn { min-height: 40px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--muted); font: inherit; font-size: 14px; cursor: pointer; }
+.ko-btn[aria-checked="true"] { color: var(--text); font-weight: 600; border-color: var(--accent); background: var(--chip); }
+.ko-btn.pruefen[aria-checked="true"] { border-color: var(--warn); color: var(--warn); }
+.ko-btn.trifft[aria-checked="true"] { border-color: var(--danger); color: var(--on-accent); background: var(--danger); }
+.ko-btn:disabled { cursor: default; }
 .sticky-action {
   position: sticky;
   bottom: calc(var(--nav-h) + var(--safe-b) + 8px);
