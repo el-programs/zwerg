@@ -79,7 +79,6 @@ const ranking = computed(() => {
   const offen = rows.filter((r) => r.result.score === null && !r.result.ko);
   return { bewertet, ko, offen };
 });
-const favoriten = computed(() => aktiv.value.filter((i) => i.is_favorite).length);
 const gewichtungStatus = computed(() => {
   if (jointWeightsSet()) return { text: 'Gemeinsame Gewichtung steht.', done: true };
   const ich = state.me && hasSubmittedWeights(state.me.id);
@@ -207,8 +206,8 @@ const serien = computed(() =>
         <Icon name="send" :size="18" />
       </router-link>
       <p class="small muted">
-        Alle weiterverfolgten Ideen mit ihren Punkten je Faktor (0–4) und der Gesamtpunktzahl (0–100). Ziel der Phase 1: 2–3 Favoriten
-        mit dem Stern markieren<template v-if="favoriten"> (aktuell {{ favoriten }})</template> und mit „→ Phase 2“ in die Machbarkeitsprüfung übernehmen.
+        Alle weiterverfolgten Ideen mit ihren Punkten je Faktor (0–4) und der Gesamtpunktzahl (0–100). Mit den Daumen gibt jeder
+        sein Bauchgefühl ab – beide sehen beide Stimmen. Ziel der Phase 1: 2–3 Ideen mit „→ Phase 2“ in die Machbarkeitsprüfung übernehmen.
       </p>
 
       <Auswertung :ideas="aktiv.filter((i) => i.shortlist === 'weiter')" />

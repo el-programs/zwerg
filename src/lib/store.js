@@ -19,6 +19,7 @@ export const state = reactive({
   models: [],
   ideas: [],
   synergies: [],
+  votes: [],
   comments: [],
   reads: {},
   devices: [],
@@ -223,6 +224,7 @@ export const TABLES = {
   business_models: { key: 'models', id: byId, sort: bySort },
   ideas: { key: 'ideas', id: byId, front: true },
   idea_synergies: { key: 'synergies', id: byId },
+  idea_votes: { key: 'votes', id: (r) => `${r.idea_id}|${r.profile_id}` },
   comments: { key: 'comments', id: byId },
   devices: { key: 'devices', id: byId },
   criteria: { key: 'criteria', id: byId, sort: bySort },
@@ -482,6 +484,16 @@ export function addSynergy(ideaId, otherId, note = '') {
     created_by: state.me.id,
     created_at: now(),
   });
+}
+
+// Bauchgefühl (Daumen) je Person: 1 hoch, 0 zur Seite, -1 runter, null = keine Angabe.
+export function voteOf(ideaId, profileId) {
+  return state.votes.find((v) => v.idea_id === ideaId && v.profile_id === profileId)?.vote ?? null;
+}
+
+export function setVote(ideaId, vote) {
+  const next = voteOf(ideaId, state.me.id) === vote ? null : vote;
+  queueUpsert('idea_votes', { idea_id: ideaId, profile_id: state.me.id, vote: next, updated_at: now() }, 'idea_id,profile_id');
 }
 
 export function updateSynergy(id, note) {

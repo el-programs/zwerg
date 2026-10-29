@@ -27,6 +27,7 @@ const paths = {
   copy: 'M9 9h10v10H9zM5 15V5h10',
   // Zwei ineinandergreifende Ringe
   synergy: 'M13.19 9.27A5 5 0 1 1 10.45 7.21M10.81 14.73A5 5 0 1 1 13.55 16.79',
+  thumb: 'M7 10v11M15 5.9L14 10h5.8a2 2 0 0 1 1.9 2.6l-2.3 8a2 2 0 0 1-1.9 1.4H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.8a2 2 0 0 0 1.8-1.1L12 2a3.1 3.1 0 0 1 3 3.9z',
   share: 'M12 4v11M7 9l5-5 5 5M5 14v6h14v-6',
 };
 </script>

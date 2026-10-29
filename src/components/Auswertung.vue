@@ -2,9 +2,10 @@
 // Auswertung aller weiterverfolgten Ideen: Punkte je Faktor als Farbfelder, Gesamtpunktzahl, KO-Hinweise und Synergien.
 // Sortieren nach Punkten, Titel oder einzelnen Faktoren; Filter; Auswahl für Phase 2.
 import { computed, onBeforeUnmount, ref } from 'vue';
-import { modelName, setFavorite, setIdeaPhase, state, synergiesOf, toast } from '../lib/store.js';
+import { modelName, partner, setIdeaPhase, state, synergiesOf, toast, voteOf } from '../lib/store.js';
 import { activeCriteria, effectiveWeight, ideaResult, jointScores, RESULT_LABEL } from '../lib/score.js';
 import SynergyButton from './SynergyButton.vue';
+import VoteBox from './VoteBox.vue';
 
 const props = defineProps({ ideas: { type: Array, required: true } });
 
@@ -36,21 +37,41 @@ const FILTER = [
   { id: 'ohneKo', label: 'Ohne KO' },
   { id: 'pruefen', label: 'Später prüfen' },
   { id: 'synergien', label: 'Mit Synergien' },
-  { id: 'favoriten', label: 'Favoriten' },
   { id: 'phase2', label: 'Ab Phase 2' },
 ];
 const filter = ref('alle');
 const minPunkte = ref(0);
+
+// Bauchgefühl: Daumen beider Personen (1 hoch, 0 zur Seite, -1 runter, null offen)
+const gefuehl = ref('alle');
+const stimmen = (ideaId) => {
+  const ich = voteOf(ideaId, state.me?.id);
+  const er = partner() ? voteOf(ideaId, partner().id) : null;
+  return { ich, er, beide: [ich, er] };
+};
+function passtGefuehl(r) {
+  const { ich, er, beide } = stimmen(r.idea.id);
+  switch (gefuehl.value) {
+    case 'beideHoch': return ich === 1 && er === 1;
+    case 'einHoch': return beide.includes(1);
+    case 'keinRunter': return !beide.includes(-1);
+    case 'einRunter': return beide.includes(-1);
+    case 'uneinig': return ich !== null && er !== null && ich !== er;
+    case 'ichOffen': return ich === null;
+    default: return true;
+  }
+}
+const summe = (ideaId) => stimmen(ideaId).beide.reduce((a, v) => a + (v ?? 0), 0);
 const sortierung = ref('punkte');
 
 const gefiltert = computed(() =>
   rows.value.filter((r) => {
     if (minPunkte.value && (r.result.score ?? -1) < minPunkte.value) return false;
+    if (gefuehl.value !== 'alle' && !passtGefuehl(r)) return false;
     switch (filter.value) {
       case 'ohneKo': return !r.result.ko;
       case 'pruefen': return r.result.checkIds.length > 0;
       case 'synergien': return r.synergien > 0;
-      case 'favoriten': return r.idea.is_favorite;
       case 'phase2': return r.idea.phase >= 2;
       default: return true;
     }
@@ -63,6 +84,7 @@ const sortiert = computed(() => {
   const wert = (r) => {
     if (sortierung.value === 'punkte') return r.result.score ?? -1;
     if (sortierung.value === 'synergien') return r.synergien;
+    if (sortierung.value === 'gefuehl') return summe(r.idea.id);
     return r.punkte[sortierung.value] ?? -1;
   };
   return [...gefiltert.value].sort((a, b) => {
@@ -100,9 +122,22 @@ const hinweis = (r) => r.result.checkIds.map(koName).filter(Boolean).join('\n');
           <option value="punkte">Gesamtpunkte</option>
           <option value="titel">Titel</option>
           <option value="synergien">Anzahl Synergien</option>
+          <option value="gefuehl">Bauchgefühl (Daumen)</option>
           <optgroup label="Faktor">
             <option v-for="c in crit" :key="c.id" :value="c.id">{{ c.name }}</option>
           </optgroup>
+        </select>
+      </label>
+      <label class="field inline">
+        <span>Bauchgefühl</span>
+        <select v-model="gefuehl" class="select">
+          <option value="alle">alle</option>
+          <option value="beideHoch">beide Daumen hoch</option>
+          <option value="einHoch">mindestens ein Daumen hoch</option>
+          <option value="keinRunter">kein Daumen runter</option>
+          <option value="einRunter">mindestens ein Daumen runter</option>
+          <option value="uneinig">uneinig</option>
+          <option value="ichOffen">von mir noch offen</option>
         </select>
       </label>
       <label class="field inline">
@@ -133,7 +168,7 @@ const hinweis = (r) => r.result.checkIds.map(koName).filter(Boolean).join('\n');
               <button type="button" class="th-btn vert" :aria-pressed="sortierung === c.id" @click="sortiere(c.id)">{{ kurz(c.name) }}</button>
             </th>
             <th class="c-hin">Hinweise</th>
-            <th class="c-akt"><span class="visually-hidden">Aktionen</span></th>
+            <th class="c-akt"><span class="akt-head">Gefühl: ich · {{ partner()?.kuerzel }}</span></th>
           </tr>
         </thead>
         <tbody>
@@ -163,7 +198,7 @@ const hinweis = (r) => r.result.checkIds.map(koName).filter(Boolean).join('\n');
                 <SynergyButton :idea-id="r.idea.id" :size="18" />
                 <span v-if="r.idea.phase >= 2" class="chip outline">Phase {{ r.idea.phase }}</span>
                 <button v-else-if="!r.result.ko && r.result.score !== null" class="btn small-btn" type="button" @click="inPhase2(r)">→ Phase 2</button>
-                <button class="icon-btn star" type="button" :aria-pressed="r.idea.is_favorite" :aria-label="r.idea.is_favorite ? 'Favorit entfernen' : 'Als Favorit markieren'" @click="setFavorite(r.idea.id, !r.idea.is_favorite)">{{ r.idea.is_favorite ? '★' : '☆' }}</button>
+                <VoteBox :idea-id="r.idea.id" class="vb" />
               </span>
             </td>
           </tr>
@@ -182,6 +217,7 @@ const hinweis = (r) => r.result.checkIds.map(koName).filter(Boolean).join('\n');
         <div class="strip" aria-hidden="true">
           <span v-for="c in crit" :key="c.id" :class="['scell', r.punkte[c.id] === null ? 'leer' : `h${r.punkte[c.id]}`, { aktiv: sortierung === c.id }]"></span>
         </div>
+        <div class="mvotes"><span class="small muted">Gefühl</span><VoteBox :idea-id="r.idea.id" /></div>
         <div class="mbottom">
           <span v-if="r.result.ko" class="chip ko-chip">KO</span>
           <span v-if="r.result.checkIds.length" class="chip pruef-chip" :title="hinweis(r)">{{ r.result.checkIds.length }} prüfen</span>
@@ -191,7 +227,7 @@ const hinweis = (r) => r.result.checkIds.map(koName).filter(Boolean).join('\n');
           <span v-if="r.idea.phase >= 2" class="chip outline">Phase {{ r.idea.phase }}</span>
           <button v-else-if="!r.result.ko && r.result.score !== null" class="btn small-btn" type="button" @click="inPhase2(r)">→ Phase 2</button>
           <SynergyButton :idea-id="r.idea.id" :size="18" />
-          <button class="icon-btn star" type="button" :aria-pressed="r.idea.is_favorite" :aria-label="r.idea.is_favorite ? 'Favorit entfernen' : 'Als Favorit markieren'" @click="setFavorite(r.idea.id, !r.idea.is_favorite)">{{ r.idea.is_favorite ? '★' : '☆' }}</button>
+
         </div>
       </li>
     </ol>
@@ -202,16 +238,17 @@ const hinweis = (r) => r.result.checkIds.map(koName).filter(Boolean).join('\n');
 .grow { flex: 1; min-width: 0; }
 .aw { gap: 12px; }
 .segmented.wrap { flex-wrap: wrap; }
-.controls { gap: 12px; align-items: flex-end; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
 .inline { min-width: 140px; flex: 1; max-width: 300px; }
 .legend { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .leg { display: inline-flex; align-items: center; gap: 4px; }
-.cell { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 5px; font-size: 12px; font-weight: 600; color: var(--heat-text); font-variant-numeric: tabular-nums; }
+.cell { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 5px; font-size: 12px; font-weight: 600; color: var(--heat-text); font-variant-numeric: tabular-nums; }
 .h0 { background: var(--h0); } .h1 { background: var(--h1); } .h2 { background: var(--h2); } .h3 { background: var(--h3); } .h4 { background: var(--h4); }
 .leer { background: var(--chip); color: var(--muted); }
 .chip.ko-chip { background: var(--danger); color: var(--on-accent); font-weight: 600; }
 .chip.pruef-chip { background: transparent; border: 1px solid var(--warn); color: var(--warn); }
-.star { font-size: 20px; color: var(--warn); width: 36px; height: 36px; }
+.vb { margin-left: 4px; }
+.mvotes { display: flex; align-items: center; gap: 8px; }
 .small-btn { min-height: 32px; padding: 0 10px; font-size: 13px; white-space: nowrap; }
 .t-title { font-weight: 600; color: inherit; text-decoration: none; }
 .bar { display: block; height: 5px; border-radius: 3px; background: var(--chip); overflow: hidden; }
@@ -227,15 +264,16 @@ const hinweis = (r) => r.result.checkIds.map(koName).filter(Boolean).join('\n');
 .th-btn[aria-pressed="true"] { color: var(--accent); font-weight: 700; }
 .th-btn.vert { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; max-height: 120px; }
 .c-rang { width: 28px; text-align: center; color: var(--muted); font-weight: 600; padding-left: 10px !important; }
-.c-idee { min-width: 180px; max-width: 260px; }
+.c-idee { min-width: 170px; max-width: 240px; }
 .c-idee .t-title { display: block; line-height: 1.3; }
 .t-model { display: block; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
 .c-pkt { width: 72px; }
 .pkt { display: flex; flex-direction: column; gap: 3px; color: inherit; text-decoration: none; }
 .pkt strong { font-size: 16px; }
-.c-fak { width: 28px; text-align: center; padding: 6px 1px !important; }
+.c-fak { width: 24px; text-align: center; padding: 6px 1px !important; }
 .c-hin { white-space: nowrap; }
 .c-hin .chip { margin-right: 4px; }
+.akt-head { display: block; text-align: right; padding-right: 6px; }
 .akt { display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
 tr.ko td:not(.c-hin):not(.c-akt) { opacity: 0.5; }
 tr.ko .pkt strong { text-decoration: line-through; }
