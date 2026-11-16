@@ -88,7 +88,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 | Was | So testet ihr es |
 |---|---|
-| Schnellerfassung | Auf der Startseite oder über das **Plus** eine Notiz festhalten. Ideen legt ihr unter **Geschäftsideen → +** an (erste Zeile = Titel). |
+| Schnellerfassung | Auf der Startseite oder über das **Plus** eine Notiz festhalten. Ideen legt ihr unter **Ideen-Sammlung → +** an (erste Zeile = Titel). |
 | Diktat | iPhone: Mikrofon auf der Tastatur. Windows: im Textfeld **Windows-Taste + H**. |
 | Live-Abgleich | Beide gleichzeitig in Zwerg: Eine neue Idee des einen erscheint beim anderen sofort. |
 | „Neu“-Markierung | Neue Ideen und Kommentare des anderen stehen auf der Startseite unter „Neu von …“ und tragen ein **neu**-Schild, bis man die Idee öffnet. |
@@ -106,18 +106,19 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 
 | Was | So testet ihr es |
 |---|---|
-| Gewichtung | **Geschäftsideen → Auswertung → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
-| Steckbrief | **Geschäftsideen → +**: Titel (Pflicht), Branche und die Leitfragen Nutzen, Angebot, Zielkunden, Erlösmodell, optional erster Test und Auslöser. In der Idee zeigt die Karte **Steckbrief** „x von 4 ausgefüllt“; leere Felder per „+ ergänzen“ nachtragen. |
-| Vorauswahl (Runde 1) | **Geschäftsideen → Vorauswahl**: Neue Ideen landen zuerst hier. Gemeinsam **Weiterverfolgen** (kommt in die Bewertung) oder **Verwerfen** (mit Begründung auf den Parkplatz). Geht auch direkt in der Idee. |
+| Gewichtung | **Ideen-Sammlung → Auswertung → Gewichtung**. Jeder legt für sich fest, wie wichtig jeder Faktor ist (0–5) und gibt ab. Erst danach sieht man die Werte des anderen; große Unterschiede sind markiert. Dann gemeinsam festlegen (gestrichelt = Vorschlag aus dem Mittelwert). |
+| Steckbrief | **Ideen-Sammlung → +**: Titel (Pflicht), Branche und die Leitfragen Nutzen, Angebot, Zielkunden, Erlösmodell, optional erster Test und Auslöser. In der Idee zeigt die Karte **Steckbrief** „x von 4 ausgefüllt“; leere Felder per „+ ergänzen“ nachtragen. |
+| Vorauswahl (Runde 1) | **Ideen-Sammlung → Vorauswahl**: Neue Ideen landen zuerst hier. Gemeinsam **Weiterverfolgen** (kommt in die Bewertung) oder **Verwerfen** (mit Begründung auf den Parkplatz). Geht auch direkt in der Idee. |
 | Bewertung (Runde 2) | Idee öffnen → **Bewertung**. Ihr beantwortet gemeinsam je Faktor eine Frage mit fünf Antworten (z. B. keine … sehr viel); die rechte ist immer die beste (0–4 Punkte). Jede Antwort ist sofort beim anderen sichtbar. KO-Kriterien ankreuzen, dann **Abschließen**. Fragen und Antwortskala sind unter Einstellungen → Bewertungsfaktoren änderbar. |
 | Vergleich & Endbewertung | Nach beiden Abgaben: Abweichungen ab 2 Punkten sind hervorgehoben. Gemeinsame Punkte wählen (oder Mittelwerte übernehmen), KO gemeinsam festlegen, **Endbewertung festlegen**. |
-| Auswertung | **Geschäftsideen → Auswertung**: alle weiterverfolgten Ideen als Tabelle (iPhone: kompakte Zeilen mit Farbstreifen). Je Faktor ein Farbfeld mit 0–4 Punkten (rot = schwach, grün = stark), dazu Gesamtpunkte (0–100). Filter: Ohne KO, Später prüfen, Mit Synergien, Ab Phase 2, Bauchgefühl, Mindestpunktzahl. Sortieren nach Gesamtpunkten, Titel, Synergien oder einem Faktor (am Laptop auch per Klick auf die Spaltenüberschrift). **→ Phase 2** übernimmt eine Idee in die Machbarkeitsprüfung (wird als Entscheidung protokolliert). Punktzahl = Summe (Punkte × Gewicht) / Summe (4 × Gewicht) × 100. |
-| Phase 2: Grobcheck (2a) | Idee öffnen → **Grobcheck (Phase 2a)** oder **Plan → Phasen → Zur Auswahl**. Je Idee eigene Kriterien als Fragen, je Kriterium eine Ampel (gut / schwierig / KO / offen) und eine Notiz „wie denken wir darüber, woher wissen wir das“. Kriterien ergänzen, ändern oder entfernen; unten „Unser Fazit“. Die Ideen werden für sich betrachtet, ohne Punkte. |
-| Phase 2: Auswahl und Machbarkeit (2b) | **Auswahl**-Seite: je Idee Ampel-Übersicht, Fazit und Daumen. Rolle wählen: Favorit (wird in 2b geprüft) oder Nachrücker 1–3; mit Begründung **im Protokoll festhalten**. Beim Favoriten: **Go → Phase 3** oder **No-Go, verwerfen** (mit Begründung) – dann wird angeboten, Nachrücker 1 zum neuen Favoriten zu machen. Verworfene lassen sich zurückholen. |
+| Auswertung | **Ideen-Sammlung → Auswertung**: alle weiterverfolgten Ideen als Tabelle (iPhone: kompakte Zeilen mit Farbstreifen). Je Faktor ein Farbfeld mit 0–4 Punkten (rot = schwach, grün = stark), dazu Gesamtpunkte (0–100). Filter: Ohne KO, Später prüfen, Mit Synergien, Ab Phase 2, Bauchgefühl, Mindestpunktzahl. Sortieren nach Gesamtpunkten, Titel, Synergien oder einem Faktor (am Laptop auch per Klick auf die Spaltenüberschrift). **→ Phase 2** übernimmt eine Idee in die Machbarkeitsprüfung (wird als Entscheidung protokolliert). Punktzahl = Summe (Punkte × Gewicht) / Summe (4 × Gewicht) × 100. |
+| Ideen-Fokus | Eigene Rubrik für die Ideen in Phase 2 und später. Je Idee eine **Arbeitsmappe** mit Grobcheck, Business Case, Kundengesprächen, Steckbrief, Fazit, Aufgaben und Entscheidungen. Im Plan stehen nur noch Ergebnisse und Phasenwechsel. Am Handy ersetzt „Fokus“ den Notizen-Knopf unten; Notizen gibt es über das + und die Kachel auf der Startseite. |
+| Phase 2: Grobcheck (2a) | **Ideen-Fokus** → Idee → **Grobcheck** (auch über die Idee selbst). Je Idee eigene Kriterien als Fragen, je Kriterium eine Ampel (gut / schwierig / KO / offen) und eine Notiz „wie denken wir darüber, woher wissen wir das“. Kriterien ergänzen, ändern oder entfernen; unten „Unser Fazit“. Die Ideen werden für sich betrachtet, ohne Punkte. |
+| Phase 2: Auswahl und Machbarkeit (2b) | **Ideen-Fokus** (Handy: unten „Fokus“): je Idee Ampel-Übersicht, Fazit und Daumen. Rolle wählen: Favorit (wird in 2b geprüft) oder Nachrücker 1–3; mit Begründung **im Protokoll festhalten**. Beim Favoriten: **Go → Phase 3** oder **No-Go, verwerfen** (mit Begründung) – dann wird angeboten, Nachrücker 1 zum neuen Favoriten zu machen. Verworfene lassen sich zurückholen. |
 | Bauchgefühl | In der **Auswertung** gibt jeder je Idee seinen Daumen ab: hoch, zur Seite oder runter (nochmal tippen nimmt ihn zurück). Daneben steht der Daumen des anderen. Filter „Bauchgefühl“: beide hoch, mindestens einer hoch, kein Daumen runter, mindestens einer runter, uneinig, von mir noch offen; sortieren nach Bauchgefühl ist ebenfalls möglich. |
 | KO-Kriterien | In der Bewertung je KO-Kriterium: **Nicht relevant**, **Später prüfen** (bleibt in der Auswertung, Hinweis „prüfen“) oder **Trifft zu** (Idee ist ausgeschlossen und steht ausgegraut unten). |
-| Vergleich | **Geschäftsideen → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
-| Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Geschäftsideen → Liste → Parkplatz** jederzeit reaktivieren. |
+| Vergleich | **Ideen-Sammlung → Vergleich**: bis zu drei Ideen als Netzdiagramm und Tabelle. |
+| Parkplatz | Idee öffnen → **Auf den Parkplatz** mit Begründung. Unter **Ideen-Sammlung → Liste → Parkplatz** jederzeit reaktivieren. |
 | Faktoren & KO-Kriterien | **Einstellungen → Bewertungsfaktoren / KO-Kriterien**: umbenennen, erklären, sortieren, archivieren, ergänzen. |
 
 ### Etappe 4 testen
@@ -138,7 +139,7 @@ Beide müssen einen grünen Haken bekommen. Ein rotes Kreuz? Screenshot an Claud
 | Notiz festhalten | **Plus** antippen, Gedanken eintippen oder diktieren, **Speichern**. Notizen sind für euch beide sichtbar. |
 | Notizen ansehen | Unten **Notizen**: Angeheftete oben, sonst die neuesten zuerst. Neue Notizen des anderen tragen ein **neu**-Schild und stehen auf der Startseite unter „Neu von …“. |
 | Bearbeiten | Notiz antippen → Text ändern, **Anheften**, **Zur Idee machen** (legt eine Idee an, die Notiz bleibt und verweist darauf) oder löschen. |
-| Neue Idee direkt | **Geschäftsideen → +** oben rechts,. |
+| Neue Idee direkt | **Ideen-Sammlung → +** oben rechts,. |
 | Einstellungen | Am Handy über euren Kürzel-Kreis oben rechts auf der Startseite, am Laptop in der Seitenleiste. |
 
 ### Besprechungen testen

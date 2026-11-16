@@ -1,8 +1,10 @@
 <script setup>
 // Handy: Leiste unten mit Plus in der Mitte. Computer: Seitenleiste links.
+import { useRoute } from 'vue-router';
 import Icon from './Icon.vue';
 import ZLogo from './ZLogo.vue';
 defineEmits(['plus']);
+const route = useRoute();
 </script>
 
 <template>
@@ -13,11 +15,12 @@ defineEmits(['plus']);
     </div>
     <button class="new side-only" type="button" @click="$emit('plus')"><Icon name="plus" :size="20" />Neue Notiz</button>
     <router-link to="/" class="item" exact-active-class="active"><Icon name="home" /><span>Start</span></router-link>
-    <router-link to="/ideen" class="item" active-class="active"><Icon name="list" /><span class="side-label">Geschäftsideen</span><span class="mobile-label">Ideen</span></router-link>
+    <router-link to="/ideen" class="item" active-class="active"><Icon name="list" /><span class="side-label">Ideen-Sammlung</span><span class="mobile-label">Ideen</span></router-link>
     <div class="center mobile-only">
       <button class="plus" type="button" aria-label="Neue Notiz" @click="$emit('plus')"><Icon name="plus" :size="26" /></button>
     </div>
-    <router-link to="/notizen" class="item" active-class="active"><Icon name="note" /><span>Notizen</span></router-link>
+    <router-link to="/fokus" class="item" :class="{ active: route.path.startsWith('/fokus') }"><Icon name="focus" /><span class="side-label">Ideen-Fokus</span><span class="mobile-label">Fokus</span></router-link>
+    <router-link to="/notizen" class="item side-only" active-class="active"><Icon name="note" /><span>Notizen</span></router-link>
     <router-link to="/phasen" class="item" active-class="active"><Icon name="phases" /><span>Plan</span></router-link>
     <router-link to="/mehr" class="item side-only" active-class="active"><Icon name="settings" /><span>Einstellungen</span></router-link>
   </nav>

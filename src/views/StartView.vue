@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { addNote, currentPhase, heute, neuigkeiten, newNotes, partner, state, toast } from '../lib/store.js';
+import { addNote, currentPhase, heute, neuigkeiten, newNotes, partner, phase2Ideas, state, toast } from '../lib/store.js';
 import { datum, relativ } from '../lib/format.js';
 import { rankedIdeas } from '../lib/score.js';
 import ZLogo from '../components/ZLogo.vue';
@@ -21,6 +21,8 @@ const phase = computed(() => state.phases.find((p) => p.nr === currentPhase()));
 const meineAufgaben = computed(() => state.tasks.filter((t) => t.status !== 'erledigt' && t.assignee === state.me?.id));
 const ueberfaellig = computed(() => meineAufgaben.value.filter((t) => t.due_date && t.due_date < heute()).length);
 const favoriten = computed(() => state.ideas.filter((i) => i.is_favorite && i.status !== 'geparkt').length);
+const fokus = computed(() => phase2Ideas().filter((i) => i.selection !== 'verworfen'));
+const fokusFavorit = computed(() => fokus.value.find((i) => i.selection === 'favorit') ?? null);
 const anderer = computed(() => partner());
 const top = computed(() => rankedIdeas().bewertet.slice(0, 3));
 const naechste = computed(() =>
@@ -122,9 +124,14 @@ function save() {
 
     <section class="tiles">
       <router-link to="/ideen" class="card tile">
-        <span class="small muted">Geschäftsideen</span>
+        <span class="small muted">Ideen-Sammlung</span>
         <span class="big">{{ aktive }}</span>
         <span v-if="favoriten" class="small muted">davon {{ favoriten }} Favorit{{ favoriten > 1 ? 'en' : '' }}</span>
+      </router-link>
+      <router-link to="/fokus" class="card tile">
+        <span class="small muted">Ideen-Fokus</span>
+        <span class="big">{{ fokus.length }}</span>
+        <span v-if="fokusFavorit" class="small muted ellipsis">Favorit: {{ fokusFavorit.title }}</span>
       </router-link>
       <router-link to="/notizen" class="card tile">
         <span class="small muted">Notizen</span>

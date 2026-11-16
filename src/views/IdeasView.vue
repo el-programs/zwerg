@@ -125,7 +125,7 @@ const serien = computed(() =>
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <h1 class="grow">Geschäftsideen</h1>
+      <h1 class="grow">Ideen-Sammlung</h1>
       <button class="icon-btn" type="button" aria-label="Neue Idee" title="Neue Idee" @click="openCapture('idee')"><Icon name="plus" /></button>
       <button v-if="ansicht === 'liste'" class="icon-btn" type="button" :aria-pressed="sucheOffen" aria-label="Suchen" @click="sucheOffen = !sucheOffen"><Icon name="search" /></button>
       <MeLink />

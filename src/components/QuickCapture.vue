@@ -1,5 +1,5 @@
 <script setup>
-// Schnellerfassung: das Plus legt immer eine Notiz an; aus „Geschäftsideen“ heraus eine Idee mit Steckbrief.
+// Schnellerfassung: das Plus legt immer eine Notiz an; aus der „Ideen-Sammlung“ heraus eine Idee mit Steckbrief.
 // Das Notizfeld ist immer vorhanden und wird direkt beim Antippen fokussiert – nur so öffnet das iPhone
 // sofort die Tastatur (mit Diktat-Mikrofon).
 import { computed, nextTick, reactive, ref } from 'vue';

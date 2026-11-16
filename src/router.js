@@ -15,6 +15,7 @@ import NotesView from './views/NotesView.vue';
 import ReportView from './views/ReportView.vue';
 import GrobcheckView from './views/GrobcheckView.vue';
 import AuswahlView from './views/AuswahlView.vue';
+import FokusIdeeView from './views/FokusIdeeView.vue';
 
 // Hash-Adressen (#/ideen …), damit die App auf GitHub Pages ohne Server-Regeln läuft.
 export const router = createRouter({
@@ -30,7 +31,9 @@ export const router = createRouter({
     { path: '/idee/:id/business-case', name: 'business-case', component: BusinessCaseView },
     { path: '/idee/:id/feedback', name: 'feedback', component: FeedbackView },
     { path: '/idee/:id/grobcheck', name: 'grobcheck', component: GrobcheckView },
-    { path: '/auswahl', name: 'auswahl', component: AuswahlView },
+    { path: '/fokus', name: 'fokus', component: AuswahlView },
+    { path: '/fokus/:id', name: 'fokus-idee', component: FokusIdeeView },
+    { path: '/auswahl', redirect: '/fokus' },
     { path: '/gewichtung', name: 'gewichtung', component: WeightsView },
     { path: '/idee/:id', name: 'idee', component: IdeaView, meta: { nav: false } },
     { path: '/phasen', name: 'phasen', component: PhasesView },

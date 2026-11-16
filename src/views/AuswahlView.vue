@@ -1,12 +1,11 @@
 <script setup>
-// Phase 2: Auswahl. 2a – jede Idee für sich (Ampeln, Fazit, Bauchgefühl), dann Favorit und Nachrücker festlegen.
+// Ideen-Fokus (Phase 2: Auswahl). 2a – jede Idee für sich (Ampeln, Fazit, Bauchgefühl), dann Favorit und Nachrücker festlegen.
 // 2b – den Favoriten prüfen: Go (Phase 3) oder No-Go (verwerfen, der nächste Nachrücker rückt nach).
 import { computed, ref } from 'vue';
 import {
   addDecision, checkSummary, modelName, phase2Ideas, setIdeaPhase, setSelection, state, toast,
 } from '../lib/store.js';
 import VoteBox from '../components/VoteBox.vue';
-import Icon from '../components/Icon.vue';
 import MeLink from '../components/MeLink.vue';
 
 const titel = (i) => i.title || 'Ohne Titel';
@@ -84,8 +83,7 @@ function zurueckholen(i) {
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <router-link to="/phasen" class="icon-btn" aria-label="Zum Plan"><Icon name="back" /></router-link>
-      <h1 class="grow">Auswahl</h1>
+      <h1 class="grow">Ideen-Fokus</h1>
       <MeLink />
     </div>
   </header>
@@ -96,13 +94,13 @@ function zurueckholen(i) {
       <p><strong>2b Machbarkeitsprüfung:</strong> Nur den Favoriten genau prüfen. Go → Phase 3. No-Go → verwerfen, der nächste Nachrücker rückt nach.</p>
     </div>
 
-    <p v-if="!imRennen.length && !verworfen.length" class="empty">Noch keine Idee in Phase 2. In der Auswertung mit „→ Phase 2“ übernehmen.</p>
+    <p v-if="!imRennen.length && !verworfen.length" class="empty">Noch keine Idee in Phase 2. In der Ideen-Sammlung unter Auswertung mit „→ Phase 2“ übernehmen.</p>
 
     <article v-for="i in imRennen" :key="i.id" :class="['card', 'kand', { fav: i.selection === 'favorit' }]">
       <div class="k-head">
         <div class="grow">
           <span v-if="modelName(i.business_model_id)" class="k-model">{{ modelName(i.business_model_id) }}</span>
-          <router-link :to="`/idee/${i.id}`" class="k-title">{{ titel(i) }}</router-link>
+          <router-link :to="`/fokus/${i.id}`" class="k-title">{{ titel(i) }}</router-link>
         </div>
         <span v-if="i.selection === 'favorit'" class="chip fav-chip">Favorit · 2b</span>
         <span v-else-if="i.selection === 'nachruecker'" class="chip outline">Nachrücker {{ i.selection_rank }}</span>
@@ -122,7 +120,8 @@ function zurueckholen(i) {
       <p v-else class="small muted">Noch kein Fazit.</p>
 
       <div class="k-actions">
-        <router-link :to="`/idee/${i.id}/grobcheck`" class="btn">Grobcheck öffnen</router-link>
+        <router-link :to="`/fokus/${i.id}`" class="btn">Arbeitsmappe</router-link>
+        <router-link :to="`/idee/${i.id}/grobcheck`" class="btn">Grobcheck</router-link>
         <VoteBox :idea-id="i.id" />
         <span class="grow"></span>
         <label class="field rolle">

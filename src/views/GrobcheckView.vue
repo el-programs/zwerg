@@ -44,9 +44,9 @@ function fazit(text) {
 <template>
   <header class="topbar">
     <div class="topbar-inner">
-      <router-link :to="`/idee/${id}`" class="icon-btn" aria-label="Zurück zur Idee"><Icon name="back" /></router-link>
+      <router-link :to="idea && idea.phase >= 2 ? `/fokus/${id}` : `/idee/${id}`" class="icon-btn" aria-label="Zurück"><Icon name="back" /></router-link>
       <h1 class="grow ellipsis">Grobcheck</h1>
-      <router-link to="/auswahl" class="small more">Auswahl</router-link>
+      <router-link to="/fokus" class="small more">Ideen-Fokus</router-link>
     </div>
   </header>
 
