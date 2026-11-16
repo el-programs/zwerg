@@ -1,7 +1,7 @@
 <script setup>
 // Phase 2a Grobcheck einer Idee: eigene Kriterien als Fragen, je Kriterium eine Ampel und eine Notiz,
 // dazu ein Fazit. Die Idee wird für sich betrachtet, ohne Punkte und ohne Vergleich.
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { addCheck, addTask, AMPEL, checkSummary, checksOf, deleteCheck, profile, state, toast, updateCheck, updateIdea } from '../lib/store.js';
 import { relativ } from '../lib/format.js';
@@ -39,15 +39,26 @@ function notiz(c, text) {
 // Offene Punkte als Aufgabe übernehmen; erkannt wird die Aufgabe am gleichen Titel bei dieser Idee.
 const aufgabeTitel = (c) => c.question.slice(0, 300);
 const aufgabeZu = (c) => state.tasks.find((t) => t.idea_id === id.value && t.title === aufgabeTitel(c)) ?? null;
+// Zwischenschritt: erst festlegen, wer sich kümmert (und optional bis wann), dann anlegen.
+const aufgabeFuer = ref(null);
+const aufgabeEntwurf = reactive({ assignee: null, due: '' });
+function aufgabeStarten(c) {
+  aufgabeFuer.value = c.id;
+  aufgabeEntwurf.assignee = null;
+  aufgabeEntwurf.due = '';
+}
 function alsAufgabe(c) {
-  if (aufgabeZu(c)) return;
+  if (aufgabeZu(c) || !aufgabeEntwurf.assignee) return;
   addTask({
     title: aufgabeTitel(c),
     notes: c.note ? `Aus dem Grobcheck. Notiz: ${c.note}` : 'Aus dem Grobcheck',
     idea_id: id.value,
     phase: 2,
+    assignee: aufgabeEntwurf.assignee,
+    due_date: aufgabeEntwurf.due || null,
   });
-  toast('Aufgabe angelegt – Verantwortliche und Datum in der Arbeitsmappe anpassen');
+  aufgabeFuer.value = null;
+  toast(`Aufgabe für ${profile(aufgabeEntwurf.assignee)?.name} angelegt`);
 }
 function fazit(text) {
   if (text !== (idea.value.check_fazit ?? '')) updateIdea(id.value, { check_fazit: text });
@@ -127,7 +138,29 @@ function fazit(text) {
           <router-link v-if="aufgabeZu(c)" :to="`/fokus/${id}`" :class="['chip', 'outline', 'task-chip', { erledigt: aufgabeZu(c).status === 'erledigt' }]">
             <Icon name="check" :size="14" />Aufgabe {{ aufgabeZu(c).status === 'erledigt' ? 'erledigt' : aufgabeZu(c).status === 'in_arbeit' ? 'in Arbeit' : 'offen' }}<template v-if="aufgabeZu(c).assignee"> · {{ profile(aufgabeZu(c).assignee)?.kuerzel }}</template>
           </router-link>
-          <button v-else class="link-btn small" type="button" @click="alsAufgabe(c)">Als Aufgabe anlegen</button>
+          <button v-else-if="aufgabeFuer !== c.id" class="link-btn small" type="button" @click="aufgabeStarten(c)">Als Aufgabe anlegen</button>
+        </div>
+        <div v-if="aufgabeFuer === c.id && !aufgabeZu(c)" class="task-form">
+          <span class="small muted">Wer kümmert sich?</span>
+          <div class="who" role="radiogroup" aria-label="Wer kümmert sich?">
+            <button
+              v-for="p in state.profiles"
+              :key="p.id"
+              type="button"
+              role="radio"
+              :class="['who-btn', { an: aufgabeEntwurf.assignee === p.id }]"
+              :aria-checked="aufgabeEntwurf.assignee === p.id"
+              @click="aufgabeEntwurf.assignee = p.id"
+            >{{ p.name }}</button>
+          </div>
+          <label class="field due">
+            <span>Bis wann? (optional)</span>
+            <input v-model="aufgabeEntwurf.due" class="input" type="date">
+          </label>
+          <div class="row">
+            <button class="btn primary" type="button" :disabled="!aufgabeEntwurf.assignee" @click="alsAufgabe(c)">Aufgabe anlegen</button>
+            <button class="btn" type="button" @click="aufgabeFuer = null">Abbrechen</button>
+          </div>
         </div>
       </li>
     </ol>
@@ -188,5 +221,10 @@ p { margin: 0; }
 .c-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .task-chip { gap: 4px; text-decoration: none; color: var(--accent); }
 .task-chip.erledigt { color: var(--ok); }
+.task-form { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 10px; background: var(--chip); }
+.who { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px; }
+.who-btn { min-height: 40px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
+.who-btn.an { border-color: var(--accent); background: var(--accent); color: var(--on-accent); font-weight: 600; }
+.due { max-width: 220px; }
 .add { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
 </style>
