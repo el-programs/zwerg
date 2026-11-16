@@ -125,6 +125,8 @@ function wechseln(p) {
               <button class="btn" type="submit" :disabled="!neuesKriterium.trim()">Hinzufügen</button>
             </form>
 
+            <router-link v-if="p.nr === 2" to="/auswahl" class="btn auswahl-btn">Zur Auswahl: Grobcheck, Favorit und Nachrücker</router-link>
+
             <template v-if="ideenIn(p.nr).length">
               <h3>Ideen in dieser Phase</h3>
               <div class="row wrap">
@@ -173,4 +175,5 @@ h3 { font-size: 14px; font-weight: 600; margin: 4px 0 0; }
 .crit-input { flex: 1; min-height: 38px; padding: 6px 10px; }
 .idea-chip { text-decoration: none; font-size: 13px; padding: 4px 10px; }
 .actions { margin-top: 4px; }
+.auswahl-btn { align-self: flex-start; }
 </style>

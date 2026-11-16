@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  addComment, backToShortlist, commentsOf, currentPhase, deleteComment, deleteIdea, markSeen, shortlistIdea, newComments, parkIdea, profile, setFavorite,
+  addComment, backToShortlist, checkSummary, commentsOf, currentPhase, deleteComment, deleteIdea, markSeen, shortlistIdea, newComments, parkIdea, profile, setFavorite,
   setIdeaPhase, state, toast, unparkIdea, updateIdea,
 } from '../lib/store.js';
 import { ideaResult, RESULT_LABEL } from '../lib/score.js';
@@ -20,6 +20,15 @@ const router = useRouter();
 const id = computed(() => route.params.id);
 const idea = computed(() => state.ideas.find((i) => i.id === id.value));
 const comments = computed(() => commentsOf(id.value));
+const grob = computed(() => checkSummary(id.value));
+const rolle = computed(() => {
+  const i = idea.value;
+  if (!i) return '';
+  if (i.selection === 'favorit') return 'Favorit';
+  if (i.selection === 'nachruecker') return `Nachrücker ${i.selection_rank ?? ''}`.trim();
+  if (i.selection === 'verworfen') return 'nach Prüfung verworfen';
+  return '';
+});
 const fields = computed(() => state.fields.filter((f) => !f.archived || f.id === idea.value?.search_field_id));
 
 // Entwürfe der Felder; werden von außen nur aktualisiert, solange man nicht selbst darin schreibt.
@@ -236,6 +245,10 @@ watch(
     </router-link>
 
     <div v-if="idea.status !== 'geparkt'" class="tools">
+      <router-link v-if="idea.phase >= 2 || grob.n" :to="`/idee/${idea.id}/grobcheck`" class="card tool">
+        <strong>Grobcheck (Phase 2a)<template v-if="rolle"> · {{ rolle }}</template></strong>
+        <span class="small muted">{{ grob.n ? `${grob.gut} gut · ${grob.schwierig} schwierig · ${grob.ko} KO · ${grob.offen} offen` : 'Noch keine Kriterien' }}</span>
+      </router-link>
       <router-link :to="`/idee/${idea.id}/business-case`" class="card tool">
         <strong>Business Case</strong>
         <span class="small muted">{{ bcText }}</span>

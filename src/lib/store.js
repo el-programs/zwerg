@@ -20,6 +20,7 @@ export const state = reactive({
   ideas: [],
   synergies: [],
   votes: [],
+  checks: [],
   comments: [],
   reads: {},
   devices: [],
@@ -225,6 +226,7 @@ export const TABLES = {
   ideas: { key: 'ideas', id: byId, front: true },
   idea_synergies: { key: 'synergies', id: byId },
   idea_votes: { key: 'votes', id: (r) => `${r.idea_id}|${r.profile_id}` },
+  idea_checks: { key: 'checks', id: byId, sort: bySort },
   comments: { key: 'comments', id: byId },
   devices: { key: 'devices', id: byId },
   criteria: { key: 'criteria', id: byId, sort: bySort },
@@ -489,6 +491,65 @@ export function addSynergy(ideaId, otherId, note = '') {
 // Bauchgefühl (Daumen) je Person: 1 hoch, 0 zur Seite, -1 runter, null = keine Angabe.
 export function voteOf(ideaId, profileId) {
   return state.votes.find((v) => v.idea_id === ideaId && v.profile_id === profileId)?.vote ?? null;
+}
+
+// ---------------------------------------------------------------------------
+// Phase 2a Grobcheck: Kriterien je Idee mit Ampel (offen, gut, schwierig, ko) und Notiz
+// ---------------------------------------------------------------------------
+
+export const AMPEL = [
+  { id: 'gut', label: 'gut / leicht', kurz: 'gut' },
+  { id: 'schwierig', label: 'schwierig / unklar', kurz: 'schwierig' },
+  { id: 'ko', label: 'KO', kurz: 'KO' },
+  { id: 'offen', label: 'noch offen', kurz: 'offen' },
+];
+
+export function checksOf(ideaId) {
+  return state.checks.filter((c) => c.idea_id === ideaId).sort(bySort);
+}
+
+export function checkSummary(ideaId) {
+  const sum = { gut: 0, schwierig: 0, ko: 0, offen: 0, n: 0 };
+  for (const c of checksOf(ideaId)) {
+    sum[c.status] += 1;
+    sum.n += 1;
+  }
+  return sum;
+}
+
+export function addCheck(ideaId, question) {
+  const list = checksOf(ideaId);
+  queueInsert('idea_checks', {
+    id: crypto.randomUUID(),
+    idea_id: ideaId,
+    sort: list.length ? list[list.length - 1].sort + 1 : 1,
+    question: question.trim().slice(0, 500),
+    status: 'offen',
+    note: '',
+    created_by: state.me.id,
+    created_at: now(),
+    updated_at: now(),
+  });
+}
+
+export function updateCheck(id, patch) {
+  queueUpdate('idea_checks', id, { ...patch, updated_by: state.me.id, updated_at: now() });
+}
+
+export function deleteCheck(id) {
+  queueDelete('idea_checks', id);
+}
+
+// Ideen in Phase 2 (und später), die noch im Rennen sind oder nach der Prüfung verworfen wurden
+export function phase2Ideas() {
+  return state.ideas.filter((i) => i.phase >= 2 && i.status !== 'geparkt');
+}
+
+// Rolle in der Auswahl festlegen: favorit, nachruecker (mit Rang), verworfen (mit Begründung) oder null
+export function setSelection(ideaId, selection, { rank = null, note } = {}) {
+  const patch = { selection, selection_rank: selection === 'nachruecker' ? rank : null };
+  if (note !== undefined) patch.selection_note = note;
+  updateIdea(ideaId, patch);
 }
 
 export function setVote(ideaId, vote) {

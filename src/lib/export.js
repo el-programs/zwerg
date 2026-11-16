@@ -94,6 +94,11 @@ export function sheets() {
 
   return [
     blatt('Ideen', ['Titel', 'Nutzen', 'Angebot', 'Zielkunden', 'Erlösmodell', 'Erster Test', 'Auslöser', 'Weitere Gedanken', 'Geschäftsmodell', 'Branche', 'Status', 'Phase', 'Favorit', 'Punkte (0–100)', 'Bewertungsstand', 'KO trifft zu', 'KO später prüfen', 'Parkgrund', 'Schlagworte', 'Von', 'Angelegt'], ideenRows, [32, 40, 40, 30, 24, 34, 30, 40, 28, 30, 9, 26, 8, 13, 22, 24, 30, 30, 20, 10, 11]),
+    blatt('Grobcheck', ['Idee', 'Kriterium', 'Ampel', 'Notiz', 'Rolle', 'Fazit'], [...state.checks].sort((a, b) => ideaTitle(a.idea_id).localeCompare(ideaTitle(b.idea_id), 'de') || a.sort - b.sort).map((c) => {
+      const i = state.ideas.find((x) => x.id === c.idea_id);
+      const rolle = i?.selection === 'favorit' ? 'Favorit' : i?.selection === 'nachruecker' ? `Nachrücker ${i.selection_rank ?? ''}` : i?.selection === 'verworfen' ? 'nach Prüfung verworfen' : '';
+      return [ideaTitle(c.idea_id), c.question, { offen: 'offen', gut: 'gut', schwierig: 'schwierig', ko: 'KO' }[c.status], c.note, rolle, c.sort === 1 ? (i?.check_fazit ?? '') : ''];
+    }), [32, 60, 10, 60, 18, 60]),
     blatt('Synergien', ['Idee', 'Lässt sich kombinieren mit', 'Begründung'], [...state.synergies].map((x) => [ideaTitle(x.idea_a), ideaTitle(x.idea_b), x.note]).sort((a, b) => a[0].localeCompare(b[0], 'de')), [40, 40, 60]),
     blatt('Bewertungen', ['Idee', 'Faktor', 'Frage', 'Gewicht', 'Antwort', 'Punkte (0–4)', 'Begründung'], bewertungRows, [32, 28, 45, 9, 14, 12, 40]),
     blatt('Business Case', ['Idee', 'Szenario', 'Investition €', 'Fixkosten/Monat €', 'Variable Kosten/Einheit €', 'Preis/Einheit €', 'Absatz/Monat', 'Umsatz/Monat €', 'Ergebnis/Monat €', 'Break-even (Einheiten/Monat)', 'Amortisation (Monate)'], bcRows, [32, 13, 13, 16, 20, 14, 13, 15, 16, 22, 18]),

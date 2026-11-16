@@ -103,7 +103,7 @@ function sortiere(key) {
 }
 
 function inPhase2(r) {
-  if (!confirm(`„${r.idea.title || 'Ohne Titel'}“ in Phase 2 (Machbarkeitsprüfung) übernehmen?`)) return;
+  if (!confirm(`„${r.idea.title || 'Ohne Titel'}“ in Phase 2 (Auswahl und Machbarkeit) übernehmen?`)) return;
   setIdeaPhase(r.idea.id, 2);
   toast('Idee ist in Phase 2');
 }
