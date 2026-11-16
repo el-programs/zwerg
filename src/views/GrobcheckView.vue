@@ -3,7 +3,7 @@
 // dazu ein Fazit. Die Idee wird für sich betrachtet, ohne Punkte und ohne Vergleich.
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { addCheck, AMPEL, checkSummary, checksOf, deleteCheck, profile, state, updateCheck, updateIdea } from '../lib/store.js';
+import { addCheck, addTask, AMPEL, checkSummary, checksOf, deleteCheck, profile, state, toast, updateCheck, updateIdea } from '../lib/store.js';
 import { relativ } from '../lib/format.js';
 import VoteBox from '../components/VoteBox.vue';
 import Icon from '../components/Icon.vue';
@@ -35,6 +35,19 @@ function setStatus(c, status) {
 }
 function notiz(c, text) {
   if (text !== c.note) updateCheck(c.id, { note: text });
+}
+// Offene Punkte als Aufgabe übernehmen; erkannt wird die Aufgabe am gleichen Titel bei dieser Idee.
+const aufgabeTitel = (c) => c.question.slice(0, 300);
+const aufgabeZu = (c) => state.tasks.find((t) => t.idea_id === id.value && t.title === aufgabeTitel(c)) ?? null;
+function alsAufgabe(c) {
+  if (aufgabeZu(c)) return;
+  addTask({
+    title: aufgabeTitel(c),
+    notes: c.note ? `Aus dem Grobcheck. Notiz: ${c.note}` : 'Aus dem Grobcheck',
+    idea_id: id.value,
+    phase: 2,
+  });
+  toast('Aufgabe angelegt – Verantwortliche und Datum in der Arbeitsmappe anpassen');
 }
 function fazit(text) {
   if (text !== (idea.value.check_fazit ?? '')) updateIdea(id.value, { check_fazit: text });
@@ -108,7 +121,14 @@ function fazit(text) {
             @change="notiz(c, $event.target.value)"
           ></textarea>
         </label>
-        <span v-if="c.updated_by" class="small muted">zuletzt {{ profile(c.updated_by)?.name }}, {{ relativ(c.updated_at) }}</span>
+        <div class="c-foot">
+          <span v-if="c.updated_by" class="small muted">zuletzt {{ profile(c.updated_by)?.name }}, {{ relativ(c.updated_at) }}</span>
+          <span class="grow"></span>
+          <router-link v-if="aufgabeZu(c)" :to="`/fokus/${id}`" :class="['chip', 'outline', 'task-chip', { erledigt: aufgabeZu(c).status === 'erledigt' }]">
+            <Icon name="check" :size="14" />Aufgabe {{ aufgabeZu(c).status === 'erledigt' ? 'erledigt' : aufgabeZu(c).status === 'in_arbeit' ? 'in Arbeit' : 'offen' }}<template v-if="aufgabeZu(c).assignee"> · {{ profile(aufgabeZu(c).assignee)?.kuerzel }}</template>
+          </router-link>
+          <button v-else class="link-btn small" type="button" @click="alsAufgabe(c)">Als Aufgabe anlegen</button>
+        </div>
       </li>
     </ol>
     <p v-if="!checks.length" class="empty">Noch keine Kriterien. Legt unten das erste als Frage an.</p>
@@ -144,10 +164,10 @@ p { margin: 0; }
 .sum { display: inline-flex; align-items: center; gap: 6px; }
 .sum-votes { display: inline-flex; align-items: center; gap: 8px; }
 .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; border: 2px solid transparent; }
-.gut .dot { background: var(--ok); }
-.schwierig .dot { background: var(--warn); }
-.ko .dot { background: var(--danger); }
-.offen .dot { background: transparent; border-color: var(--muted); }
+.sum.gut .dot, .amp.gut .dot { background: var(--ok); }
+.sum.schwierig .dot, .amp.schwierig .dot { background: var(--warn); }
+.sum.ko .dot, .amp.ko .dot { background: var(--danger); }
+.sum.offen .dot, .amp.offen .dot { background: transparent; border-color: var(--muted); }
 .checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .check { display: flex; flex-direction: column; gap: 10px; border-left-width: 4px; }
 .check.gut { border-left-color: var(--ok); }
@@ -165,5 +185,8 @@ p { margin: 0; }
 .amp.ko[aria-checked="true"] { border-color: var(--danger); }
 .amp.offen[aria-checked="true"] { border-color: var(--muted); }
 @media (max-width: 520px) { .ampel { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.c-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.task-chip { gap: 4px; text-decoration: none; color: var(--accent); }
+.task-chip.erledigt { color: var(--ok); }
 .add { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
 </style>
