@@ -21,6 +21,8 @@ export const state = reactive({
   synergies: [],
   votes: [],
   checks: [],
+  steps: [],
+  costs: [],
   comments: [],
   reads: {},
   devices: [],
@@ -227,6 +229,8 @@ export const TABLES = {
   idea_synergies: { key: 'synergies', id: byId },
   idea_votes: { key: 'votes', id: (r) => `${r.idea_id}|${r.profile_id}` },
   idea_checks: { key: 'checks', id: byId, sort: bySort },
+  idea_steps: { key: 'steps', id: byId, sort: bySort },
+  idea_costs: { key: 'costs', id: byId, sort: bySort },
   comments: { key: 'comments', id: byId },
   devices: { key: 'devices', id: byId },
   criteria: { key: 'criteria', id: byId, sort: bySort },
@@ -538,6 +542,98 @@ export function updateCheck(id, patch) {
 
 export function deleteCheck(id) {
   queueDelete('idea_checks', id);
+}
+
+// ---------------------------------------------------------------------------
+// Phase 2b Gründungscheck: Prüfpunkte je Abschnitt und Kostentabelle
+// ---------------------------------------------------------------------------
+
+export const ABSCHNITTE = [
+  { id: 'plan', name: 'Gründungsplan', hint: 'Startangebot, App-Entscheidung, Fahrplan und Zeitplan bis zur Gründung' },
+  { id: 'budget', name: 'Budget und Kalkulation', hint: 'Budget bis zur Gründung, laufende Kosten, Preise und Umsatzerwartung' },
+  { id: 'klaerung', name: 'Klärungspunkte', hint: 'Was vor der Gründung geklärt sein muss' },
+  { id: 'gonogo', name: 'Go/No-Go', hint: 'Sind die Kriterien erfüllt?' },
+];
+
+export function stepsOf(ideaId, section) {
+  return state.steps.filter((x) => x.idea_id === ideaId && (!section || x.section === section)).sort(bySort);
+}
+
+export function stepSummary(ideaId) {
+  const alle = stepsOf(ideaId);
+  const pruef = alle.filter((x) => x.section !== 'gonogo');
+  const go = alle.filter((x) => x.section === 'gonogo');
+  return {
+    n: pruef.length,
+    erledigt: pruef.filter((x) => x.status === 'erledigt').length,
+    inArbeit: pruef.filter((x) => x.status === 'in_arbeit').length,
+    goN: go.length,
+    goJa: go.filter((x) => x.status === 'ja').length,
+    goNein: go.filter((x) => x.status === 'nein').length,
+  };
+}
+
+export function addStep(ideaId, section, title) {
+  const list = stepsOf(ideaId, section);
+  queueInsert('idea_steps', {
+    id: crypto.randomUUID(),
+    idea_id: ideaId,
+    section,
+    sort: list.length ? list[list.length - 1].sort + 1 : 1,
+    title: title.trim().slice(0, 500),
+    status: 'offen',
+    result: '',
+    assignee: null,
+    due_date: null,
+    created_by: state.me.id,
+    created_at: now(),
+    updated_at: now(),
+  });
+}
+
+export function updateStep(id, patch) {
+  queueUpdate('idea_steps', id, { ...patch, updated_by: state.me.id, updated_at: now() });
+}
+
+export function deleteStep(id) {
+  queueDelete('idea_steps', id);
+}
+
+export function costsOf(ideaId) {
+  return state.costs.filter((c) => c.idea_id === ideaId).sort(bySort);
+}
+
+export function costTotals(ideaId) {
+  const sum = { einmalig: 0, monatlich: 0, offen: 0 };
+  for (const c of costsOf(ideaId)) {
+    if (c.amount === null || c.amount === undefined || c.amount === '') sum.offen += 1;
+    else sum[c.kind] += Number(c.amount);
+  }
+  return sum;
+}
+
+export function addCost(ideaId, kind, label) {
+  const list = costsOf(ideaId);
+  queueInsert('idea_costs', {
+    id: crypto.randomUUID(),
+    idea_id: ideaId,
+    sort: list.length ? list[list.length - 1].sort + 1 : 1,
+    kind,
+    label: label.trim().slice(0, 300),
+    amount: null,
+    note: '',
+    created_by: state.me.id,
+    created_at: now(),
+    updated_at: now(),
+  });
+}
+
+export function updateCost(id, patch) {
+  queueUpdate('idea_costs', id, { ...patch, updated_at: now() });
+}
+
+export function deleteCost(id) {
+  queueDelete('idea_costs', id);
 }
 
 // Ideen in Phase 2 (und später), die noch im Rennen sind oder nach der Prüfung verworfen wurden

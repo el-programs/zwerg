@@ -1,15 +1,16 @@
 <script setup>
-// Ideen-Fokus: Arbeitsmappe einer Idee der engeren Wahl. Bündelt Grobcheck, Business Case, Pilot-Feedback,
-// Steckbrief, Aufgaben und Entscheidungen zu dieser Idee.
+// Ideen-Fokus: Arbeitsmappe einer Idee der engeren Wahl. Bündelt Grobcheck (2a), Gründungscheck (2b),
+// Steckbrief, weitere Gedanken, Aufgaben und Entscheidungen zu dieser Idee.
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { checkSummary, modelName, state } from '../lib/store.js';
-import { eur, rechne } from '../lib/business.js';
+import { checkSummary, costTotals, modelName, state, stepSummary } from '../lib/store.js';
+import { eur } from '../lib/business.js';
 import { phaseName } from '../lib/format.js';
 import VoteBox from '../components/VoteBox.vue';
 import TaskList from '../components/TaskList.vue';
 import DecisionList from '../components/DecisionList.vue';
 import SteckbriefCard from '../components/SteckbriefCard.vue';
+import GliederText from '../components/GliederText.vue';
 import Icon from '../components/Icon.vue';
 
 const route = useRoute();
@@ -18,17 +19,20 @@ const idea = computed(() => state.ideas.find((i) => i.id === id.value));
 const grob = computed(() => checkSummary(id.value));
 const rolle = computed(() => {
   const i = idea.value;
-  if (i?.selection === 'favorit') return 'Favorit · Machbarkeitsprüfung (2b)';
+  if (i?.selection === 'favorit') return 'Favorit · 2b';
   if (i?.selection === 'nachruecker') return `Nachrücker ${i.selection_rank ?? ''}`.trim();
   if (i?.selection === 'verworfen') return 'nach der Prüfung verworfen';
   return 'im Grobcheck (2a)';
 });
-const bc = computed(() => state.businessCases.find((b) => b.idea_id === id.value) ?? null);
-const bcText = computed(() => {
-  const r = rechne(bc.value?.scenarios?.realistisch);
-  if (!r) return 'Noch nicht gerechnet';
-  return `Realistisch: ${eur(r.gewinnMonat)} Ergebnis/Monat`;
+const gc = computed(() => stepSummary(id.value));
+const kosten = computed(() => costTotals(id.value));
+const gcText = computed(() => {
+  if (!gc.value.n) return 'Noch keine Prüfpunkte';
+  const teile = [`${gc.value.erledigt} von ${gc.value.n} erledigt`];
+  if (kosten.value.einmalig) teile.push(`Budget ${eur(kosten.value.einmalig)}`);
+  return teile.join(' · ');
 });
+// Pilot-Feedback erst ab Phase 3 (oder wenn schon Einträge da sind)
 const feedbackAnzahl = computed(() => state.feedback.filter((f) => f.idea_id === id.value).length);
 </script>
 
@@ -60,12 +64,12 @@ const feedbackAnzahl = computed(() => state.feedback.filter((f) => f.idea_id ===
         <strong>Grobcheck (2a)</strong>
         <span class="small muted">{{ grob.n ? `${grob.gut} gut · ${grob.schwierig} schwierig · ${grob.ko} KO · ${grob.offen} offen` : 'Noch keine Kriterien' }}</span>
       </router-link>
-      <router-link :to="`/idee/${id}/business-case`" class="card tool">
-        <strong>Business Case</strong>
-        <span class="small muted">{{ bcText }}</span>
+      <router-link :to="`/idee/${id}/gruendungscheck`" class="card tool">
+        <strong>Gründungscheck (2b)</strong>
+        <span class="small muted">{{ gcText }}</span>
       </router-link>
-      <router-link :to="`/idee/${id}/feedback`" class="card tool">
-        <strong>Kundengespräche und Tests</strong>
+      <router-link v-if="idea.phase >= 3 || feedbackAnzahl" :to="`/idee/${id}/feedback`" class="card tool">
+        <strong>Pilot-Feedback</strong>
         <span class="small muted">{{ feedbackAnzahl ? `${feedbackAnzahl} Einträge` : 'Noch keine Einträge' }}</span>
       </router-link>
       <router-link :to="`/bericht/idee/${id}`" class="card tool">
@@ -81,6 +85,11 @@ const feedbackAnzahl = computed(() => state.feedback.filter((f) => f.idea_id ===
     </section>
 
     <SteckbriefCard :idea="idea" />
+
+    <section v-if="idea.description" class="stack">
+      <div class="row"><h2 class="grow">Weitere Gedanken</h2><router-link :to="`/idee/${id}`" class="small more">bearbeiten</router-link></div>
+      <GliederText :text="idea.description" />
+    </section>
 
     <section class="stack">
       <h2>Aufgaben zu dieser Idee</h2>

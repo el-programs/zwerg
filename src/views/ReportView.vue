@@ -59,6 +59,8 @@ function zurueck() {
 function drucken() {
   window.print();
 }
+// „## “/„### “-Gliederung aus „Weitere Gedanken“ für den Druck als einfache Überschriften zeigen.
+const lesbar = (t) => (t ?? '').replace(/^### (.*)$/gm, '– $1 –').replace(/^## (.*)$/gm, (m, x) => `\n${x.toUpperCase()}`).trim();
 </script>
 
 <template>
@@ -98,7 +100,7 @@ function drucken() {
       </template>
       <template v-if="idea.description">
         <h2>Weitere Gedanken</h2>
-        <p class="r-text">{{ idea.description }}</p>
+        <p class="r-text">{{ lesbar(idea.description) }}</p>
       </template>
       <p v-if="idea.tags?.length" class="r-meta">Schlagworte: {{ idea.tags.join(', ') }}</p>
       <p v-if="idea.status === 'geparkt' && idea.park_reason" class="r-text"><strong>Parkgrund:</strong> {{ idea.park_reason }}</p>

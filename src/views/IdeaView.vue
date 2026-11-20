@@ -2,13 +2,14 @@
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  addComment, backToShortlist, checkSummary, commentsOf, currentPhase, deleteComment, deleteIdea, markSeen, shortlistIdea, newComments, parkIdea, profile, setFavorite,
+  addComment, backToShortlist, checkSummary, commentsOf, stepSummary, currentPhase, deleteComment, deleteIdea, markSeen, shortlistIdea, newComments, parkIdea, profile, setFavorite,
   setIdeaPhase, state, toast, unparkIdea, updateIdea,
 } from '../lib/store.js';
 import { ideaResult, RESULT_LABEL } from '../lib/score.js';
 import { datum, phaseName, relativ, PHASEN } from '../lib/format.js';
 import { eur, rechne } from '../lib/business.js';
 import SteckbriefCard from '../components/SteckbriefCard.vue';
+import GliederText from '../components/GliederText.vue';
 import SynergyButton from '../components/SynergyButton.vue';
 import SynergyList from '../components/SynergyList.vue';
 import TaskList from '../components/TaskList.vue';
@@ -21,6 +22,10 @@ const id = computed(() => route.params.id);
 const idea = computed(() => state.ideas.find((i) => i.id === id.value));
 const comments = computed(() => commentsOf(id.value));
 const grob = computed(() => checkSummary(id.value));
+const gruend = computed(() => stepSummary(id.value));
+// „Weitere Gedanken“ mit ##-Gliederung werden aufklappbar angezeigt, zum Ändern in das Textfeld wechseln.
+const gegliedert = computed(() => /^## /m.test(idea.value?.description ?? ''));
+const gedankenBearbeiten = ref(false);
 const rolle = computed(() => {
   const i = idea.value;
   if (!i) return '';
@@ -249,23 +254,34 @@ watch(
         <strong>Grobcheck (Phase 2a)<template v-if="rolle"> · {{ rolle }}</template></strong>
         <span class="small muted">{{ grob.n ? `${grob.gut} gut · ${grob.schwierig} schwierig · ${grob.ko} KO · ${grob.offen} offen` : 'Noch keine Kriterien' }}</span>
       </router-link>
-      <router-link :to="`/idee/${idea.id}/business-case`" class="card tool">
+      <router-link v-if="idea.phase >= 2 || gruend.n" :to="`/idee/${idea.id}/gruendungscheck`" class="card tool">
+        <strong>Gründungscheck (Phase 2b)</strong>
+        <span class="small muted">{{ gruend.n ? `${gruend.erledigt} von ${gruend.n} Prüfpunkten erledigt` : 'Noch keine Prüfpunkte' }}</span>
+      </router-link>
+      <router-link v-if="idea.phase < 2 || bc" :to="`/idee/${idea.id}/business-case`" class="card tool">
         <strong>Business Case</strong>
         <span class="small muted">{{ bcText }}</span>
       </router-link>
-      <router-link :to="`/idee/${idea.id}/feedback`" class="card tool">
+      <router-link v-if="idea.phase < 2 || idea.phase >= 3 || feedback.length" :to="`/idee/${idea.id}/feedback`" class="card tool">
         <strong>Pilot-Feedback</strong>
         <span class="small muted">{{ feedbackText }}</span>
       </router-link>
     </div>
 
-    <label class="field">
-      <span>Weitere Gedanken</span>
+    <section v-if="gegliedert && !gedankenBearbeiten" class="stack tight-stack">
+      <div class="row"><span class="label grow">Weitere Gedanken</span><button class="link-btn small" type="button" @click="gedankenBearbeiten = true">Bearbeiten</button></div>
+      <GliederText :text="idea.description" />
+    </section>
+    <label v-else class="field">
+      <span class="row">
+        <span class="grow">Weitere Gedanken</span>
+        <button v-if="gegliedert" class="link-btn small" type="button" @click="gedankenBearbeiten = false">Fertig</button>
+      </span>
       <textarea
         v-model="draft.description"
         class="textarea"
-        rows="5"
-        placeholder="Alles, was nicht in den Steckbrief passt …"
+        :rows="gegliedert ? 18 : 5"
+        placeholder="Alles, was nicht in den Steckbrief passt … (Tipp: Zeilen mit „## “ werden zu aufklappbaren Abschnitten, „### “ zu Gruppen, „- “ zu Aufzählungen)"
         @focus="editing = 'description'"
         @blur="commit('description')"
       ></textarea>
@@ -445,4 +461,5 @@ p { margin: 0; }
   cursor: pointer;
 }
 .send:disabled { opacity: 0.45; }
+.tight-stack { gap: 8px; }
 </style>
