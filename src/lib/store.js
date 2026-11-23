@@ -23,6 +23,7 @@ export const state = reactive({
   checks: [],
   steps: [],
   costs: [],
+  competitors: [],
   comments: [],
   reads: {},
   devices: [],
@@ -231,6 +232,7 @@ export const TABLES = {
   idea_checks: { key: 'checks', id: byId, sort: bySort },
   idea_steps: { key: 'steps', id: byId, sort: bySort },
   idea_costs: { key: 'costs', id: byId, sort: bySort },
+  idea_competitors: { key: 'competitors', id: byId, sort: bySort },
   comments: { key: 'comments', id: byId },
   devices: { key: 'devices', id: byId },
   criteria: { key: 'criteria', id: byId, sort: bySort },
@@ -634,6 +636,44 @@ export function updateCost(id, patch) {
 
 export function deleteCost(id) {
   queueDelete('idea_costs', id);
+}
+
+// ---------------------------------------------------------------------------
+// Konkurrenz je Idee
+// ---------------------------------------------------------------------------
+
+export function competitorsOf(ideaId) {
+  return state.competitors.filter((c) => c.idea_id === ideaId).sort(bySort);
+}
+
+export function addCompetitor(ideaId, name) {
+  const list = competitorsOf(ideaId);
+  const row = {
+    id: crypto.randomUUID(),
+    idea_id: ideaId,
+    sort: list.length ? list[list.length - 1].sort + 1 : 1,
+    name: name.trim().slice(0, 200),
+    url: '',
+    area: '',
+    kind: '',
+    prices: '',
+    strengths: '',
+    weaknesses: '',
+    note: '',
+    created_by: state.me.id,
+    created_at: now(),
+    updated_at: now(),
+  };
+  queueInsert('idea_competitors', row);
+  return row.id;
+}
+
+export function updateCompetitor(id, patch) {
+  queueUpdate('idea_competitors', id, { ...patch, updated_by: state.me.id, updated_at: now() });
+}
+
+export function deleteCompetitor(id) {
+  queueDelete('idea_competitors', id);
 }
 
 // Ideen in Phase 2 (und später), die noch im Rennen sind oder nach der Prüfung verworfen wurden

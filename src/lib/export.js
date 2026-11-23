@@ -106,6 +106,9 @@ export function sheets() {
     blatt('Kosten', ['Idee', 'Art', 'Position', 'Betrag €', 'Notiz'], [...state.costs].sort((a, b) => ideaTitle(a.idea_id).localeCompare(ideaTitle(b.idea_id), 'de') || a.kind.localeCompare(b.kind) || a.sort - b.sort).map((c) => [
       ideaTitle(c.idea_id), c.kind === 'einmalig' ? 'einmalig bis zur Gründung' : 'monatlich', c.label, c.amount === null ? null : Number(c.amount), c.note,
     ]), [28, 24, 50, 12, 40]),
+    blatt('Konkurrenz', ['Idee', 'Anbieter', 'Link', 'Bereich', 'Art', 'Preise', 'Stärken', 'Schwächen', 'Notiz'], [...state.competitors].sort((a, b) => ideaTitle(a.idea_id).localeCompare(ideaTitle(b.idea_id), 'de') || a.sort - b.sort).map((c) => [
+      ideaTitle(c.idea_id), c.name, c.url, c.area, c.kind, c.prices, c.strengths, c.weaknesses, c.note,
+    ]), [28, 28, 28, 20, 18, 30, 40, 40, 40]),
     blatt('Synergien', ['Idee', 'Lässt sich kombinieren mit', 'Begründung'], [...state.synergies].map((x) => [ideaTitle(x.idea_a), ideaTitle(x.idea_b), x.note]).sort((a, b) => a[0].localeCompare(b[0], 'de')), [40, 40, 60]),
     blatt('Bewertungen', ['Idee', 'Faktor', 'Frage', 'Gewicht', 'Antwort', 'Punkte (0–4)', 'Begründung'], bewertungRows, [32, 28, 45, 9, 14, 12, 40]),
     blatt('Business Case', ['Idee', 'Szenario', 'Investition €', 'Fixkosten/Monat €', 'Variable Kosten/Einheit €', 'Preis/Einheit €', 'Absatz/Monat', 'Umsatz/Monat €', 'Ergebnis/Monat €', 'Break-even (Einheiten/Monat)', 'Amortisation (Monate)'], bcRows, [32, 13, 13, 16, 20, 14, 13, 15, 16, 22, 18]),

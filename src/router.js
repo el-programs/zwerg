@@ -17,6 +17,7 @@ import GrobcheckView from './views/GrobcheckView.vue';
 import AuswahlView from './views/AuswahlView.vue';
 import FokusIdeeView from './views/FokusIdeeView.vue';
 import GruendungscheckView from './views/GruendungscheckView.vue';
+import KonkurrenzView from './views/KonkurrenzView.vue';
 
 // Hash-Adressen (#/ideen …), damit die App auf GitHub Pages ohne Server-Regeln läuft.
 export const router = createRouter({
@@ -33,6 +34,7 @@ export const router = createRouter({
     { path: '/idee/:id/feedback', name: 'feedback', component: FeedbackView },
     { path: '/idee/:id/grobcheck', name: 'grobcheck', component: GrobcheckView },
     { path: '/idee/:id/gruendungscheck', name: 'gruendungscheck', component: GruendungscheckView },
+    { path: '/idee/:id/konkurrenz', name: 'konkurrenz', component: KonkurrenzView },
     { path: '/fokus', name: 'fokus', component: AuswahlView },
     { path: '/fokus/:id', name: 'fokus-idee', component: FokusIdeeView },
     { path: '/auswahl', redirect: '/fokus' },

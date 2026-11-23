@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  addComment, backToShortlist, checkSummary, commentsOf, stepSummary, currentPhase, deleteComment, deleteIdea, markSeen, shortlistIdea, newComments, parkIdea, profile, setFavorite,
+  addComment, backToShortlist, checkSummary, commentsOf, competitorsOf, stepSummary, currentPhase, deleteComment, deleteIdea, markSeen, shortlistIdea, newComments, parkIdea, profile, setFavorite,
   setIdeaPhase, state, toast, unparkIdea, updateIdea,
 } from '../lib/store.js';
 import { ideaResult, RESULT_LABEL } from '../lib/score.js';
@@ -23,6 +23,7 @@ const idea = computed(() => state.ideas.find((i) => i.id === id.value));
 const comments = computed(() => commentsOf(id.value));
 const grob = computed(() => checkSummary(id.value));
 const gruend = computed(() => stepSummary(id.value));
+const konkurrenz = computed(() => competitorsOf(id.value));
 // „Weitere Gedanken“ mit ##-Gliederung werden aufklappbar angezeigt, zum Ändern in das Textfeld wechseln.
 const gegliedert = computed(() => /^## /m.test(idea.value?.description ?? ''));
 const gedankenBearbeiten = ref(false);
@@ -257,6 +258,10 @@ watch(
       <router-link v-if="idea.phase >= 2 || gruend.n" :to="`/idee/${idea.id}/gruendungscheck`" class="card tool">
         <strong>Gründungscheck (Phase 2b)</strong>
         <span class="small muted">{{ gruend.n ? `${gruend.erledigt} von ${gruend.n} Prüfpunkten erledigt` : 'Noch keine Prüfpunkte' }}</span>
+      </router-link>
+      <router-link v-if="idea.phase >= 2 || konkurrenz.length" :to="`/idee/${idea.id}/konkurrenz`" class="card tool">
+        <strong>Konkurrenz</strong>
+        <span class="small muted">{{ konkurrenz.length ? `${konkurrenz.length} Anbieter erfasst` : 'Noch keine Anbieter erfasst' }}</span>
       </router-link>
       <router-link v-if="idea.phase < 2 || bc" :to="`/idee/${idea.id}/business-case`" class="card tool">
         <strong>Business Case</strong>

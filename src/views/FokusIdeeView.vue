@@ -3,7 +3,7 @@
 // Steckbrief, weitere Gedanken, Aufgaben und Entscheidungen zu dieser Idee.
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { checkSummary, costTotals, modelName, state, stepSummary } from '../lib/store.js';
+import { checkSummary, competitorsOf, costTotals, modelName, state, stepSummary } from '../lib/store.js';
 import { eur } from '../lib/business.js';
 import { phaseName } from '../lib/format.js';
 import VoteBox from '../components/VoteBox.vue';
@@ -25,6 +25,7 @@ const rolle = computed(() => {
   return 'im Grobcheck (2a)';
 });
 const gc = computed(() => stepSummary(id.value));
+const konkurrenz = computed(() => competitorsOf(id.value));
 const kosten = computed(() => costTotals(id.value));
 const gcText = computed(() => {
   if (!gc.value.n) return 'Noch keine Prüfpunkte';
@@ -67,6 +68,10 @@ const feedbackAnzahl = computed(() => state.feedback.filter((f) => f.idea_id ===
       <router-link :to="`/idee/${id}/gruendungscheck`" class="card tool">
         <strong>Gründungscheck (2b)</strong>
         <span class="small muted">{{ gcText }}</span>
+      </router-link>
+      <router-link :to="`/idee/${id}/konkurrenz`" class="card tool">
+        <strong>Konkurrenz</strong>
+        <span class="small muted">{{ konkurrenz.length ? `${konkurrenz.length} Anbieter erfasst` : 'Noch keine Anbieter erfasst' }}</span>
       </router-link>
       <router-link v-if="idea.phase >= 3 || feedbackAnzahl" :to="`/idee/${id}/feedback`" class="card tool">
         <strong>Pilot-Feedback</strong>
